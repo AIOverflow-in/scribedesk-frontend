@@ -1,19 +1,52 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { Button } from "@workspace/ui/components/button"
+import { DashboardLayout } from "@/shared/layout/dashboard-layout"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
 
-export const Route = createFileRoute("/")({ component: App })
+export const Route = createFileRoute("/")({
+  component: DashboardIndex,
+})
 
-function App() {
+function DashboardIndex() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
+    <DashboardLayout>
+      <div className="flex flex-col gap-4">
         <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+          <h1 className="text-3xl font-bold">Welcome to your dashboard</h1>
+          <p className="text-muted-foreground">This is your first route with a proper layout.</p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Projects</CardTitle>
+              <CardDescription>Active projects this month</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">12</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Tasks</CardTitle>
+              <CardDescription>Pending tasks</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">24</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Messages</CardTitle>
+              <CardDescription>Unread messages</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">8</div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
