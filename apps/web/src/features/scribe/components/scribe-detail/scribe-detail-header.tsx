@@ -18,6 +18,7 @@ import {
 } from "@workspace/ui/components/dropdown-menu"
 import { ButtonGroup } from "@workspace/ui/components/button-group"
 import type { Consultation } from "@workspace/features/scribe/types"
+import { useScribe } from "../../context/scribe-context"
 
 export interface ScribeDetailHeaderProps {
   consultation: Consultation
@@ -35,6 +36,7 @@ export function ScribeDetailHeader({
   isMobile = false,
 }: ScribeDetailHeaderProps) {
   const [activeOption, setActiveOption] = useState<ResumeOption>("transcribe")
+  const { openDocModal } = useScribe()
 
   const options = {
     transcribe: {
@@ -115,7 +117,7 @@ export function ScribeDetailHeader({
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 shrink-0">
-          <Button className="rounded-md cursor-pointer gap-2">
+          <Button className="rounded-md cursor-pointer gap-2" onClick={openDocModal}>
             <NotepadText className="h-4 w-4" />
             Create
           </Button>
