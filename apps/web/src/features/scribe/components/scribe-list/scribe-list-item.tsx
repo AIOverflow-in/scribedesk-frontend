@@ -50,12 +50,17 @@ export function ScribeListItem({
 
         {/* Patient Details: name, date, duration */}
         <p className="text-sm font-medium text-foreground/80 pr-16 mt-1">
-          {consultation.patient.name} • {formatDate(consultation.date)}
-          {consultation.duration && ` • ${formatDuration(consultation.duration)}`}
+          {consultation.patient.name} <span className="text-xs text-foreground/60 ml-2">{formatDate(consultation.date)}</span>
+          {consultation.duration && (
+            <>
+              <span className="mx-1.5 text-xs text-foreground/60">•</span>
+              <span className="text-xs text-foreground/60">{formatDuration(consultation.duration)}</span>
+            </>
+          )}
         </p>
 
         {/* Description */}
-        <p className="text-xs text-muted-foreground line-clamp-3 mt-1">
+        <p className="text-xs text-muted-foreground line-clamp-3 mt-2">
           {consultation.description}
         </p>
       </div>

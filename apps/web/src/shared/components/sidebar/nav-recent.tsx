@@ -1,5 +1,6 @@
 "use client"
 
+import { Link, useLocation } from "@tanstack/react-router"
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,6 +23,8 @@ export function NavRecent({
     url: string
   }[]
 }) {
+  const location = useLocation()
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden py-0">
       <Collapsible asChild defaultOpen={true} className="group/collapsible">
@@ -36,10 +39,10 @@ export function NavRecent({
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
+                    <Link to={item.url}>
                       <span className="truncate">{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

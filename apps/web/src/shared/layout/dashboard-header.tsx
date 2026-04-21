@@ -39,7 +39,7 @@ export function DashboardHeader() {
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className="h-7 w-7 cursor-pointer"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
           <Sun className="h-3.5 w-3.5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -48,7 +48,7 @@ export function DashboardHeader() {
         </Button>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="h-7 w-7 relative">
+        <Button variant="ghost" size="icon" className="h-7 w-7 relative cursor-pointer">
           <Bell className="h-3.5 w-3.5" />
           <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-red-500" />
           <span className="sr-only">Notifications</span>

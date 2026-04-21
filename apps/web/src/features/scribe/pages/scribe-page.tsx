@@ -4,6 +4,7 @@ import { ScribeList } from "@workspace/features/scribe/components/scribe-list/sc
 import { ScribeDetail } from "@workspace/features/scribe/components/scribe-detail/scribe-detail"
 import { ScribeEmptyState } from "@workspace/features/scribe/components/scribe-list/scribe-empty-state"
 import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
+import { cn } from "@workspace/ui/lib/utils"
 import type { Consultation } from "@workspace/features/scribe/types"
 
 // Mock data - replace with actual data fetching
@@ -73,35 +74,47 @@ export function ScribePage() {
     }
   }
 
+  // Animation states
+  const showList = isListVisible && (!isMobile || !selectedId)
+  const showDetail = !isMobile || selectedId
+
   return (
     <DashboardLayout>
-      <div className="flex h-[calc(100vh-2.75rem)] overflow-hidden -m-6">
-        {/* List Panel - Hidden on mobile if a consultation is selected */}
-        {isListVisible && (!isMobile || !selectedId) && (
-          <div className="w-full md:w-80 shrink-0 border-r border-border">
+      <div className="flex h-[calc(100vh-2.75rem)] overflow-hidden -m-6 bg-muted/40">
+        {/* List Panel */}
+        <div 
+          className={cn(
+            "shrink-0 border-r border-border bg-background transition-all duration-300 ease-in-out overflow-hidden flex flex-col",
+            showList ? "w-full md:w-80 opacity-100" : "w-0 opacity-0 border-none"
+          )}
+        >
+          <div className="w-full md:w-80 h-full flex flex-col">
             <ScribeList
               consultations={mockConsultations}
               selectedId={selectedId}
               onSelectConsultation={setSelectedId}
             />
           </div>
-        )}
+        </div>
 
-        {/* Detail Panel - Hidden on mobile if no consultation is selected */}
-        {(!isMobile || selectedId) && (
-          <div className="flex-1 min-w-0">
-            {selectedConsultation ? (
-              <ScribeDetail
-                consultation={selectedConsultation}
-                isListVisible={isListVisible}
-                onToggleList={handleToggleList}
-                isMobile={isMobile}
-              />
-            ) : (
-              <ScribeEmptyState />
-            )}
-          </div>
-        )}
+        {/* Detail Panel */}
+        <div 
+          className={cn(
+            "flex-1 min-w-0 transition-all duration-300 ease-in-out",
+            showDetail ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
+          )}
+        >
+          {selectedConsultation ? (
+            <ScribeDetail
+              consultation={selectedConsultation}
+              isListVisible={isListVisible}
+              onToggleList={handleToggleList}
+              isMobile={isMobile}
+            />
+          ) : (
+            <ScribeEmptyState />
+          )}
+        </div>
       </div>
     </DashboardLayout>
   )
