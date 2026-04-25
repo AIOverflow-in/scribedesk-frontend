@@ -1,5 +1,5 @@
 import { Calendar, User, ExternalLink, PillBottle } from "lucide-react"
-import { ScrollArea } from "@workspace/ui/components/scroll-area"
+import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
 import {
@@ -33,8 +33,8 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
     <Dialog open={!!consultation} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[750px] max-h-[85vh] flex flex-col p-0 overflow-hidden [&>button]:cursor-pointer">
         {/* Modal Header */}
-        <DialogHeader className="p-6 pb-2 shrink-0">
-          <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground tracking-widest mb-1">
+        <DialogHeader className="p-6 pb-4 shrink-0">
+          <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-widest mb-1">
             <Calendar className="h-3.5 w-3.5" />
             {new Date(consultation.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </div>
@@ -55,7 +55,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
         </DialogHeader>
 
         {/* Tab System */}
-        <Tabs defaultValue="summary" className="flex-1 flex flex-col min-h-0">
+        <Tabs defaultValue="summary" className="flex flex-col flex-1 min-h-0">
           <div className="px-6 pt-1 pb-3 shrink-0">
             <TabsList className="h-9">
               <TabsTrigger value="summary" className="cursor-pointer">
@@ -68,40 +68,34 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 min-h-0">
-            <TabsContent value="summary" className="h-full m-0 focus-visible:outline-none">
-              <ScrollArea className="h-full">
-                <div className="p-4">
-                  {consultation.summary ? (
-                    <div className="bg-background border rounded-lg p-4 text-[14px] leading-relaxed text-foreground/80 whitespace-pre-wrap shadow-xs">
-                      {consultation.summary}
-                    </div>
-                  ) : (
-                    <Empty className="py-12 bg-transparent border border-dashed rounded-xl">
-                      <EmptyHeader>
-                        <EmptyTitle>No Summary Available</EmptyTitle>
-                        <EmptyDescription>This consultation doesn't have a generated summary.</EmptyDescription>
-                      </EmptyHeader>
-                    </Empty>
-                  )}
-                </div>
-              </ScrollArea>
+          <div className="flex-1 min-h-0 px-6 pb-2 flex flex-col">
+            <TabsContent value="summary" className="flex-1 min-h-0 m-0 data-[state=active]:flex flex-col focus-visible:outline-none">
+              {consultation.summary ? (
+                <NativeScroll className="flex-1 min-h-0 bg-background border rounded-lg shadow-xs">
+                  <div className="p-4 text-[14px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
+                    {consultation.summary}
+                  </div>
+                </NativeScroll>
+              ) : (
+                <Empty className="flex-1 min-h-0 py-12 bg-transparent border border-dashed rounded-xl flex items-center justify-center">
+                  <EmptyHeader>
+                    <EmptyTitle>No Summary Available</EmptyTitle>
+                    <EmptyDescription>This consultation doesn't have a generated summary.</EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              )}
             </TabsContent>
 
-            <TabsContent value="prescriptions" className="h-full m-0 focus-visible:outline-none">
-              <ScrollArea className="h-full">
-                <div className="p-4">
-                  <Empty className="py-12 bg-transparent border border-dashed rounded-xl">
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon" className="bg-primary/10 text-primary">
-                        <PillBottle className="h-4 w-4" />
-                      </EmptyMedia>
-                      <EmptyTitle>No Prescriptions</EmptyTitle>
-                      <EmptyDescription>No medications were prescribed during this session.</EmptyDescription>
-                    </EmptyHeader>
-                  </Empty>
-                </div>
-              </ScrollArea>
+            <TabsContent value="prescriptions" className="flex-1 min-h-0 m-0 data-[state=active]:flex flex-col focus-visible:outline-none">
+              <Empty className="flex-1 min-h-0 py-12 bg-transparent border border-dashed rounded-xl flex items-center justify-center">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon" className="bg-primary/10 text-primary">
+                    <PillBottle className="h-4 w-4" />
+                  </EmptyMedia>
+                  <EmptyTitle>No Prescriptions</EmptyTitle>
+                  <EmptyDescription>No medications were prescribed during this session.</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
             </TabsContent>
           </div>
         </Tabs>

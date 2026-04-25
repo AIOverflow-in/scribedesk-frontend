@@ -49,7 +49,7 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
                   <div className={cn(
                     "absolute top-1/2 -translate-y-1/2 z-20 rounded-full border-2 transition-all duration-300 bg-background",
                     "left-8 md:left-1/2 -translate-x-1/2",
-                    isCurrent ? "w-5 h-5 border-amber-500 bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]" : "w-3 h-3 border-border group-hover:border-primary"
+                    isCurrent ? "w-4 h-4 border-amber-500 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.2)]" : "w-3 h-3 border-border group-hover:border-primary"
                   )} />
                   
                   {/* 3. Horizontal Connector Line */}
@@ -84,7 +84,7 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
                     >
                       {isCurrent && (
                         <div className="absolute -top-2.5 left-4">
-                           <Badge className="bg-amber-500 hover:bg-amber-600 border-none text-[8px] uppercase h-4.5 px-2 font-black tracking-tighter shadow-xs">Current</Badge>
+                           <Badge className="bg-amber-500 hover:bg-amber-600 border-none text-[10px] font-bold h-4.5 px-2 tracking-normal shadow-xs">Current</Badge>
                         </div>
                       )}
 
@@ -104,7 +104,7 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
                         {item.description}
                       </p>
 
-                      <div className="mt-3 flex justify-end items-center gap-1 text-primary/80 group-hover:text-primary transition-colors">
+                      <div className="mt-3 flex justify-end items-center gap-1 text-primary group-hover:text-primary/80 transition-colors">
                          <span className="text-[11px] font-bold tracking-tight">
                            Open Summary
                          </span>

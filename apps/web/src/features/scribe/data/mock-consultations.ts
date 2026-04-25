@@ -26,7 +26,27 @@ The surgical site was inspected: the three portals are clean, dry, and intact. T
 
 The clinical plan remains focused on aggressive physical therapy (PT). Patient is currently attending PT 3 times weekly. We discussed the importance of avoiding high-impact activities for the next 4 weeks to allow for tissue consolidation. He is currently transitioning from crutches to a single-point cane as tolerated. 
 
-Medication review: Patient has successfully tapered off hydrocodone and is now managing pain with Naproxen 500mg twice daily and scheduled icing. No signs of deep vein thrombosis (DVT) noted in calf. We will continue the current course and follow up in another 2 weeks for further ROM assessment and potential return-to-work clearance for his desk-based role. Patient demonstrated a clear understanding of the restrictions.`,
+Medication review: Patient has successfully tapered off hydrocodone and is now managing pain with Naproxen 500mg twice daily and scheduled icing. No signs of deep vein thrombosis (DVT) noted in calf. We will continue the current course and follow up in another 2 weeks for further ROM assessment and potential return-to-work clearance for his desk-based role. Patient demonstrated a clear understanding of the restrictions.
+
+--- EXTENDED CLINICAL NOTES FOR SCROLL TEST ---
+
+The patient's gait analysis shows a slight antalgic pattern with a reduced stance phase on the right side. This is expected given the recent surgery but should be addressed in physical therapy to prevent secondary hip or lower back strain. Quadriceps muscle atrophy was noted compared to the left side, confirming the need for focused strengthening exercises.
+
+Detailed Physical Therapy Plan:
+1. Isometric quadriceps sets (10 reps, 5 sets daily).
+2. Straight leg raises to strengthen the hip flexors and quads without knee extension.
+3. Heel slides to gently increase flexion beyond 95 degrees.
+4. Ankle pumps to maintain circulation and prevent vascular complications.
+
+Long-term Outlook:
+Given the successful meniscal repair rather than a simple debridement, the patient's long-term joint health is prioritized. We discussed the risk of early-onset osteoarthritis if rehabilitation is rushed. The patient is advised to stick strictly to the non-running protocol for the next 12 weeks. 
+
+Future milestones:
+- 4 weeks: Expected transition to full weight-bearing without assistive devices.
+- 8 weeks: Initiation of proprioceptive training on unstable surfaces.
+- 12 weeks: Return to low-impact cycling and swimming.
+
+Patient concerns regarding mild swelling after PT were addressed. We confirmed that this is a normal inflammatory response and should be managed with immediate icing after each session. The patient remains optimistic and compliant with all clinical advice provided today.`,
     transcript: "Doctor: Welcome back, John...",
     reports: [],
   },
