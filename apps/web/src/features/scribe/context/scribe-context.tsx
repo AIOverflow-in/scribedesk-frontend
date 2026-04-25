@@ -53,7 +53,7 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const generateDocument = async (type: string, data?: any) => {
+  const generateDocument = async (type: string, _data?: any) => {
     // TODO: Connect to backend FastAPI/Go generation endpoint
     setIsDocModalOpen(false)
     

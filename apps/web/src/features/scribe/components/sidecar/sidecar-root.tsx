@@ -1,8 +1,6 @@
-import * as React from "react"
-import { MessageSquare, History, Lightbulb, X, ChevronRight } from "lucide-react"
+import { MessageSquare, History, X } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { useScribe } from "../../context/scribe-context"
-import { cn } from "@workspace/ui/lib/utils"
 
 export function ScribeSidecar() {
   const { isSidecarOpen, toggleSidecar, sidecarView, setSidecarView } = useScribe()

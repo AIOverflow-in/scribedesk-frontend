@@ -1,6 +1,5 @@
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@workspace/ui/components/sidebar"
+import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
-import { Separator } from "@workspace/ui/components/separator"
 import { AppSidebar } from "@/shared/components/sidebar/app-sidebar"
 import { DashboardHeader } from "@/shared/layout/dashboard-header"
 

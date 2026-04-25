@@ -31,7 +31,6 @@ type ResumeOption = "transcribe" | "telehealth"
 
 export function ScribeDetailHeader({
   consultation,
-  isListVisible,
   onToggleList,
   isMobile = false,
 }: ScribeDetailHeaderProps) {

@@ -28,16 +28,30 @@ import {
 import { useScribe } from "../../context/scribe-context"
 import { cn } from "@workspace/ui/lib/utils"
 import { ClinicalPaper } from "./clinical-paper"
+import { ClinicalPaperSkeleton } from "./clinical-paper-skeleton"
 
 export function DraftingSheet() {
   const { isSheetOpen, closeSheet, activeDocument } = useScribe()
   const [isSigned, setIsSigned] = React.useState(false)
   const [showSignature, setShowSignature] = React.useState(true)
+  const [isGenerating, setIsGenerating] = React.useState(true)
 
   // Keep a reference to the last document to prevent content disappearing during exit animation
   const lastDoc = React.useRef(activeDocument)
   if (activeDocument) lastDoc.current = activeDocument
   const docToRender = activeDocument || lastDoc.current
+
+  // Simulate generation whenever the sheet opens with a new document
+  React.useEffect(() => {
+    if (isSheetOpen) {
+      setIsGenerating(true)
+      setIsSigned(false)
+      const timer = setTimeout(() => {
+        setIsGenerating(false)
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [isSheetOpen, activeDocument?.id])
 
   const handlePrint = () => {
     window.print()
@@ -54,7 +68,7 @@ export function DraftingSheet() {
         {/* Toolbar Header */}
         <div className="shrink-0 bg-background border-b h-11 flex items-center justify-between px-3">
           <SheetTitle className="text-sm font-semibold truncate pr-4">
-            {docToRender.title}
+            {isGenerating ? "Generating Document..." : docToRender.title}
           </SheetTitle>
 
           <div className="flex items-center gap-1">
@@ -64,14 +78,14 @@ export function DraftingSheet() {
                   size="sm"
                   className="h-7 px-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white cursor-pointer text-xs gap-2 rounded-r-none! z-10"
                   onClick={() => setIsSigned(true)}
-                  disabled={!showSignature}
+                  disabled={!showSignature || isGenerating}
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   Sign
                 </Button>
                 
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
+                  <DropdownMenuTrigger asChild disabled={isGenerating}>
                     <Button variant="outline" className="h-7 w-7 p-0 cursor-pointer rounded-l-none! border-l-0! focus-visible:ring-0">
                       <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                     </Button>
@@ -95,10 +109,10 @@ export function DraftingSheet() {
             
             <div className="h-3.5 w-px bg-border mx-1" />
             
-            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer">
+            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer" disabled={isGenerating}>
               <Download className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer" onClick={handlePrint}>
+            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer" onClick={handlePrint} disabled={isGenerating}>
               <Printer className="h-3.5 w-3.5" />
             </Button>
             <Button variant="outline" size="icon" onClick={closeSheet} className="h-7 w-7 cursor-pointer ml-1">
@@ -107,13 +121,17 @@ export function DraftingSheet() {
           </div>
         </div>
 
-        {/* Clinical Workspace (The Paper) */}
+        {/* Clinical Workspace (The Paper or Skeleton) */}
         <div className="flex-1 min-h-0 bg-gray-100 dark:bg-gray-900 no-print flex flex-col items-center p-4 md:p-8">
-            <ClinicalPaper 
-              document={docToRender}
-              isSigned={isSigned}
-              showSignature={showSignature}
-            />
+            {isGenerating ? (
+              <ClinicalPaperSkeleton />
+            ) : (
+              <ClinicalPaper 
+                document={docToRender}
+                isSigned={isSigned}
+                showSignature={showSignature}
+              />
+            )}
         </div>
 
         {/* Footer Actions */}
@@ -121,7 +139,7 @@ export function DraftingSheet() {
           <Button variant="outline" size="sm" className="cursor-pointer" onClick={closeSheet}>
             Cancel
           </Button>
-          <Button size="sm" className="cursor-pointer">
+          <Button size="sm" className="cursor-pointer" disabled={isGenerating}>
             Save to Consultation
           </Button>
         </div>

@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate, useSearch } from "@tanstack/react-router"
 import { DashboardLayout } from "@/shared/layout/dashboard-layout"
 import { ScribeList } from "@workspace/features/scribe/components/navigation/scribe-list"
+import { ScribeListSkeleton } from "@workspace/features/scribe/components/navigation/scribe-list-skeleton"
 import { ScribeDetail } from "@workspace/features/scribe/components/workspace/scribe-detail"
+import { ScribeDetailSkeleton } from "@workspace/features/scribe/components/workspace/scribe-detail-skeleton"
 import { ScribeEmptyState } from "@workspace/features/scribe/components/navigation/scribe-empty-state"
-import { DocumentTypeModal } from "@workspace/features/scribe/components/orchestrator/document-modal/document-type-modal"
-import { DraftingSheet } from "@workspace/features/scribe/components/orchestrator/drafting-sheet"
+import { DocumentTypeModal } from "@workspace/features/scribe/components/documentation/document-modal/document-type-modal"
+import { DraftingSheet } from "@workspace/features/scribe/components/documentation/drafting-sheet"
 import { ScribeSidecar } from "@workspace/features/scribe/components/sidecar/sidecar-root"
 import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 import { cn } from "@workspace/ui/lib/utils"
@@ -12,15 +15,54 @@ import { mockConsultations } from "../data/mock-consultations"
 import { ScribeProvider } from "../context/scribe-context"
 
 export function ScribePage() {
-  const [selectedId, setSelectedId] = useState<string | undefined>()
+  const navigate = useNavigate()
+  const search = useSearch({ strict: false }) as any
+  const selectedId = search.id
+  
   const [isListVisible, setIsListVisible] = useState(true)
+  const [isLoadingList, setIsLoadingList] = useState(true)
+  // Initialize to true if we have a selection to show the skeleton on refresh
+  const [isFetchingDetail, setIsFetchingDetail] = useState(!!selectedId)
   const isMobile = useIsMobile()
 
   const selectedConsultation = mockConsultations.find((c) => c.id === selectedId)
 
+  // 1. Handle Initial Load
+  useEffect(() => {
+    // Fake list loading
+    const listTimer = setTimeout(() => setIsLoadingList(false), 1000)
+    
+    // Fake detail fetching if ID exists
+    let detailTimer: NodeJS.Timeout
+    if (selectedId) {
+      setIsFetchingDetail(true)
+      detailTimer = setTimeout(() => setIsFetchingDetail(false), 800)
+    }
+
+    return () => {
+      clearTimeout(listTimer)
+      if (detailTimer) clearTimeout(detailTimer)
+    }
+  }, []) // Only run on mount
+
+  // 2. Handle Selection: Update URL and trigger fetch
+  const handleSelectConsultation = (id: string) => {
+    if (id === selectedId) return
+    
+    navigate({
+      to: "/scribe",
+      search: { id } as any,
+    })
+    
+    setIsFetchingDetail(true)
+    setTimeout(() => {
+      setIsFetchingDetail(false)
+    }, 800)
+  }
+
   const handleToggleList = () => {
     if (isMobile) {
-      setSelectedId(undefined)
+      navigate({ to: "/scribe", search: { id: undefined } as any })
     } else {
       setIsListVisible(!isListVisible)
     }
@@ -41,11 +83,15 @@ export function ScribePage() {
             )}
           >
             <div className="w-full md:w-80 h-full flex flex-col">
-              <ScribeList
-                consultations={mockConsultations}
-                selectedId={selectedId}
-                onSelectConsultation={setSelectedId}
-              />
+              {isLoadingList ? (
+                <ScribeListSkeleton />
+              ) : (
+                <ScribeList
+                  consultations={mockConsultations}
+                  selectedId={selectedId}
+                  onSelectConsultation={handleSelectConsultation}
+                />
+              )}
             </div>
           </div>
 
@@ -56,7 +102,9 @@ export function ScribePage() {
               showDetail ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
             )}
           >
-            {selectedConsultation ? (
+            {isFetchingDetail ? (
+              <ScribeDetailSkeleton />
+            ) : selectedConsultation ? (
               <>
                 <div className="flex-1 min-w-0 h-full">
                   <ScribeDetail
