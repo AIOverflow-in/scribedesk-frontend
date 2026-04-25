@@ -1,4 +1,3 @@
-import * as React from "react"
 import { createPortal } from "react-dom"
 import { cn } from "@workspace/ui/lib/utils"
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
