@@ -3,6 +3,8 @@ import { DashboardLayout } from "@/shared/layout/dashboard-layout"
 import { ScribeList } from "@workspace/features/scribe/components/scribe-list/scribe-list"
 import { ScribeDetail } from "@workspace/features/scribe/components/scribe-detail/scribe-detail"
 import { ScribeEmptyState } from "@workspace/features/scribe/components/scribe-list/scribe-empty-state"
+import { DocumentTypeModal } from "@workspace/features/scribe/components/scribe-detail/document-type-modal"
+import { DraftingSheet } from "@workspace/features/scribe/components/scribe-detail/drafting-sheet"
 import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 import { cn } from "@workspace/ui/lib/utils"
 import { mockConsultations } from "../data/mock-consultations"
@@ -66,6 +68,8 @@ export function ScribePage() {
           </div>
         </div>
       </DashboardLayout>
+      <DocumentTypeModal />
+      <DraftingSheet />
     </ScribeProvider>
   )
 }

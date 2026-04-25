@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { PanelLeft, ArrowLeft, Pencil, NotepadText, ChevronDown, AudioLines, ScreenShare } from "lucide-react"
+import { PanelLeft, ArrowLeft, Pencil, CirclePlus, ChevronDown, AudioLines, ScreenShare } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import {
@@ -118,7 +118,7 @@ export function ScribeDetailHeader({
         {/* Action Buttons */}
         <div className="flex items-center gap-2 shrink-0">
           <Button className="rounded-md cursor-pointer gap-2" onClick={openDocModal}>
-            <NotepadText className="h-4 w-4" />
+            <CirclePlus className="h-4 w-4" />
             Create
           </Button>
           

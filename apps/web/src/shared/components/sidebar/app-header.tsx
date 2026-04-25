@@ -22,7 +22,7 @@ export function AppHeader({
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton size="lg" asChild className="hover:!bg-transparent hover:!text-sidebar-foreground data-[active]:!bg-transparent">
+        <SidebarMenuButton size="lg" asChild className="hover:bg-transparent! hover:text-sidebar-foreground! data-active:bg-transparent!">
           <div className="flex items-center gap-2 cursor-default">
             <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
               {app.logo}

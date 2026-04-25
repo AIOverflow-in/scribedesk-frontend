@@ -1,14 +1,10 @@
 import * as React from "react"
 import {
-  FileText,
   Stethoscope,
-  FilePlus,
   Mail,
-  ClipboardList,
   Pill,
-  FileSearch,
-  MessageSquarePlus,
-  ChevronLeft
+  ChevronLeft,
+  CircleCheck,
 } from "lucide-react"
 import {
   Dialog,
@@ -30,6 +26,9 @@ const docTypes = [
     items: [
       { id: "soap", label: "SOAP Note" },
       { id: "hpi", label: "History of Present Illness" },
+      { id: "h-p", label: "History & Physical" },
+      { id: "progress", label: "Progress Note" },
+      { id: "consultation", label: "Consultation Note" },
     ]
   },
   {
@@ -41,6 +40,8 @@ const docTypes = [
       { id: "referral", label: "Referral Letter" },
       { id: "discharge", label: "Discharge Summary" },
       { id: "medical-leave", label: "Medical Leave Certificate" },
+      { id: "return-work", label: "Return to Work" },
+      { id: "doctors-note", label: "Doctor's Note" },
     ]
   },
   {
@@ -50,6 +51,8 @@ const docTypes = [
     icon: <Pill className="h-5 w-5 text-red-500" />,
     items: [
       { id: "prescription", label: "New Prescription" },
+      { id: "refill", label: "Prescription Refill" },
+      { id: "medication-list", label: "Medication List" },
     ]
   }
 ]
@@ -60,12 +63,21 @@ export function DocumentTypeModal() {
   const [selectedItem, setSelectedItem] = React.useState<string | null>(null)
   const [context, setContext] = React.useState("")
 
+  // Reset state after the modal has finished closing to prevent "abrupt" content jumps
+  React.useEffect(() => {
+    if (!isDocModalOpen) {
+      const timer = setTimeout(() => {
+        setSelectedCategory(null)
+        setSelectedItem(null)
+        setContext("")
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [isDocModalOpen])
+
   const handleGenerate = () => {
     if (selectedItem) {
       generateDocument(selectedItem, context)
-      setContext("")
-      setSelectedCategory(null)
-      setSelectedItem(null)
     }
   }
 
@@ -77,9 +89,6 @@ export function DocumentTypeModal() {
 
   const handleClose = () => {
     closeDocModal()
-    setSelectedCategory(null)
-    setSelectedItem(null)
-    setContext("")
   }
 
   return (
@@ -96,25 +105,25 @@ export function DocumentTypeModal() {
 
         <div className="grid gap-4 py-4">
           {!selectedCategory ? (
-            <div className="grid grid-cols-1 gap-3">
+            <div key="category-list" className="grid grid-cols-1 divide-y divide-border pb-4">
               {docTypes.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className="flex items-start gap-4 rounded-lg border p-4 text-left transition-colors hover:bg-accent cursor-pointer"
+                  className="flex items-start gap-4 p-4 -mx-4 text-left transition-colors hover:bg-accent cursor-pointer"
                 >
-                  <div className="mt-1 rounded-md bg-muted p-2">
+                  <span className="mt-1 rounded-md bg-muted p-2 block">
                     {cat.icon}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium">{cat.title}</div>
-                    <div className="text-sm text-muted-foreground">{cat.description}</div>
-                  </div>
+                  </span>
+                  <span className="flex-1 block">
+                    <span className="font-medium block">{cat.title}</span>
+                    <span className="text-sm text-muted-foreground block">{cat.description}</span>
+                  </span>
                 </button>
               ))}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div key="item-selection" className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-medium text-muted-foreground">
                   Additional Context (Optional)
@@ -127,23 +136,25 @@ export function DocumentTypeModal() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 gap-2">
+              <div className={cn(
+                "grid grid-cols-1",
+                !selectedItem && "divide-y divide-border"
+              )}>
                 {docTypes.find(c => c.id === selectedCategory)?.items.map(item => (
                   <button
                     key={item.id}
                     onClick={() => setSelectedItem(item.id)}
                     className={cn(
-                      "flex items-center justify-between rounded-md border px-4 py-3 text-sm font-medium transition-colors cursor-pointer",
+                      "flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors cursor-pointer group",
                       selectedItem === item.id
-                        ? "bg-primary/5 border-primary text-primary"
+                        ? "bg-primary/5 border border-primary rounded-md"
                         : "hover:bg-accent"
                     )}
                   >
-                    {item.label}
-                    <FilePlus className={cn(
-                      "h-4 w-4",
-                      selectedItem === item.id ? "text-primary" : "text-muted-foreground"
-                    )} />
+                    <span>{item.label}</span>
+                    {selectedItem === item.id && (
+                      <CircleCheck className="h-5 w-5 text-green-600" />
+                    )}
                   </button>
                 ))}
               </div>

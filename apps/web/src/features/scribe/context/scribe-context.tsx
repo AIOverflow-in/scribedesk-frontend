@@ -1,7 +1,6 @@
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useMemo, type ReactNode } from "react"
 import type { Consultation, Report } from "../types"
-import { DocumentTypeModal } from "../components/scribe-detail/document-type-modal"
-import { DraftingSheet } from "../components/scribe-detail/drafting-sheet"
+import { mockReports } from "../data/mock-reports"
 
 interface ScribeContextType {
   // Current active consultation
@@ -49,43 +48,53 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
   }
 
   const generateDocument = async (type: string, context?: string) => {
-    // This will be implemented with AI logic later
+    // Simulate AI generation by picking a mock report or creating a placeholder
     console.log(`Generating ${type} with context: ${context}`)
     closeDocModal()
     
-    // Add a small delay to allow the Modal to unmount before opening the Sheet
-    // This prevents the 'removeChild' on 'Node' error caused by overlapping Portals
+    // Default to the long version for SOAP notes to show multi-page capabilities
+    const mockKey = type === 'soap' ? 'soap-long' : type === 'referral' ? 'referral-letter-1' : null
+    const mockData = mockKey ? mockReports[mockKey] : null
+
+    // Add a slightly longer delay to allow the Modal exit animation to finish
+    // before the Sheet starts sliding in.
     setTimeout(() => {
       openSheet({ 
-        title: `New ${type}`, 
+        title: mockData?.title || `New ${type}`, 
         type: type,
         createdAt: new Date().toISOString(),
-        content: ""
+        content: mockData?.content || ""
       })
-    }, 100)
+    }, 350)
   }
 
+  // Memoize the context value to prevent unnecessary re-renders
+  // and maintain stability during HMR swaps of child components.
+  const value = useMemo(() => ({
+    consultation,
+    setConsultation,
+    isDocModalOpen,
+    openDocModal,
+    closeDocModal,
+    isSheetOpen,
+    activeDocument,
+    openSheet,
+    closeSheet,
+    generateDocument
+  }), [
+    consultation, 
+    isDocModalOpen, 
+    isSheetOpen, 
+    activeDocument
+  ])
+
   return (
-    <ScribeContext.Provider
-      value={{
-        consultation,
-        setConsultation,
-        isDocModalOpen,
-        openDocModal,
-        closeDocModal,
-        isSheetOpen,
-        activeDocument,
-        openSheet,
-        closeSheet,
-        generateDocument
-      }}
-    >
+    <ScribeContext.Provider value={value}>
       {children}
-      <DocumentTypeModal />
-      <DraftingSheet />
     </ScribeContext.Provider>
   )
 }
+
 
 export function useScribe() {
   const context = useContext(ScribeContext)
