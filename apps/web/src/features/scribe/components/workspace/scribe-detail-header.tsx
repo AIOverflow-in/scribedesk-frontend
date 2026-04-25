@@ -35,7 +35,7 @@ export function ScribeDetailHeader({
   isMobile = false,
 }: ScribeDetailHeaderProps) {
   const [activeOption, setActiveOption] = useState<ResumeOption>("transcribe")
-  const { openDocModal } = useScribe()
+  const { openDocModal, openEditModal } = useScribe()
 
   const options = {
     transcribe: {
@@ -100,7 +100,10 @@ export function ScribeDetailHeader({
 
           {/* Title and Patient Details */}
           <div className="flex-1 min-w-0">
-            <div className="group flex items-center gap-2 cursor-pointer w-fit">
+            <div 
+              className="group flex items-center gap-2 cursor-pointer w-fit"
+              onClick={openEditModal}
+            >
               <h2 className="text-xl font-medium">{consultation.title}</h2>
               <Pencil className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>

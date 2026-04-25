@@ -13,6 +13,11 @@ interface ScribeContextType {
   isDocModalOpen: boolean
   openDocModal: () => void
   closeDocModal: () => void
+
+  // Session Edit Modal
+  isEditModalOpen: boolean
+  openEditModal: () => void
+  closeEditModal: () => void
   
   // Drafting Sheet
   isSheetOpen: boolean
@@ -37,6 +42,7 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
   
   // Modal/Sheet states
   const [isDocModalOpen, setIsDocModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [activeDocument, setActiveDocument] = useState<Partial<Report> | null>(null)
 
@@ -77,6 +83,9 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
     isDocModalOpen,
     openDocModal: () => setIsDocModalOpen(true),
     closeDocModal: () => setIsDocModalOpen(false),
+    isEditModalOpen,
+    openEditModal: () => setIsEditModalOpen(true),
+    closeEditModal: () => setIsEditModalOpen(false),
     isSheetOpen,
     activeDocument,
     openSheet: (doc: Partial<Report>) => {
@@ -92,7 +101,7 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
     toggleSidecar,
     setSidecarView,
     generateDocument
-  }), [consultation, isDocModalOpen, isSheetOpen, activeDocument, isSidecarOpen, sidecarView])
+  }), [consultation, isDocModalOpen, isEditModalOpen, isSheetOpen, activeDocument, isSidecarOpen, sidecarView])
 
   return (
     <ScribeContext.Provider value={value}>

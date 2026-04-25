@@ -7,17 +7,19 @@ import { ScribeDetail } from "@workspace/features/scribe/components/workspace/sc
 import { ScribeDetailSkeleton } from "@workspace/features/scribe/components/workspace/scribe-detail-skeleton"
 import { ScribeEmptyState } from "@workspace/features/scribe/components/navigation/scribe-empty-state"
 import { DocumentTypeModal } from "@workspace/features/scribe/components/documentation/document-modal/document-type-modal"
+import { EditSessionModal } from "@workspace/features/scribe/components/workspace/modals/edit-session-modal"
 import { DraftingSheet } from "@workspace/features/scribe/components/documentation/drafting-sheet"
 import { ScribeSidecar } from "@workspace/features/scribe/components/sidecar/sidecar-root"
 import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 import { cn } from "@workspace/ui/lib/utils"
 import { mockConsultations } from "../data/mock-consultations"
-import { ScribeProvider } from "../context/scribe-context"
+import { ScribeProvider, useScribe } from "../context/scribe-context"
 
-export function ScribePage() {
+function ScribeContent() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false }) as any
   const selectedId = search.id
+  const { setConsultation } = useScribe()
   
   const [isListVisible, setIsListVisible] = useState(true)
   const [isLoadingList, setIsLoadingList] = useState(true)
@@ -44,6 +46,11 @@ export function ScribePage() {
       if (detailTimer) clearTimeout(detailTimer)
     }
   }, []) // Only run on mount
+
+  // Sync consultation to context
+  useEffect(() => {
+    setConsultation(selectedConsultation || null)
+  }, [selectedConsultation, setConsultation])
 
   // 2. Handle Selection: Update URL and trigger fetch
   const handleSelectConsultation = (id: string) => {
@@ -72,7 +79,7 @@ export function ScribePage() {
   const showDetail = !isMobile || selectedId
 
   return (
-    <ScribeProvider>
+    <>
       <DashboardLayout>
         <div className="flex h-[calc(100vh-2.75rem)] overflow-hidden -m-6 bg-muted/40">
           {/* 1. Left Navigation Panel */}
@@ -127,7 +134,16 @@ export function ScribePage() {
       
       {/* 4. Global Modals and Sheets */}
       <DocumentTypeModal />
+      <EditSessionModal />
       <DraftingSheet />
+    </>
+  )
+}
+
+export function ScribePage() {
+  return (
+    <ScribeProvider>
+      <ScribeContent />
     </ScribeProvider>
   )
 }

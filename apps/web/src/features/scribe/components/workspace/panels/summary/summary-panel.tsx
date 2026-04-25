@@ -18,8 +18,10 @@ export function SummaryPanel({ consultation }: SummaryPanelProps) {
     <div className="border rounded-lg bg-background h-full flex flex-col overflow-hidden">
       {consultation.summary ? (
         <ScrollArea className="flex-1">
-          <div className="p-4 prose prose-sm max-w-none">
-            <p className="whitespace-pre-wrap">{consultation.summary}</p>
+          <div className="p-6 prose prose-sm max-w-none">
+            <p className="whitespace-pre-wrap text-foreground/80 leading-relaxed">
+              {consultation.summary}
+            </p>
           </div>
         </ScrollArea>
       ) : (
