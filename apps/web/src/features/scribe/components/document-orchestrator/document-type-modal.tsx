@@ -3,7 +3,6 @@ import {
   Stethoscope,
   Mail,
   Pill,
-  ChevronLeft,
   CircleCheck,
 } from "lucide-react"
 import {
@@ -16,7 +15,10 @@ import {
 import { Button } from "@workspace/ui/components/button"
 import { Textarea } from "@workspace/ui/components/textarea"
 import { useScribe } from "../../context/scribe-context"
+import { PrescriptionBuilder } from "./prescription-builder"
 import { cn } from "@workspace/ui/lib/utils"
+
+type ModalStep = "CATEGORY" | "ITEM_SPECS" | "RX_BUILDER"
 
 const docTypes = [
   {
@@ -30,6 +32,7 @@ const docTypes = [
       { id: "h-p", label: "History & Physical" },
       { id: "progress", label: "Progress Note" },
       { id: "consultation", label: "Consultation Note" },
+      { id: "emergency", label: "Emergency Dept Note" },
     ]
   },
   {
@@ -43,31 +46,29 @@ const docTypes = [
       { id: "medical-leave", label: "Medical Leave Certificate" },
       { id: "return-work", label: "Return to Work" },
       { id: "doctors-note", label: "Doctor's Note" },
+      { id: "fit-to-travel", label: "Fit to Travel" },
     ]
   },
   {
     id: "prescriptions",
-    title: "Prescriptions",
-    description: "Medicines, Dosage, Frequency",
+    title: "Prescription",
+    description: "Search medicine, Dosage, Instructions",
     icon: <Pill className="h-5 w-5 text-red-500" />,
-    items: [
-      { id: "prescription", label: "New Prescription" },
-      { id: "refill", label: "Prescription Refill" },
-      { id: "medication-list", label: "Medication List" },
-    ]
+    isDirect: true
   }
 ]
 
 export function DocumentTypeModal() {
   const { isDocModalOpen, closeDocModal, generateDocument } = useScribe()
+  const [step, setStep] = React.useState<ModalStep>("CATEGORY")
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null)
   const [selectedItem, setSelectedItem] = React.useState<string | null>(null)
   const [context, setContext] = React.useState("")
 
-  // Reset state after the modal has finished closing to prevent "abrupt" content jumps
   React.useEffect(() => {
     if (!isDocModalOpen) {
       const timer = setTimeout(() => {
+        setStep("CATEGORY")
         setSelectedCategory(null)
         setSelectedItem(null)
         setContext("")
@@ -76,59 +77,73 @@ export function DocumentTypeModal() {
     }
   }, [isDocModalOpen])
 
-  const handleGenerate = () => {
-    if (selectedItem) {
-      generateDocument(selectedItem, context)
+  const handleCategorySelect = (catId: string) => {
+    const cat = docTypes.find(c => c.id === catId)
+    setSelectedCategory(catId)
+    if (cat?.isDirect) {
+      setStep("RX_BUILDER")
+    } else {
+      setStep("ITEM_SPECS")
     }
   }
 
   const handleBack = () => {
-    setSelectedCategory(null)
-    setSelectedItem(null)
-    setContext("")
+    if (step === "ITEM_SPECS" || step === "RX_BUILDER") {
+      setStep("CATEGORY")
+      setSelectedCategory(null)
+      setSelectedItem(null)
+    }
   }
 
-  const handleClose = () => {
-    closeDocModal()
+  const onGenerateRx = (items: any[]) => {
+     generateDocument("prescription", { items })
   }
+
+  const selectedItemLabel = docTypes
+    .flatMap(c => c.items || [])
+    .find(i => i.id === selectedItem)?.label
 
   return (
-    <Dialog open={isDocModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] [&>button]:cursor-pointer">
+    <Dialog open={isDocModalOpen} onOpenChange={closeDocModal}>
+      <DialogContent className="sm:max-w-[500px] transition-all duration-300 [&>button]:cursor-pointer">
         <DialogHeader>
-          <DialogTitle className="text-xl">Create Clinical Document</DialogTitle>
+          <DialogTitle className="text-xl">
+            {step === "RX_BUILDER" ? "New Prescription" : "Create Clinical Document"}
+          </DialogTitle>
           <DialogDescription>
-            {selectedCategory 
-              ? "Select a document type and add optional context."
-              : "Select the type of document you want to generate."}
+            {step === "CATEGORY" && "Select the type of document you want to generate."}
+            {step === "ITEM_SPECS" && (
+              selectedItem 
+                ? `Provide specific details to refine your ${selectedItemLabel}.` 
+                : `Select a document subtype and add context.`
+            )}
+            {step === "RX_BUILDER" && "Add medicines and instructions below."}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          {!selectedCategory ? (
-            <div key="category-list" className="grid grid-cols-1 gap-2 pb-4">
+        <div>
+          {step === "CATEGORY" && (
+            <div className="grid grid-cols-1 divide-y border rounded-md overflow-hidden mb-6">
               {docTypes.map((cat) => (
                 <button
                   key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className="flex items-start gap-4 p-4 border border-border rounded-md text-left transition-colors hover:bg-accent cursor-pointer"
+                  onClick={() => handleCategorySelect(cat.id)}
+                  className="flex items-start gap-4 p-4 text-left transition-colors hover:bg-accent cursor-pointer"
                 >
-                  <span className="mt-1 rounded-md bg-muted p-2 block">
-                    {cat.icon}
-                  </span>
+                  <span className="mt-1 rounded-md bg-muted p-2 block">{cat.icon}</span>
                   <span className="flex-1 block">
-                    <span className="font-medium block">{cat.title}</span>
+                    <span className="font-medium block text-foreground">{cat.title}</span>
                     <span className="text-sm text-muted-foreground block">{cat.description}</span>
                   </span>
                 </button>
               ))}
             </div>
-          ) : (
-            <div key="item-selection" className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Additional Context (Optional)
-                </label>
+          )}
+
+          {step === "ITEM_SPECS" && (
+            <div className="space-y-4">
+               <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">Additional Context (Optional)</label>
                 <Textarea
                   placeholder="e.g., focus more on the side effects from earlier medication..."
                   className="min-h-[80px] max-h-[200px]"
@@ -136,38 +151,25 @@ export function DocumentTypeModal() {
                   onChange={(e) => setContext(e.target.value)}
                 />
               </div>
-
-              <div className="grid grid-cols-1 gap-2">
-                {docTypes.find(c => c.id === selectedCategory)?.items.map(item => (
+              <div className="grid grid-cols-1 divide-y border rounded-md overflow-hidden max-h-[300px] overflow-y-auto">
+                {docTypes.find(c => c.id === selectedCategory)?.items?.map(item => (
                   <button
                     key={item.id}
                     onClick={() => setSelectedItem(item.id)}
                     className={cn(
-                      "flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors cursor-pointer group border rounded-md",
-                      selectedItem === item.id
-                        ? "bg-primary/5 border-primary"
-                        : "hover:bg-accent border-border"
+                      "flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors cursor-pointer",
+                      selectedItem === item.id ? "bg-primary/5 text-foreground" : "hover:bg-accent"
                     )}
                   >
-                    <span>{item.label}</span>
-                    {selectedItem === item.id && (
-                      <CircleCheck className="h-5 w-5 text-green-600" />
-                    )}
+                    <span className="text-foreground">{item.label}</span>
+                    {selectedItem === item.id && <CircleCheck className="h-5 w-5 text-green-600" />}
                   </button>
                 ))}
               </div>
-
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  className="cursor-pointer gap-1"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  Back
-                </Button>
-                <Button
-                  onClick={handleGenerate}
+                <Button variant="outline" onClick={handleBack} className="cursor-pointer">Back</Button>
+                <Button 
+                  onClick={() => generateDocument(selectedItem!, context)} 
                   disabled={!selectedItem}
                   className="cursor-pointer"
                 >
@@ -176,9 +178,15 @@ export function DocumentTypeModal() {
               </div>
             </div>
           )}
+
+          {step === "RX_BUILDER" && (
+            <PrescriptionBuilder 
+              onBack={handleBack} 
+              onGenerate={onGenerateRx} 
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>
   )
 }
-
