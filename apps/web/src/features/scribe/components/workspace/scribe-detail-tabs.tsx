@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { AudioLines, PenLine, Library } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
-import { TranscriptPanel } from "./panels/transcript-panel"
-import { SummaryPanel } from "./panels/summary-panel"
-import { ReportsPanel } from "./panels/reports-panel"
+import { TranscriptPanel } from "./panels/transcript/transcript-panel"
+import { SummaryPanel } from "./panels/summary/summary-panel"
+import { ReportsPanel } from "./panels/reports/reports-panel"
 import type { Consultation } from "@workspace/features/scribe/types"
 
 export interface ScribeDetailTabsProps {

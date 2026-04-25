@@ -1,4 +1,5 @@
 import { PillBottle, Clock, Calendar, Trash2 } from "lucide-react"
+import { Button } from "@workspace/ui/components/button"
 import type { PrescriptionItem } from "./types"
 
 interface PrescriptionItemCardProps {
@@ -27,13 +28,14 @@ export function PrescriptionItemCard({ item, onRemove }: PrescriptionItemCardPro
           )}
         </div>
       </div>
-      <button
-        type="button"
-        className="h-7 w-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+      <Button
+        variant="ghost" 
+        size="icon" 
+        className="h-7 w-7 text-muted-foreground hover:text-destructive cursor-pointer"
         onClick={() => onRemove(item.id)}
       >
         <Trash2 className="h-3.5 w-3.5" />
-      </button>
+      </Button>
     </div>
   )
 }

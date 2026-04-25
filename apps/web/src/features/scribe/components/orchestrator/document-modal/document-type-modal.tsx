@@ -14,8 +14,8 @@ import {
 } from "@workspace/ui/components/dialog"
 import { Button } from "@workspace/ui/components/button"
 import { Textarea } from "@workspace/ui/components/textarea"
-import { useScribe } from "../../context/scribe-context"
-import { PrescriptionBuilder } from "./prescription-builder"
+import { useScribe } from "../../../context/scribe-context"
+import { PrescriptionBuilder } from "../prescription/prescription-builder"
 import { cn } from "@workspace/ui/lib/utils"
 
 type ModalStep = "CATEGORY" | "ITEM_SPECS" | "RX_BUILDER"

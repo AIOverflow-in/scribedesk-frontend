@@ -9,9 +9,9 @@ import {
   EmptyTitle,
   EmptyDescription
 } from "@workspace/ui/components/empty"
-import type { PrescriptionItem } from "./prescription/types"
-import { PrescriptionForm } from "./prescription/prescription-form"
-import { PrescriptionItemCard } from "./prescription/prescription-item-card"
+import type { PrescriptionItem } from "./types"
+import { PrescriptionForm } from "./prescription-form"
+import { PrescriptionItemCard } from "./prescription-item-card"
 
 export function PrescriptionBuilder({ onGenerate, onBack }: { 
   onGenerate: (data: PrescriptionItem[]) => void
