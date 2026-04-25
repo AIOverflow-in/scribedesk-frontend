@@ -9,7 +9,7 @@ export function ScribeEmptyState({ className }: ScribeEmptyStateProps) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center h-full px-6 text-center",
+        "flex flex-col items-center justify-center h-full w-full px-6 text-center",
         className
       )}
     >

@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog"
 import { Button } from "@workspace/ui/components/button"
+import { Textarea } from "@workspace/ui/components/textarea"
 import { useScribe } from "../../context/scribe-context"
 import { cn } from "@workspace/ui/lib/utils"
 
@@ -105,12 +106,12 @@ export function DocumentTypeModal() {
 
         <div className="grid gap-4 py-4">
           {!selectedCategory ? (
-            <div key="category-list" className="grid grid-cols-1 divide-y divide-border pb-4">
+            <div key="category-list" className="grid grid-cols-1 gap-2 pb-4">
               {docTypes.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className="flex items-start gap-4 p-4 -mx-4 text-left transition-colors hover:bg-accent cursor-pointer"
+                  className="flex items-start gap-4 p-4 border border-border rounded-md text-left transition-colors hover:bg-accent cursor-pointer"
                 >
                   <span className="mt-1 rounded-md bg-muted p-2 block">
                     {cat.icon}
@@ -128,27 +129,24 @@ export function DocumentTypeModal() {
                 <label className="text-xs font-medium text-muted-foreground">
                   Additional Context (Optional)
                 </label>
-                <textarea
+                <Textarea
                   placeholder="e.g., focus more on the side effects from earlier medication..."
-                  className="min-h-[80px] w-full rounded-md border bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+                  className="min-h-[80px] max-h-[200px]"
                   value={context}
                   onChange={(e) => setContext(e.target.value)}
                 />
               </div>
 
-              <div className={cn(
-                "grid grid-cols-1",
-                !selectedItem && "divide-y divide-border"
-              )}>
+              <div className="grid grid-cols-1 gap-2">
                 {docTypes.find(c => c.id === selectedCategory)?.items.map(item => (
                   <button
                     key={item.id}
                     onClick={() => setSelectedItem(item.id)}
                     className={cn(
-                      "flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors cursor-pointer group",
+                      "flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors cursor-pointer group border rounded-md",
                       selectedItem === item.id
-                        ? "bg-primary/5 border border-primary rounded-md"
-                        : "hover:bg-accent"
+                        ? "bg-primary/5 border-primary"
+                        : "hover:bg-accent border-border"
                     )}
                   >
                     <span>{item.label}</span>

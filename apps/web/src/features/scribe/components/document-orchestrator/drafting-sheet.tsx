@@ -1,0 +1,131 @@
+import * as React from "react"
+import {
+  Download,
+  Printer,
+  CheckCircle2,
+  Lock,
+  X,
+  ChevronDown,
+  FileSignature,
+} from "lucide-react"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@workspace/ui/components/sheet"
+import { Button } from "@workspace/ui/components/button"
+import {
+  ButtonGroup,
+} from "@workspace/ui/components/button-group"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@workspace/ui/components/dropdown-menu"
+import { useScribe } from "../../context/scribe-context"
+import { cn } from "@workspace/ui/lib/utils"
+import { ClinicalPaper } from "./clinical-paper"
+
+export function DraftingSheet() {
+  const { isSheetOpen, closeSheet, activeDocument } = useScribe()
+  const [isSigned, setIsSigned] = React.useState(false)
+  const [showSignature, setShowSignature] = React.useState(true)
+
+  // Keep a reference to the last document to prevent content disappearing during exit animation
+  const lastDoc = React.useRef(activeDocument)
+  if (activeDocument) lastDoc.current = activeDocument
+  const docToRender = activeDocument || lastDoc.current
+
+  const handlePrint = () => {
+    window.print()
+  }
+
+  if (!docToRender) return null
+
+  return (
+    <Sheet open={isSheetOpen} onOpenChange={closeSheet}>
+      <SheetContent
+        side="right"
+        className="w-full sm:w-[50vw]! sm:max-w-none! p-0 flex flex-col h-full border-l overflow-hidden [&>button]:hidden no-print"
+      >
+        {/* Toolbar Header */}
+        <div className="shrink-0 bg-background border-b h-11 flex items-center justify-between px-3">
+          <SheetTitle className="text-sm font-semibold truncate pr-4">
+            {docToRender.title}
+          </SheetTitle>
+
+          <div className="flex items-center gap-1">
+            {!isSigned ? (
+              <ButtonGroup className="gap-0!">
+                <Button
+                  size="sm"
+                  className="h-7 px-3 bg-green-600 hover:bg-green-700 border border-green-600 text-white cursor-pointer text-xs gap-2 rounded-r-none! z-10"
+                  onClick={() => setIsSigned(true)}
+                  disabled={!showSignature}
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Sign
+                </Button>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="h-7 w-7 p-0 cursor-pointer rounded-l-none! border-l-0! focus-visible:ring-0">
+                      <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuLabel className="text-[10px] uppercase text-muted-foreground">Options</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => setShowSignature(!showSignature)}>
+                      <FileSignature className={cn("h-4 w-4", showSignature ? "text-primary" : "text-muted-foreground")} />
+                      <span className="flex-1">Include Signature</span>
+                      {showSignature && <div className="h-1.5 w-1.5 rounded-full bg-primary" />}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </ButtonGroup>
+            ) : (
+              <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-medium uppercase tracking-tight">
+                <Lock className="h-3 w-3" /> Signed
+              </div>
+            )}
+            
+            <div className="h-3.5 w-px bg-border mx-1" />
+            
+            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer">
+              <Download className="h-3.5 w-3.5" />
+            </Button>
+            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer" onClick={handlePrint}>
+              <Printer className="h-3.5 w-3.5" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={closeSheet} className="h-7 w-7 cursor-pointer ml-1">
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Clinical Workspace (The Paper) */}
+        <div className="flex-1 min-h-0 bg-gray-100 dark:bg-gray-900 no-print flex flex-col items-center p-4 md:p-8">
+            <ClinicalPaper 
+              document={docToRender}
+              isSigned={isSigned}
+              showSignature={showSignature}
+            />
+        </div>
+
+        {/* Footer Actions */}
+        <div className="h-14 border-t flex items-center justify-end px-4 gap-2 bg-background shrink-0">
+          <Button variant="outline" size="sm" className="cursor-pointer" onClick={closeSheet}>
+            Cancel
+          </Button>
+          <Button size="sm" className="cursor-pointer">
+            Save to Consultation
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
