@@ -33,16 +33,13 @@ export function ScribeDetailSkeleton() {
           <Skeleton className="h-4 w-20" />
         </div>
 
-        {/* Panel Content Skeleton */}
-        <div className="flex-1 border rounded-lg p-6 space-y-4 bg-background">
-          <Skeleton className="h-4 w-[60%]" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-[90%]" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-[40%] pt-8" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-[85%]" />
+        {/* Transcript Buttons Skeleton */}
+        <div className="flex-1 border rounded-lg p-6 bg-background">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-20 rounded-md" />
+            <Skeleton className="h-8 w-24 rounded-md" />
+            <Skeleton className="h-8 w-28 rounded-md" />
+          </div>
         </div>
       </div>
     </div>
