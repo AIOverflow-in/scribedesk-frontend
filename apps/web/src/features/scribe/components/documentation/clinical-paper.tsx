@@ -17,6 +17,7 @@ interface ClinicalPaperProps {
   onContentChange?: (content: string) => void
   onTextChange?: (text: string) => void
   onHtmlChange?: (html: string) => void
+  currentHtml?: string
 }
 
 export function ClinicalPaper({ 
@@ -27,7 +28,8 @@ export function ClinicalPaper({
   clinicName = "Acme Medical Center",
   onContentChange,
   onTextChange,
-  onHtmlChange
+  onHtmlChange,
+  currentHtml
 }: ClinicalPaperProps) {
   
   const printPortal = typeof document !== 'undefined' ? createPortal(
@@ -42,6 +44,17 @@ export function ClinicalPaper({
           table.print-table { width: 100%; border-collapse: collapse; }
           table.print-table > thead { display: table-header-group; }
           table.print-table > tfoot { display: table-footer-group; }
+          .lexical-print-content h1 { font-size: 24px; font-weight: bold; margin-bottom: 16px; }
+          .lexical-print-content h2 { font-size: 20px; font-weight: bold; margin-bottom: 12px; }
+          .lexical-print-content h3 { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+          .lexical-print-content p { margin-bottom: 12px; line-height: 1.6; }
+          .lexical-print-content ul { list-style-type: disc; margin-left: 24px; margin-bottom: 12px; }
+          .lexical-print-content ol { list-style-type: decimal; margin-left: 24px; margin-bottom: 12px; }
+          .lexical-print-content li { margin-bottom: 4px; }
+          .lexical-print-content blockquote { border-left: 4px solid #e5e7eb; padding-left: 16px; font-style: italic; margin-bottom: 12px; }
+          .lexical-print-content table { width: 100%; border-collapse: collapse; margin-bottom: 16px; border: 1px solid #e5e7eb; }
+          .lexical-print-content th { background-color: #f9fafb; font-weight: bold; border: 1px solid #e5e7eb; padding: 8px; text-align: left; font-size: 12px; }
+          .lexical-print-content td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; font-size: 12px; }
         }
       `}} />
       
@@ -73,11 +86,10 @@ export function ClinicalPaper({
         <tbody>
           <tr>
             <td className="px-12">
-              <h2 className="text-2xl font-bold capitalize mb-2">{doc.type?.replace("-", " ")}</h2>
-              <div className="h-1 w-12 bg-primary mb-8 print-color-exact" />
-              <div className="text-sm leading-relaxed whitespace-pre-wrap font-sans">
-                {doc.content || "No content available."}
-              </div>
+              <div 
+                className="text-sm leading-relaxed font-sans lexical-print-content"
+                dangerouslySetInnerHTML={{ __html: currentHtml || "" }}
+              />
               
               {showSignature && (
                 <div className="mt-12 flex flex-col items-start">

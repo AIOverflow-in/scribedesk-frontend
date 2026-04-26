@@ -61,7 +61,7 @@ export function DraftingSheet() {
       }, 1500)
       return () => clearTimeout(timer)
     }
-  }, [isSheetOpen, activeDocument?.id, docToRender?.content])
+  }, [isSheetOpen, activeDocument?.id])
 
   const handleCopy = async () => {
     const plainText = editedText || editedContent || docToRender?.content || ""
@@ -191,6 +191,7 @@ export function DraftingSheet() {
                 onContentChange={setEditedContent}
                 onTextChange={setEditedText}
                 onHtmlChange={setEditedHtml}
+                currentHtml={editedHtml}
               />
             )}
         </div>

@@ -74,13 +74,19 @@ Patient is a 68-year-old female with a complex history of Type 2 Diabetes, Hyper
 She reports that her home glucose readings have been fluctuating between 140 and 190 mg/dL. She admits to "slipping" on her diet during the recent holidays. She also mentions increased stiffness in her knees, especially in the morning, which lasts about 45 minutes.
 
 ### OBJECTIVE
-- **Vitals:** BP 145/88 (Right arm, seated), HR 78, Temp 98.2°F, Weight 185 lbs (up 4 lbs since last visit).
-- **Physical Exam:** 
-  - Cardiovascular: RRR, no murmurs. 
-  - Respiratory: Clear to auscultation bilaterally.
-  - Musculoskeletal: Bilateral crepitus noted in knee joints. No acute swelling. Decreased ROM in right knee.
-  - Neurological: Decreased sensation to monofilament testing at the base of the great toe bilaterally.
-  - Integumentary: Skin is intact. No diabetic ulcers noted on feet. Pedal pulses 2+ bilaterally.
+| Parameter | Value | Reference |
+| :--- | :--- | :--- |
+| Blood Pressure | 145/88 mmHg | < 130/80 |
+| Heart Rate | 78 bpm | 60-100 |
+| Temperature | 98.2 °F | 97.8-99.1 |
+| Weight | 185 lbs | -- |
+
+### PHYSICAL EXAM
+- Cardiovascular: RRR, no murmurs. 
+- Respiratory: Clear to auscultation bilaterally.
+- Musculoskeletal: Bilateral crepitus noted in knee joints. No acute swelling. Decreased ROM in right knee.
+- Neurological: Decreased sensation to monofilament testing at the base of the great toe bilaterally.
+- Integumentary: Skin is intact. No diabetic ulcers noted on feet. Pedal pulses 2+ bilaterally.
 
 ### DETAILED REVIEW OF SYSTEMS
 - Constitutional: Reports mild fatigue. No fevers or chills.
