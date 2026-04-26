@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { NavMain } from "@/shared/components/sidebar/nav-main"
-import { NavRecent } from "@/shared/components/sidebar/nav-recent"
+import { NavChats } from "@/shared/components/sidebar/nav-chats"
 import { NavUser } from "@/shared/components/sidebar/nav-user"
 import { SidebarHeaderToggle } from "@/shared/components/sidebar/sidebar-toggle"
 import {
@@ -22,7 +22,6 @@ import {
   SquarePenIcon
 } from "lucide-react"
 
-// This is sample data.
 const data = {
   user: {
     name: "shadcn",
@@ -42,7 +41,7 @@ const data = {
     },
     {
       title: "New Chat",
-      url: "/new-chat",
+      url: "/chats/new", // TODO: Update to your actual route
       icon: <SquarePenIcon />,
     },
     {
@@ -59,20 +58,6 @@ const data = {
       title: "Tasks",
       url: "/tasks",
       icon: <CircleCheckBigIcon />,
-    },
-  ],
-  recentChats: [
-    {
-      title: "Patient John Doe - Consultation",
-      url: "/chats/1",
-    },
-    {
-      title: "Follow-up: Sarah Smith",
-      url: "/chats/2",
-    },
-    {
-      title: "New Intake: Mike Ross",
-      url: "/chats/3",
     },
   ],
 }
@@ -92,7 +77,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       if (e.matches) setOpen(false)
     }
 
-    // Initial check
     if (lgQuery.matches) setOpen(true)
     else if (mdQuery.matches) setOpen(false)
 
@@ -112,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavRecent items={data.recentChats} />
+        <NavChats />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

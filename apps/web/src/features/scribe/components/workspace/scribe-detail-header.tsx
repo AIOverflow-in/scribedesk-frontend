@@ -55,7 +55,7 @@ export function ScribeDetailHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 cursor-pointer rounded-md"
+          className="h-7 w-7 cursor-pointer rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
           onClick={onToggleList}
         >
           {isMobile ? (

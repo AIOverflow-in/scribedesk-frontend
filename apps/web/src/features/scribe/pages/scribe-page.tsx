@@ -113,8 +113,8 @@ function ScribeContent() {
                 {/* Assistant Sidecar Panel */}
                 {!isMobile && (
                   <div className={cn(
-                    "h-full transition-all duration-500 ease-in-out overflow-hidden",
-                    isSidecarOpen ? "w-1/2 opacity-100" : "w-0 opacity-0"
+                    "h-full transition-[width,opacity] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden",
+                    isSidecarOpen ? "w-1/2 opacity-100" : "w-0 opacity-0 pointer-events-none"
                   )}>
                     <ScribeSidecar />
                   </div>

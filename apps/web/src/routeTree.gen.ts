@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as protectedScribeRouteImport } from './routes/(protected)/scribe'
+import { Route as protectedChatsRouteImport } from './routes/(protected)/chats'
+import { Route as protectedChatsIdRouteImport } from './routes/(protected)/chats.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +24,52 @@ const protectedScribeRoute = protectedScribeRouteImport.update({
   path: '/scribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const protectedChatsRoute = protectedChatsRouteImport.update({
+  id: '/(protected)/chats',
+  path: '/chats',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedChatsIdRoute = protectedChatsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => protectedChatsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chats': typeof protectedChatsRouteWithChildren
   '/scribe': typeof protectedScribeRoute
+  '/chats/$id': typeof protectedChatsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chats': typeof protectedChatsRouteWithChildren
   '/scribe': typeof protectedScribeRoute
+  '/chats/$id': typeof protectedChatsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(protected)/chats': typeof protectedChatsRouteWithChildren
   '/(protected)/scribe': typeof protectedScribeRoute
+  '/(protected)/chats/$id': typeof protectedChatsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/scribe'
+  fullPaths: '/' | '/chats' | '/scribe' | '/chats/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/scribe'
-  id: '__root__' | '/' | '/(protected)/scribe'
+  to: '/' | '/chats' | '/scribe' | '/chats/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/(protected)/chats'
+    | '/(protected)/scribe'
+    | '/(protected)/chats/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  protectedChatsRoute: typeof protectedChatsRouteWithChildren
   protectedScribeRoute: typeof protectedScribeRoute
 }
 
@@ -65,11 +89,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedScribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(protected)/chats': {
+      id: '/(protected)/chats'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof protectedChatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/chats/$id': {
+      id: '/(protected)/chats/$id'
+      path: '/$id'
+      fullPath: '/chats/$id'
+      preLoaderRoute: typeof protectedChatsIdRouteImport
+      parentRoute: typeof protectedChatsRoute
+    }
   }
 }
 
+interface protectedChatsRouteChildren {
+  protectedChatsIdRoute: typeof protectedChatsIdRoute
+}
+
+const protectedChatsRouteChildren: protectedChatsRouteChildren = {
+  protectedChatsIdRoute: protectedChatsIdRoute,
+}
+
+const protectedChatsRouteWithChildren = protectedChatsRoute._addFileChildren(
+  protectedChatsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  protectedChatsRoute: protectedChatsRouteWithChildren,
   protectedScribeRoute: protectedScribeRoute,
 }
 export const routeTree = rootRouteImport
