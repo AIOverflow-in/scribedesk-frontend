@@ -38,6 +38,8 @@ export function DraftingSheet() {
   const [isGenerating, setIsGenerating] = React.useState(true)
   const [isCopied, setIsCopied] = React.useState(false)
   const [editedContent, setEditedContent] = React.useState("")
+  const [editedText, setEditedText] = React.useState("")
+  const [editedHtml, setEditedHtml] = React.useState("")
 
   // Keep a reference to the last document to prevent content disappearing during exit animation
   const lastDoc = React.useRef(activeDocument)
@@ -51,23 +53,45 @@ export function DraftingSheet() {
       setIsSigned(false)
       if (docToRender?.content) {
         setEditedContent(docToRender.content)
+        setEditedText(docToRender.content)
+        setEditedHtml(docToRender.content)
       }
       const timer = setTimeout(() => {
         setIsGenerating(false)
       }, 1500)
       return () => clearTimeout(timer)
     }
-  }, [isSheetOpen, activeDocument?.id])
+  }, [isSheetOpen, activeDocument?.id, docToRender?.content])
 
   const handleCopy = async () => {
-    const textToCopy = editedContent || docToRender?.content || ""
-    if (!textToCopy) return
+    const plainText = editedText || editedContent || docToRender?.content || ""
+    const htmlText = editedHtml || plainText
+    
+    if (!plainText) return
+
     try {
-      await navigator.clipboard.writeText(textToCopy)
+      const typeText = "text/plain"
+      const typeHtml = "text/html"
+      const blobText = new Blob([plainText], { type: typeText })
+      const blobHtml = new Blob([htmlText], { type: typeHtml })
+      
+      const data = [new ClipboardItem({
+        [typeText]: blobText,
+        [typeHtml]: blobHtml,
+      })]
+      
+      await navigator.clipboard.write(data)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
-      console.error("Failed to copy text: ", err)
+      // Fallback to plain text only if ClipboardItem fails (some browsers)
+      try {
+        await navigator.clipboard.writeText(plainText)
+        setIsCopied(true)
+        setTimeout(() => setIsCopied(false), 2000)
+      } catch (fallbackErr) {
+        console.error("Failed to copy text: ", fallbackErr)
+      }
     }
   }
 
@@ -165,6 +189,8 @@ export function DraftingSheet() {
                 isSigned={isSigned}
                 showSignature={showSignature}
                 onContentChange={setEditedContent}
+                onTextChange={setEditedText}
+                onHtmlChange={setEditedHtml}
               />
             )}
         </div>

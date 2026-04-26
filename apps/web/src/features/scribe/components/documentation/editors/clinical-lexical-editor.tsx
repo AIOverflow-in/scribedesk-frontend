@@ -9,8 +9,9 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary"
 import { ListPlugin } from "@lexical/react/LexicalListPlugin"
 import { HeadingNode, QuoteNode, $createHeadingNode, $createQuoteNode } from "@lexical/rich-text"
 import { ListNode, ListItemNode } from "@lexical/list"
-import { $setBlocksType } from "@lexical/selection"
+import { $setBlocksType, $patchStyleText, $getSelectionStyleValueForProperty } from "@lexical/selection"
 import { $findMatchingParent } from "@lexical/utils"
+import { $generateHtmlFromNodes } from "@lexical/html"
 import { 
   $convertFromMarkdownString, 
   $convertToMarkdownString,
@@ -20,11 +21,10 @@ import {
   ORDERED_LIST,
   TEXT_FORMAT_TRANSFORMERS
 } from "@lexical/markdown"
-import { FORMAT_TEXT_COMMAND, UNDO_COMMAND, REDO_COMMAND, $getSelection, $isRangeSelection, $createParagraphNode, SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL } from "lexical"
+import { FORMAT_TEXT_COMMAND, UNDO_COMMAND, REDO_COMMAND, $getSelection, $isRangeSelection, $createParagraphNode, SELECTION_CHANGE_COMMAND, COMMAND_PRIORITY_CRITICAL, $getRoot } from "lexical"
 import { INSERT_UNORDERED_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND } from "@lexical/list"
 import { Bold, Italic, Underline, List, ListOrdered, Undo, Redo, Type, Heading1, Heading2, Heading3, Quote, Plus, Minus } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select"
-import { $patchStyleText } from "@lexical/selection"
 
 const CLINICAL_TRANSFORMERS = [
   HEADING,
@@ -64,7 +64,7 @@ function BlockFormatDropdown() {
   useEffect(() => {
     return editor.registerCommand(
       SELECTION_CHANGE_COMMAND,
-      (_payload, newEditor) => {
+      (_payload, _newEditor) => {
         updateToolbar()
         return false
       },
@@ -158,36 +158,74 @@ function FontSizeControl() {
   const [editor] = useLexicalComposerContext()
   const [fontSize, setFontSize] = useState("13px")
 
+  const updateToolbar = useCallback(() => {
+    const selection = $getSelection()
+    if ($isRangeSelection(selection)) {
+      const size = $getSelectionStyleValueForProperty(selection, "font-size", "13px")
+      setFontSize(size || "13px")
+    }
+  }, [])
+
+  useEffect(() => {
+    return editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      () => {
+        updateToolbar()
+        return false
+      },
+      COMMAND_PRIORITY_CRITICAL,
+    )
+  }, [editor, updateToolbar])
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        updateToolbar()
+      })
+    })
+  }, [editor, updateToolbar])
+
+  useEffect(() => {
+    editor.getEditorState().read(() => {
+      updateToolbar()
+    })
+  }, [editor, updateToolbar])
+
   const updateFontSize = useCallback((newSize: number) => {
+    const sizeStr = `${newSize}px`
+    setFontSize(sizeStr) 
     editor.update(() => {
       const selection = $getSelection()
       if ($isRangeSelection(selection)) {
         $patchStyleText(selection, {
-          "font-size": `${newSize}px`,
+          "font-size": sizeStr,
         })
-        setFontSize(`${newSize}px`)
       }
     })
   }, [editor])
 
-  const currentSize = parseInt(fontSize)
+  const currentSize = parseInt(fontSize) || 13
 
   return (
-    <div className="flex items-center bg-gray-50/50 rounded-md border border-gray-100 px-1">
+    <div className="flex items-center gap-0.5">
       <button 
         type="button"
         onClick={() => updateFontSize(Math.max(8, currentSize - 1))}
-        className="p-1 hover:text-primary transition-colors cursor-pointer"
+        className="p-1.5 hover:bg-gray-100 rounded transition-all text-gray-500 hover:text-gray-900 cursor-pointer"
+        title="Decrease font size"
       >
         <Minus className="h-3 w-3" />
       </button>
-      <span className="w-8 text-[11px] font-bold text-center text-gray-600 select-none">
+      
+      <span className="min-w-9 h-7 flex items-center justify-center bg-gray-50/50 rounded border border-gray-200 text-[13px] font-bold text-gray-700 select-none px-1.5">
         {currentSize}
       </span>
+      
       <button 
         type="button"
         onClick={() => updateFontSize(Math.min(72, currentSize + 1))}
-        className="p-1 hover:text-primary transition-colors cursor-pointer"
+        className="p-1.5 hover:bg-gray-100 rounded transition-all text-gray-500 hover:text-gray-900 cursor-pointer"
+        title="Increase font size"
       >
         <Plus className="h-3 w-3" />
       </button>
@@ -200,7 +238,7 @@ function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext()
 
   return (
-    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 border-b border-gray-200 bg-white backdrop-blur-sm p-2">
+    <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 border-b border-gray-200 bg-white backdrop-blur-sm py-1 px-2">
       <BlockFormatDropdown />
       
       <div className="w-px h-6 bg-gray-200 mx-1" />
@@ -278,10 +316,14 @@ function ToolbarPlugin() {
 // Plugin to sync markdown in and out of the editor
 function MarkdownSyncPlugin({ 
   initialMarkdown, 
-  onChange 
+  onChange,
+  onTextChange,
+  onHtmlChange
 }: { 
   initialMarkdown: string, 
-  onChange?: (markdown: string) => void 
+  onChange?: (markdown: string) => void,
+  onTextChange?: (text: string) => void,
+  onHtmlChange?: (html: string) => void
 }) {
   const [editor] = useLexicalComposerContext()
   const isFirstRender = useRef(true)
@@ -296,19 +338,31 @@ function MarkdownSyncPlugin({
     }
   }, [editor, initialMarkdown])
 
-  // Sync state back to Markdown on edit
+  // Sync state back to Markdown/Text/HTML on edit
   useEffect(() => {
-    if (!onChange) return
+    if (!onChange && !onTextChange && !onHtmlChange) return
 
     return editor.registerUpdateListener(({ editorState, dirtyElements, dirtyLeaves }) => {
       if (dirtyElements.size === 0 && dirtyLeaves.size === 0) return
       
       editorState.read(() => {
-        const markdown = $convertToMarkdownString(CLINICAL_TRANSFORMERS)
-        onChange(markdown)
+        if (onChange) {
+          const markdown = $convertToMarkdownString(CLINICAL_TRANSFORMERS)
+          onChange(markdown)
+        }
+
+        if (onTextChange) {
+          const text = $getRoot().getTextContent()
+          onTextChange(text)
+        }
+
+        if (onHtmlChange) {
+          const html = $generateHtmlFromNodes(editor)
+          onHtmlChange(html)
+        }
       })
     })
-  }, [editor, onChange])
+  }, [editor, onChange, onTextChange, onHtmlChange])
 
   return null
 }
@@ -337,12 +391,16 @@ const theme = {
 interface ClinicalLexicalEditorProps {
   initialContent: string
   onChange?: (content: string) => void
+  onTextChange?: (text: string) => void
+  onHtmlChange?: (html: string) => void
   readOnly?: boolean
 }
 
 export function ClinicalLexicalEditor({ 
   initialContent, 
   onChange,
+  onTextChange,
+  onHtmlChange,
   readOnly = false
 }: ClinicalLexicalEditorProps) {
   
@@ -383,7 +441,7 @@ export function ClinicalLexicalEditor({
         <ListPlugin />
         <HistoryPlugin />
         <MarkdownShortcutPlugin transformers={CLINICAL_TRANSFORMERS} />
-        <MarkdownSyncPlugin initialMarkdown={initialContent} onChange={onChange} />
+        <MarkdownSyncPlugin initialMarkdown={initialContent} onChange={onChange} onTextChange={onTextChange} onHtmlChange={onHtmlChange} />
       </div>
     </LexicalComposer>
   )

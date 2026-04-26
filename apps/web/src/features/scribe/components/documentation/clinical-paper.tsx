@@ -15,6 +15,8 @@ interface ClinicalPaperProps {
   clinicName?: string
   onPrint?: () => void
   onContentChange?: (content: string) => void
+  onTextChange?: (text: string) => void
+  onHtmlChange?: (html: string) => void
 }
 
 export function ClinicalPaper({ 
@@ -23,7 +25,9 @@ export function ClinicalPaper({
   showSignature = true,
   doctorName = "Dr. Alexander Care",
   clinicName = "Acme Medical Center",
-  onContentChange
+  onContentChange,
+  onTextChange,
+  onHtmlChange
 }: ClinicalPaperProps) {
   
   const printPortal = typeof document !== 'undefined' ? createPortal(
@@ -123,6 +127,8 @@ export function ClinicalPaper({
                   <ClinicalLexicalEditor 
                     initialContent={doc.content} 
                     onChange={onContentChange}
+                    onTextChange={onTextChange}
+                    onHtmlChange={onHtmlChange}
                     readOnly={isSigned} 
                   />
                 ) : (

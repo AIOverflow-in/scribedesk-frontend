@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@lexical/html": "0.43.0",
     "@lexical/list": "0.43.0",
     "@lexical/markdown": "0.43.0",
     "@lexical/react": "0.43.0",
