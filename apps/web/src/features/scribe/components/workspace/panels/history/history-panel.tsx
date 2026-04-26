@@ -94,7 +94,7 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
                           {item.description}
                         </p>
 
-                        <div className="mt-3 flex justify-end items-center gap-1 text-primary group-hover:text-primary/80 transition-colors">
+                        <div className="mt-3 flex justify-end items-center gap-1 text-blue-600 dark:text-blue-400 group-hover:opacity-80 transition-all">
                            <span className="text-[11px] font-bold tracking-tight">
                              Open Summary
                            </span>

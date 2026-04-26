@@ -162,7 +162,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
         </Tabs>
 
         {/* Fixed Footer Actions */}
-        <div className="p-4 flex justify-end gap-2 shrink-0 border-t bg-muted/5">
+        <div className="p-4 flex justify-end gap-2 shrink-0 bg-muted/5">
           <Button variant="outline" size="sm" onClick={onClose} className="h-9 px-4 cursor-pointer text-xs font-semibold">
             Close
           </Button>

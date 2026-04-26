@@ -162,18 +162,18 @@ export function DraftingSheet() {
             <Button 
               variant="outline" 
               size="icon" 
-              className="h-8 w-8 cursor-pointer" 
+              className="h-7 w-7 cursor-pointer" 
               onClick={handleCopy}
               disabled={isGenerating}
               title="Copy to clipboard"
             >
-              <div className="relative h-4 w-4">
+              <div className="relative h-3.5 w-3.5">
                 <Copy className={cn(
-                  "absolute inset-0 h-4 w-4 transition-all duration-300 transform",
+                  "absolute inset-0 h-3.5 w-3.5 transition-all duration-300 transform",
                   isCopied ? "opacity-0 scale-75 rotate-45" : "opacity-100 scale-100 rotate-0"
                 )} />
                 <CircleCheck className={cn(
-                  "absolute inset-0 h-4 w-4 text-green-600 transition-all duration-300 transform",
+                  "absolute inset-0 h-3.5 w-3.5 text-green-600 transition-all duration-300 transform",
                   isCopied ? "opacity-100 scale-100 rotate-0" : "opacity-0 scale-75 -rotate-45"
                 )} />
               </div>
