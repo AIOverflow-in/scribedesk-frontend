@@ -1,6 +1,7 @@
 import { createPortal } from "react-dom"
 import { cn } from "@workspace/ui/lib/utils"
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
+import { ClinicalLexicalEditor } from "./editors/clinical-lexical-editor"
 
 interface ClinicalPaperProps {
   document: {
@@ -13,6 +14,7 @@ interface ClinicalPaperProps {
   doctorName?: string
   clinicName?: string
   onPrint?: () => void
+  onContentChange?: (content: string) => void
 }
 
 export function ClinicalPaper({ 
@@ -20,7 +22,8 @@ export function ClinicalPaper({
   isSigned, 
   showSignature = true,
   doctorName = "Dr. Alexander Care",
-  clinicName = "Acme Medical Center"
+  clinicName = "Acme Medical Center",
+  onContentChange
 }: ClinicalPaperProps) {
   
   const printPortal = typeof document !== 'undefined' ? createPortal(
@@ -114,24 +117,23 @@ export function ClinicalPaper({
 
         {/* Content Area - Scrollable */}
         <ScrollArea className="flex-1 min-h-0 bg-white">
-          <div className="p-8 md:p-10">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900 capitalize tracking-tight">{doc.type?.replace("-", " ")}</h2>
-              <div className="h-1 w-10 bg-primary mt-1.5 rounded-full" />
-            </div>
-
-            <div className="text-[13px] text-gray-700 leading-relaxed min-h-[300px]">
+          <div className="flex flex-col min-h-full">
+            <div className="text-[13px] text-gray-700 leading-relaxed flex-1 flex flex-col">
                 {doc.content ? (
-                  <div className="whitespace-pre-wrap font-sans">
-                    {doc.content}
-                  </div>
+                  <ClinicalLexicalEditor 
+                    initialContent={doc.content} 
+                    onChange={onContentChange}
+                    readOnly={isSigned} 
+                  />
                 ) : (
-                  <p className="text-muted-foreground italic">Generating content...</p>
+                  <div className="p-8 md:p-10">
+                    <p className="text-muted-foreground italic">Generating content...</p>
+                  </div>
                 )}
             </div>
 
             {showSignature && (
-              <div className="mt-10 flex flex-col items-start">
+              <div className="mt-10 mb-8 mx-8 md:mb-10 md:mx-10 flex flex-col items-start">
                 {isSigned && (
                   <div className="mb-2 animate-in fade-in slide-in-from-bottom-1 duration-500">
                     <div className="font-heading text-xl text-blue-900/80 italic tracking-tight underline decoration-blue-200 underline-offset-4">

@@ -1,6 +1,7 @@
 import * as React from "react"
 import {
-  Download,
+  Copy,
+  Check,
   Printer,
   CheckCircle2,
   Lock,
@@ -35,6 +36,8 @@ export function DraftingSheet() {
   const [isSigned, setIsSigned] = React.useState(false)
   const [showSignature, setShowSignature] = React.useState(true)
   const [isGenerating, setIsGenerating] = React.useState(true)
+  const [isCopied, setIsCopied] = React.useState(false)
+  const [editedContent, setEditedContent] = React.useState("")
 
   // Keep a reference to the last document to prevent content disappearing during exit animation
   const lastDoc = React.useRef(activeDocument)
@@ -46,12 +49,32 @@ export function DraftingSheet() {
     if (isSheetOpen) {
       setIsGenerating(true)
       setIsSigned(false)
+      if (docToRender?.content) {
+        setEditedContent(docToRender.content)
+      }
       const timer = setTimeout(() => {
         setIsGenerating(false)
       }, 1500)
       return () => clearTimeout(timer)
     }
   }, [isSheetOpen, activeDocument?.id])
+
+  const handleCopy = async () => {
+    const textToCopy = editedContent || docToRender?.content || ""
+    if (!textToCopy) return
+    try {
+      await navigator.clipboard.writeText(textToCopy)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy text: ", err)
+    }
+  }
+
+  const handleSave = () => {
+    console.log("Saving document with content:", editedContent)
+    closeSheet()
+  }
 
   const handlePrint = () => {
     window.print()
@@ -109,11 +132,22 @@ export function DraftingSheet() {
             
             <div className="h-3.5 w-px bg-border mx-1" />
             
-            <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer" disabled={isGenerating}>
-              <Download className="h-3.5 w-3.5" />
-            </Button>
             <Button variant="outline" size="icon" className="h-7 w-7 cursor-pointer" onClick={handlePrint} disabled={isGenerating}>
               <Printer className="h-3.5 w-3.5" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="h-7 w-7 cursor-pointer" 
+              onClick={handleCopy}
+              disabled={isGenerating}
+              title="Copy to clipboard"
+            >
+              {isCopied ? (
+                <Check className="h-3.5 w-3.5 text-green-600" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
             </Button>
             <Button variant="outline" size="icon" onClick={closeSheet} className="h-7 w-7 cursor-pointer ml-1">
               <X className="h-3.5 w-3.5" />
@@ -130,6 +164,7 @@ export function DraftingSheet() {
                 document={docToRender}
                 isSigned={isSigned}
                 showSignature={showSignature}
+                onContentChange={setEditedContent}
               />
             )}
         </div>
@@ -139,8 +174,8 @@ export function DraftingSheet() {
           <Button variant="outline" size="sm" className="cursor-pointer" onClick={closeSheet}>
             Cancel
           </Button>
-          <Button size="sm" className="cursor-pointer" disabled={isGenerating}>
-            Save to Consultation
+          <Button size="sm" className="cursor-pointer" disabled={isGenerating} onClick={handleSave}>
+            Save
           </Button>
         </div>
       </SheetContent>
