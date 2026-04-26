@@ -1,4 +1,6 @@
-import { Calendar, User, ExternalLink, PillBottle } from "lucide-react"
+import { Calendar, User, ExternalLink, PillBottle, Copy, CircleCheck } from "lucide-react"
+import * as React from "react"
+import ReactMarkdown from "react-markdown"
 import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { Button } from "@workspace/ui/components/button"
 import { Badge } from "@workspace/ui/components/badge"
@@ -17,6 +19,7 @@ import {
   EmptyDescription 
 } from "@workspace/ui/components/empty"
 import type { Consultation } from "@workspace/features/scribe/types"
+import { cn } from "@workspace/ui/lib/utils"
 
 interface HistoryDetailModalProps {
   consultation: Consultation | null
@@ -24,10 +27,33 @@ interface HistoryDetailModalProps {
   onClose: () => void
 }
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#+\s+/gm, '') 
+    .replace(/\*\*(.*?)\*\*/g, '$1') 
+    .replace(/\*(.*?)\*/g, '$1') 
+    .replace(/^\s*-\s+/gm, '• ') 
+    .trim()
+}
+
 export function HistoryDetailModal({ consultation, currentSessionId, onClose }: HistoryDetailModalProps) {
+  const [isCopied, setIsCopied] = React.useState(false)
+  
   if (!consultation) return null
 
   const isCurrent = consultation.id === currentSessionId
+  const summaryContent = consultation.summary || ""
+
+  const handleCopy = async () => {
+    try {
+      const cleanText = stripMarkdown(summaryContent)
+      await navigator.clipboard.writeText(cleanText)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (err) {
+      console.error("Failed to copy text: ", err)
+    }
+  }
 
   return (
     <Dialog open={!!consultation} onOpenChange={(open) => !open && onClose()}>
@@ -69,13 +95,48 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
 
           {/* Content Area */}
           <div className="flex-1 min-h-0 px-6 pb-2 flex flex-col">
-            <TabsContent value="summary" className="flex-1 min-h-0 m-0 data-[state=active]:flex flex-col focus-visible:outline-none">
-              {consultation.summary ? (
-                <NativeScroll className="flex-1 min-h-0 bg-background border rounded-lg shadow-xs">
-                  <div className="p-4 text-[14px] leading-relaxed text-foreground/80 whitespace-pre-wrap">
-                    {consultation.summary}
+            <TabsContent value="summary" className="flex-1 min-h-0 m-0 data-[state=active]:flex flex-col focus-visible:outline-none relative group/summary">
+              {summaryContent ? (
+                <>
+                  {/* Contextual Copy Button - Persistent inside Summary tab */}
+                  <div className="absolute top-3 right-3 z-20">
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer transition-all duration-200 shadow-xs bg-background/80 backdrop-blur-xs opacity-0 group-hover/summary:opacity-100"
+                      onClick={handleCopy}
+                    >
+                      <div className="relative h-4 w-4">
+                        <Copy className={cn(
+                          "absolute inset-0 h-4 w-4 transition-all duration-300 transform",
+                          isCopied ? "opacity-0 scale-75 rotate-45" : "opacity-100 scale-100 rotate-0"
+                        )} />
+                        <CircleCheck className={cn(
+                          "absolute inset-0 h-4 w-4 text-green-600 transition-all duration-300 transform",
+                          isCopied ? "opacity-100 scale-100 rotate-0" : "opacity-0 scale-75 -rotate-45"
+                        )} />
+                      </div>
+                    </Button>
                   </div>
-                </NativeScroll>
+
+                  <NativeScroll className="flex-1 min-h-0 bg-background border rounded-lg shadow-xs">
+                    <div className="p-6 md:p-8 pt-4">
+                      <div className="text-[14px] leading-relaxed text-foreground/90">
+                        <ReactMarkdown
+                          components={{
+                            h3: ({node, ...props}) => <h3 className="text-[13px] font-bold text-foreground mt-4 mb-2 uppercase tracking-wide" {...props} />,
+                            p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
+                            ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-3 space-y-1" {...props} />,
+                            li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                            strong: ({node, ...props}) => <span className="font-bold text-foreground" {...props} />,
+                          }}
+                        >
+                          {summaryContent}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </NativeScroll>
+                </>
               ) : (
                 <Empty className="flex-1 min-h-0 py-12 bg-transparent border border-dashed rounded-xl flex items-center justify-center">
                   <EmptyHeader>
@@ -101,7 +162,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
         </Tabs>
 
         {/* Fixed Footer Actions */}
-        <div className="p-4 flex justify-end gap-2 shrink-0">
+        <div className="p-4 flex justify-end gap-2 shrink-0 border-t bg-muted/5">
           <Button variant="outline" size="sm" onClick={onClose} className="h-9 px-4 cursor-pointer text-xs font-semibold">
             Close
           </Button>

@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom"
 import { cn } from "@workspace/ui/lib/utils"
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
-import { ClinicalLexicalEditor } from "./editors/clinical-lexical-editor"
+import { ClinicalLexicalEditor } from "@/shared/components/clinical-editor"
 
 interface ClinicalPaperProps {
   document: {

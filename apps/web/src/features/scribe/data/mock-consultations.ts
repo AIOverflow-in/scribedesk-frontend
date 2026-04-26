@@ -20,33 +20,48 @@ export const mockConsultations: Consultation[] = [
     date: "2024-02-10",
     description: "Scheduled follow-up after knee arthroscopy. Check wound healing and range of motion.",
     status: "draft",
-    summary: `Patient is a 45-year-old male, 2 weeks status-post right knee arthroscopy for a complex medial meniscus tear. Today's visit is to evaluate wound healing and baseline range of motion (ROM). 
+    summary: `
+### SUBJECTIVE
+Patient is a 45-year-old male, 2 weeks status-post right knee arthroscopy for a complex medial meniscus tear. Today's visit is to evaluate wound healing and baseline range of motion (ROM). 
 
+### OBJECTIVE
 The surgical site was inspected: the three portals are clean, dry, and intact. There are no signs of erythema, warmth, or purulent discharge. Sutures were removed without complication. Active ROM was measured at 0–95 degrees, which is slightly ahead of the expected recovery curve. The patient reports a 4/10 pain level, mostly localized to the medial joint line during transition from sitting to standing.
 
+### ASSESSMENT & PLAN
 The clinical plan remains focused on aggressive physical therapy (PT). Patient is currently attending PT 3 times weekly. We discussed the importance of avoiding high-impact activities for the next 4 weeks to allow for tissue consolidation. He is currently transitioning from crutches to a single-point cane as tolerated. 
 
-Medication review: Patient has successfully tapered off hydrocodone and is now managing pain with Naproxen 500mg twice daily and scheduled icing. No signs of deep vein thrombosis (DVT) noted in calf. We will continue the current course and follow up in another 2 weeks for further ROM assessment and potential return-to-work clearance for his desk-based role. Patient demonstrated a clear understanding of the restrictions.
+### MEDICATIONS
+Patient has successfully tapered off hydrocodone and is now managing pain with Naproxen 500mg twice daily and scheduled icing. No signs of deep vein thrombosis (DVT) noted in calf. 
 
---- EXTENDED CLINICAL NOTES FOR SCROLL TEST ---
+### FOLLOW-UP
+We will continue the current course and follow up in another 2 weeks for further ROM assessment and potential return-to-work clearance.
 
-The patient's gait analysis shows a slight antalgic pattern with a reduced stance phase on the right side. This is expected given the recent surgery but should be addressed in physical therapy to prevent secondary hip or lower back strain. Quadriceps muscle atrophy was noted compared to the left side, confirming the need for focused strengthening exercises.
+### DETAILED REHABILITATION PLAN
+- **Phase 1 (Weeks 1-2):**
+  - Focus on edema control and static quadriceps firing.
+  - Active-assisted ROM goal: 0-90 degrees.
+  - Weight bearing as tolerated (WBAT) with crutches.
+- **Phase 2 (Weeks 3-6):**
+  - Progress to full weight bearing without assistive devices.
+  - Initiate closed-chain exercises (mini-squats, wall sits).
+  - Target ROM: 0-120 degrees.
+- **Phase 3 (Weeks 7-12):**
+  - Proprioceptive training (single-leg balance).
+  - Introduction of low-impact cardiovascular training (stationary bike).
+  - Progression to resistance training.
 
-Detailed Physical Therapy Plan:
-1. Isometric quadriceps sets (10 reps, 5 sets daily).
-2. Straight leg raises to strengthen the hip flexors and quads without knee extension.
-3. Heel slides to gently increase flexion beyond 95 degrees.
-4. Ankle pumps to maintain circulation and prevent vascular complications.
+### CLINICAL MILESTONES
+1. **Wound Closure:** Completed today. Portals are epithelialized.
+2. **Pain Management:** Transitioned from opioids to NSAIDs successfully.
+3. **Functional Goal:** Return to light driving expected by Week 3.
+4. **Long-term Goal:** Return to recreational jogging at Month 6, pending clearance.
 
-Long-term Outlook:
-Given the successful meniscal repair rather than a simple debridement, the patient's long-term joint health is prioritized. We discussed the risk of early-onset osteoarthritis if rehabilitation is rushed. The patient is advised to stick strictly to the non-running protocol for the next 12 weeks. 
-
-Future milestones:
-- 4 weeks: Expected transition to full weight-bearing without assistive devices.
-- 8 weeks: Initiation of proprioceptive training on unstable surfaces.
-- 12 weeks: Return to low-impact cycling and swimming.
-
-Patient concerns regarding mild swelling after PT were addressed. We confirmed that this is a normal inflammatory response and should be managed with immediate icing after each session. The patient remains optimistic and compliant with all clinical advice provided today.`,
+### PATIENT EDUCATION
+- Importance of consistent icing (20 mins, 4-5 times daily).
+- Warning signs: Increased calf pain, shortness of breath, or excessive fever.
+- Ergonomic workspace adjustments for remote work.
+- Compliance with physical therapy home exercise program (HEP).
+    `.trim(),
     transcript: "Doctor: Welcome back, John...",
     reports: [],
   },
@@ -58,17 +73,21 @@ Patient concerns regarding mild swelling after PT were addressed. We confirmed t
     description: "Routine annual health checkup including physical examination and lifestyle discussion.",
     duration: 45,
     status: "completed",
-    summary: `Patient presented today for a comprehensive annual physical examination. He is a 45-year-old male with a significant family history of early-onset coronary artery disease (father had an MI at age 52). 
+    summary: `
+### SUBJECTIVE
+Patient is a 45-year-old male presenting for an annual physical examination. Significant family history of early-onset coronary artery disease (father had an MI at age 52). Reports noticeable dip in energy levels around 3:00 PM. Sleep quality is poor (6 hours/night).
 
-Subjective findings: The patient reports feeling "generally well" but mentions a noticeable dip in energy levels around 3:00 PM most days. He denies any chest pain, palpitations, or shortness of breath on exertion. Sleep quality is poor, averaging only 6 hours per night due to high stress levels at his software firm. Diet consists of moderate fast food. 
+### OBJECTIVE
+Vitals are stable, though BP is slightly elevated at 134/86. BMI is 28.5 (Overweight). Heart is RRR without murmurs, and lungs are clear.
 
-Objective findings: Vitals are stable, though BP is slightly elevated at 134/86 today. BMI is 28.5 (Overweight). Physical exam is largely unremarkable; heart is RRR without murmurs, and lungs are clear. No carotid bruits. 
+### ASSESSMENT & PLAN
+1. **Preventative Screen:** Ordered metabolic panel, HbA1c, and fasting lipid panel.
+2. **Fatigue:** Likely secondary to sedentary lifestyle and poor sleep hygiene.
+3. **Diet:** Recommended transition to a Mediterranean-style diet.
 
-Assessment & Plan:
-1. Preventative Screen: Ordered a comprehensive metabolic panel, HbA1c, and a fasting lipid panel to assess 10-year ASCVD risk.
-2. Fatigue: Likely secondary to sedentary lifestyle and poor sleep hygiene. Discussed the "30-minute walk" rule and blue light restriction after 9:00 PM.
-3. Diet: Recommended transition to a Mediterranean-style diet to manage early hypertensive trends.
-4. Follow-up: Patient to return in two weeks to review laboratory findings. If LDL is >130, we will discuss statin therapy given the family history. A baseline EKG was performed today and showed normal sinus rhythm.`,
+### FOLLOW-UP
+Patient to return in two weeks to review laboratory findings.
+    `.trim(),
     transcript: longTranscript,
     reports: [
       { id: "r1", title: "Lab Results", type: "Medical Report", createdAt: "2024-01-15" },
@@ -82,13 +101,18 @@ Assessment & Plan:
     description: "Post-treatment follow-up to review recovery progress and adjust treatment plan.",
     duration: 30,
     status: "in-progress",
-    summary: `Patient is a 32-year-old female returning for a 1-month follow-up on her newly diagnosed moderate persistent asthma. Since starting the Symbicort maintenance inhaler, she reports a marked improvement in her daily activities.
+    summary: `
+### SUBJECTIVE
+Patient is a 32-year-old female returning for a 1-month follow-up on her newly diagnosed moderate persistent asthma. Reports marked improvement in daily activities. Night-time awakenings have decreased to less than once a week.
 
-Detailed review: Night-time awakenings have decreased from 4 times a week to less than once a week. She is currently using her Albuterol rescue inhaler only twice a week, usually during high-pollen days. Peak flow meter readings provided by the patient show an average of 420 L/min, up from her baseline of 360 L/min.
+### OBJECTIVE
+O2 saturation is 99% on room air. Lungs are clear with no audible expiratory wheeze. Heart rate is 72 bpm. Peak flow meter: 420 L/min (baseline 360).
 
-On examination: O2 saturation is 99% on room air. Lungs are clear with no audible expiratory wheeze. Heart rate is 72 bpm. No signs of oral thrush (patient is rinsing after inhaler use).
-
-Clinical Decision: We will continue the current Symbicort 160/4.5 dose of two puffs twice daily for another 3 months. I have provided her with an updated Asthma Action Plan that details when to seek emergency care. We also discussed potential triggers in her home environment, specifically the new cat she adopted. She will monitor for any increased symptoms related to dander. If she remains stable at the 3-month mark, we will consider stepping down to a single-dose maintenance regimen. I encouraged her to continue her light jogging as her capacity has clearly improved.`,
+### ASSESSMENT & PLAN
+- **Action:** Continue current Symbicort 160/4.5 (two puffs BID) for 3 months.
+- **Education:** Provided updated Asthma Action Plan. Discussed triggers (new cat).
+- **Goal:** Consider step-down to single-dose maintenance if stable at next visit.
+    `.trim(),
     transcript: longTranscript,
     reports: [],
   },
@@ -100,13 +124,18 @@ Clinical Decision: We will continue the current Symbicort 160/4.5 dose of two pu
     description: "Check resolution of cough and chest congestion.",
     duration: 20,
     status: "completed",
-    summary: `Patient is returning today for a follow-up regarding acute bronchitis diagnosed 10 days ago. He has successfully completed a 7-day course of Amoxicillin 500mg TID.
+    summary: `
+### SUBJECTIVE
+Returning for follow-up regarding acute bronchitis. Productive cough has fully resolved. Yellow/green sputum is no longer present. Low-grade fevers have ceased. Baseline energy has returned.
 
-Patient reports that his productive cough has fully resolved. The yellow/green sputum reported at the initial visit is no longer present. He is no longer experiencing the low-grade fevers or the localized substernal chest soreness that accompanied the coughing fits. Baseline energy has returned, and he has resumed his normal work schedule.
+### OBJECTIVE
+Temperature is 98.4°F. Pulmonary auscultation reveals clear lung fields bilaterally. No residual rales, rhonchi, or wheezes.
 
-Physical Exam: Temperature is 98.4°F. Pulmonary auscultation reveals clear lung fields bilaterally. There are no residual rales, rhonchi, or wheezes in the lower lobes. Peak flow is at 100% of his normal baseline. No lymphadenopathy noted in the cervical or axillary nodes.
-
-Assessment: Resolved acute bronchitis. No further antibiotic therapy is required. I have advised the patient that a dry "post-viral" cough can occasionally linger for another week and is not a cause for concern unless it becomes productive again. He has been cleared to resume full exercise. I recommended he receive his annual flu shot before the end of the month to prevent secondary infections this season.`,
+### ASSESSMENT & PLAN
+- **Status:** Resolved acute bronchitis. No further antibiotics required.
+- **Advice:** Dry "post-viral" cough may linger.
+- **Prevention:** Recommended annual flu shot.
+    `.trim(),
     transcript: longTranscript,
     reports: [],
   },
@@ -118,18 +147,18 @@ Assessment: Resolved acute bronchitis. No further antibiotic therapy is required
     description: "Baseline assessment for new patient. Reviewing chronic lower back pain and history of hypertension.",
     duration: 60,
     status: "completed",
-    summary: `Initial consultation for a new patient presenting with chronic lower back pain localized to the L4-L5 region. The pain has been persistent for approximately 6 months, described as a dull, aching sensation that worsens after prolonged sitting at his desk. He denies any radiation to the lower extremities, numbness, or "pins and needles" sensations. Bladder and bowel function are normal.
+    summary: `
+### SUBJECTIVE
+New patient presenting with chronic lower back pain localized to L4-L5 region (6 months). Pain is dull, aching, worsens with sitting. No radiation or radicular symptoms.
 
-Objective: Straight leg raise test is negative bilaterally. Lower extremity strength is 5/5 in all muscle groups. Sensation is intact to light touch in all dermatomes. Reflexes are 2+ and symmetric. Some mild paraspinal muscle tenderness is noted.
+### OBJECTIVE
+Straight leg raise test negative bilaterally. Lower extremity strength is 5/5. Sensation intact. Reflexes 2+ and symmetric. Mild paraspinal tenderness.
 
-Assessment: Chronic mechanical low back pain without radiculopathy. Hypertension, stable.
-
-Plan:
-1. Physical Therapy: Referral placed for 8 weeks of core strengthening and lumbar stabilization.
-2. Imaging: Not indicated at this time given the lack of red flags or radicular symptoms.
-3. Medication: Discussed the transition from daily Ibuprofen to "as needed" use to protect renal function. 
-4. Work ergonomics: Advised on the use of a standing desk and frequent postural breaks.
-5. Hypertension: Continue Lisinopril 10mg. BP today was excellent at 126/80. We will continue this regimen and re-evaluate the back pain progress in 2 months.`,
+### ASSESSMENT & PLAN
+1. **Diagnosis:** Chronic mechanical low back pain without radiculopathy.
+2. **Hypertension:** Stable on Lisinopril 10mg (BP 126/80).
+3. **Plan:** Physical Therapy referral (8 weeks), Ibuprofen as needed, Ergonomic standing desk.
+    `.trim(),
     transcript: longTranscript,
     reports: [],
   },

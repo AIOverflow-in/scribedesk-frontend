@@ -38,7 +38,7 @@ const theme = {
   tableCellHeader: "bg-gray-50 font-bold border border-gray-200 p-2 text-sm text-left",
 }
 
-interface ClinicalLexicalEditorProps {
+export interface ClinicalLexicalEditorProps {
   initialContent: string
   onChange?: (content: string) => void
   onTextChange?: (text: string) => void

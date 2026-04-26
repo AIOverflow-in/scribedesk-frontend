@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Layers, Calendar, ChevronRight } from "lucide-react"
+import { Calendar, ChevronRight } from "lucide-react"
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
 import { Badge } from "@workspace/ui/components/badge"
 import { mockConsultations } from "../../../../data/mock-consultations"
@@ -22,20 +22,9 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
 
   return (
     <div className="h-full flex flex-col bg-background rounded-lg border overflow-hidden">
-      {/* Header */}
-      <div className="p-4 border-b bg-muted/20 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <Layers className="h-4 w-4 text-amber-500" />
-          <h3 className="text-sm font-semibold text-foreground/80 tracking-tight">Patient Longitudinal Record</h3>
-        </div>
-        <div className="px-2 py-0.5 rounded-sm bg-emerald-600">
-          <span className="text-[10px] font-bold text-white uppercase tracking-tight">{patientHistory.length} Sessions</span>
-        </div>
-      </div>
-
       <div className="flex-1 min-h-0 relative flex flex-col">
         {/* 1. Center Timeline Line (Fixed Background) */}
-        <div className="absolute top-0 bottom-0 w-px bg-border left-[3.5rem] md:left-1/2 md:-translate-x-1/2 z-0 pointer-events-none" />
+        <div className="absolute top-0 bottom-0 w-px bg-border left-14 md:left-1/2 md:-translate-x-1/2 z-0 pointer-events-none" />
 
         <ScrollArea className="flex-1 z-10">
           <div className="p-6 md:p-10 relative">
@@ -50,7 +39,7 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
                     <div className={cn(
                       "absolute top-1/2 -translate-y-1/2 z-20 rounded-full border-2 transition-all duration-300 bg-background",
                       "left-8 md:left-1/2 -translate-x-1/2",
-                      isCurrent ? "w-4 h-4 border-amber-500 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.2)]" : "w-3 h-3 border-border group-hover:border-primary"
+                      isCurrent ? "w-3 h-3 border-amber-500 bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.2)]" : "w-3 h-3 border-border group-hover:border-primary"
                     )} />
                     
                     {/* 3. Horizontal Connector Line */}
@@ -78,7 +67,7 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
                     )}>
                       <div 
                         className={cn(
-                          "group border rounded-xl p-4 transition-all hover:shadow-md cursor-pointer bg-card relative w-full max-w-[380px] text-left",
+                          "group border rounded-lg p-4 transition-all hover:shadow-md cursor-pointer bg-card relative w-full max-w-[380px] text-left",
                           isCurrent ? "border-amber-500/40 bg-amber-50/5 ring-1 ring-amber-500/10 shadow-sm" : "hover:border-primary/40 shadow-xs"
                         )}
                         onClick={() => setSelectedHistoryId(item.id)}

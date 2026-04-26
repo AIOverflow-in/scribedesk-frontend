@@ -69,7 +69,7 @@ export const TABLE: MultilineElementTransformer = {
       tableNode.append(tableRowNode);
     }
 
-    // 3. Append to the rootNode (satisfies TS 'never read' warning)
+    // 3. Append to the rootNode
     if (rootNode instanceof ElementNode) {
       rootNode.append(tableNode);
     }
