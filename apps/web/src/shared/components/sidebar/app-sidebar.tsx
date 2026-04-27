@@ -17,9 +17,9 @@ import {
   GalleryVerticalEndIcon, 
   AudioLinesIcon,
   UsersIcon, 
-  NotebookIcon, 
   CircleCheckBigIcon,
-  SquarePenIcon
+  SquarePenIcon,
+  NotebookPen
 } from "lucide-react"
 
 const data = {
@@ -52,7 +52,7 @@ const data = {
     {
       title: "Templates",
       url: "/templates",
-      icon: <NotebookIcon />,
+      icon: <NotebookPen />,
     },
     {
       title: "Tasks",

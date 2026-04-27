@@ -1,7 +1,8 @@
 import * as React from "react"
-import { Drone } from "lucide-react"
+import { PenLine } from "lucide-react"
 import { ChatHeader } from "./chat-header"
 import { ChatInput } from "./chat-input"
+import { ChatMessageList } from "./chat-message-list"
 import { 
   Empty, 
   EmptyHeader, 
@@ -19,44 +20,50 @@ interface ChatWindowProps {
 
 export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
   const { messages, setActiveThread } = useChatStore()
-  const activeMessages = threadId ? messages[threadId] || [] : []
+  
+  const effectiveId = threadId === 'new' ? null : threadId
+  const activeMessages = effectiveId ? messages[effectiveId] || [] : []
 
-  // Sync active thread to store when opened in sidecar/workspace
   React.useEffect(() => {
-    if (threadId) setActiveThread(threadId)
-  }, [threadId, setActiveThread])
+    setActiveThread(effectiveId)
+  }, [effectiveId, setActiveThread])
 
   return (
     <div className="flex-1 flex flex-col h-full bg-background overflow-hidden">
       <ChatHeader mode={mode} onClose={onClose} />
       
-      <div className="flex-1 overflow-hidden p-6 flex flex-col">
+      <div className="flex-1 overflow-hidden flex flex-col relative">
         {activeMessages.length === 0 ? (
-          <Empty className="flex-1 border-none bg-transparent">
-            <EmptyHeader>
-              <EmptyMedia variant="icon" className="bg-indigo-500/10 text-indigo-500 size-16 mb-4">
-                <Drone className="size-8" />
-              </EmptyMedia>
-              <EmptyTitle className="text-lg font-bold text-foreground/90">Clinical Intelligence</EmptyTitle>
-              <EmptyDescription className="text-sm max-w-[320px] leading-relaxed">
-                I'm listening and analyzing clinical data in real-time. 
-                Ask me to check history, identify red flags, or draft documents.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            <div className="py-20">
+              <Empty className="border-none bg-transparent">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon" className="size-16 bg-primary/10 text-primary shadow-xs">
+                    <PenLine className="size-8" />
+                  </EmptyMedia>
+                  <EmptyTitle className="text-lg">No conversations found</EmptyTitle>
+                  <EmptyDescription>
+                    Start a new conversation to analyze data, check history, or draft clinical documents.
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            </div>
+          </div>
         ) : (
-          <div className="flex-1 overflow-y-auto space-y-4">
-             {activeMessages.map(msg => (
-               <div key={msg.id} className="text-sm p-4 bg-muted/30 rounded-xl">
-                 <span className="font-bold uppercase text-[10px] text-muted-foreground block mb-1">{msg.role}</span>
-                 {msg.content}
-               </div>
-             ))}
+          <div className="flex-1 relative min-h-0 flex flex-col">
+            <div className="absolute top-0 inset-x-0 h-4 bg-linear-to-b from-background to-transparent z-10 pointer-events-none" />
+            <ChatMessageList messages={activeMessages} />
           </div>
         )}
         
-        <div className="mt-auto">
-           <ChatInput />
+        {/* Tightened Input area with reduced width */}
+        <div className="w-full pb-1 relative z-10 -mt-6">
+           <div className="max-w-3xl mx-auto px-4">
+              <ChatInput />
+              <p className="text-[10px] text-muted-foreground text-center mt-1.5 font-medium">
+                AI can make mistakes. Always verify clinical recommendations.
+              </p>
+           </div>
         </div>
       </div>
     </div>

@@ -31,12 +31,15 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-markdown": "10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.1.18",
     "vite-tsconfig-paths": "^5.1.4",
-    "zustand": "^5.0.12",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19",
     "@tanstack/eslint-config": "^0.3.0",
     "@types/node": "^25.1.0",
     "@types/react": "^19.2.10",

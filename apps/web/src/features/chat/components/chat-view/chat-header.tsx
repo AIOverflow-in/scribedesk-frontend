@@ -1,10 +1,16 @@
-import { SquarePen, Maximize2, X, ChevronDown, Trash2, Clock } from "lucide-react"
+import * as React from "react"
+import { Link } from "@tanstack/react-router"
+import { SquarePen, Maximize2, X, ChevronDown, Trash2, Clock, ArrowLeft, Star } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { 
   Popover, 
   PopoverContent, 
   PopoverTrigger 
 } from "@workspace/ui/components/popover"
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "@workspace/ui/components/button-group"
 import { useChatStore } from "../../stores/chat-store"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
 import { cn } from "@workspace/ui/lib/utils"
@@ -13,6 +19,55 @@ export function ChatHeader({ mode = 'workspace', onClose }: { mode?: 'sidecar' |
   const { threads, activeThreadId, setActiveThread, createThread, deleteThread } = useChatStore()
   const activeThread = threads.find(t => t.id === activeThreadId)
 
+  if (mode === 'workspace') {
+    return (
+      <div className="h-16 flex items-center justify-between px-4 bg-background shrink-0">
+        {/* Left: Back Button & Title Dropdown Group */}
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground shrink-0 cursor-pointer" asChild>
+            <Link to="/chats">
+              <ArrowLeft className="h-4.5 w-4.5" />
+            </Link>
+          </Button>
+
+          <Popover>
+            <ButtonGroup className="group/bg rounded-lg transition-colors hover:bg-muted border border-transparent">
+              <Button variant="ghost" className="font-medium text-base hover:bg-transparent cursor-pointer px-3 h-9" asChild>
+                <div className="truncate">{activeThread?.title || "New Chat"}</div>
+              </Button>
+              <ButtonGroupSeparator className="opacity-0 group-hover/bg:opacity-100 transition-opacity" />
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-transparent cursor-pointer rounded-r-lg rounded-l-none border-l-0">
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </PopoverTrigger>
+            </ButtonGroup>
+
+            <PopoverContent align="start" className="w-48 p-2">
+              <div className="flex flex-col gap-1">
+                 <Button variant="ghost" className="w-full justify-start text-sm cursor-pointer hover:bg-muted">
+                    <Star className="h-4 w-4 mr-2" />
+                    Star chat
+                 </Button>
+                 <Button 
+                   variant="ghost" 
+                   className="w-full justify-start text-sm text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                   onClick={() => {
+                     if (activeThread) deleteThread(activeThread.id)
+                   }}
+                 >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete chat
+                 </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    )
+  }
+
+  // mode === 'sidecar'
   return (
     <div className="h-16 flex items-center justify-between px-4 bg-background shrink-0">
       {/* Left: Chat History Popover */}
@@ -76,18 +131,16 @@ export function ChatHeader({ mode = 'workspace', onClose }: { mode?: 'sidecar' |
           New chat
         </Button>
 
-        {mode === 'sidecar' && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => {
-                 // TODO: Navigate to /chats/$id
-              }}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted" asChild>
+              <Link to="/chats/$id" params={{ id: activeThreadId || 'new' } as any}>
                 <Maximize2 className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">Full Screen</TooltipContent>
-          </Tooltip>
-        )}
+              </Link>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Full Screen</TooltipContent>
+        </Tooltip>
 
         {onClose && (
           <Tooltip>

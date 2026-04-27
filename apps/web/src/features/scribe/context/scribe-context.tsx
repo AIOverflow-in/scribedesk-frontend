@@ -150,3 +150,7 @@ export function useScribe() {
   }
   return context
 }
+
+export function useScribeOptional() {
+  return useContext(ScribeContext)
+}

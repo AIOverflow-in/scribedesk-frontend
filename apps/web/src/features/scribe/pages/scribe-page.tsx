@@ -130,7 +130,7 @@ function ScribeContent() {
       <DocumentTypeModal />
       <EditSessionModal />
       <DraftingSheet />
-      <AssistantLauncher />
+      {selectedConsultation && <AssistantLauncher />}
     </>
   )
 }

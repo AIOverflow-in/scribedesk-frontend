@@ -13,13 +13,13 @@ export function ScribeEmptyState({ className }: ScribeEmptyStateProps) {
         className
       )}
     >
-      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-        <Inbox className="h-7 w-7 text-muted-foreground" />
+      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary shadow-xs">
+        <Inbox className="h-7 w-7" />
       </div>
-      <h3 className="text-base font-semibold mb-1">No Consultation Selected</h3>
-      <p className="text-sm text-muted-foreground max-w-[240px]">
+      <h3 className="text-base font-semibold mb-1 text-foreground/90">No Consultation Selected</h3>
+      <p className="text-sm text-muted-foreground max-w-[240px] leading-relaxed">
         Select a consultation from the list to view details, transcript, and
-        reports
+        reports.
       </p>
     </div>
   )
