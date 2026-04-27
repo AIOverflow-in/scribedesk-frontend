@@ -10,16 +10,20 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 import { 
   GalleryVerticalEndIcon, 
   AudioLinesIcon,
   UsersIcon, 
-  CircleCheckBigIcon,
   SquarePenIcon,
-  NotebookPen
+  NotebookPen,
+  CirclePlus
 } from "lucide-react"
 
 const data = {
@@ -41,7 +45,7 @@ const data = {
     },
     {
       title: "New Chat",
-      url: "/chats/new", // TODO: Update to your actual route
+      url: "/chats/new",
       icon: <SquarePenIcon />,
     },
     {
@@ -53,12 +57,7 @@ const data = {
       title: "Templates",
       url: "/templates",
       icon: <NotebookPen />,
-    },
-    {
-      title: "Tasks",
-      url: "/tasks",
-      icon: <CircleCheckBigIcon />,
-    },
+    }
   ],
 }
 
@@ -95,6 +94,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeaderToggle app={data.app} />
       </SidebarHeader>
       <SidebarContent>
+        <SidebarGroup className="pt-4">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton 
+                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors"
+                tooltip="New session"
+              >
+                <CirclePlus />
+                <span>New session</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
         <NavMain items={data.navMain} />
         <NavChats />
       </SidebarContent>

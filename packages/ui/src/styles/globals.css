@@ -129,4 +129,10 @@
   body {
     @apply bg-background text-foreground;
     }
+  button {
+    @apply cursor-pointer;
+  }
+  .destructive-hover:hover {
+    background-color: oklch(0.95 0.05 27.325);
+  }
 }

@@ -12,17 +12,19 @@ import {
 
 export function NavMain({
   items,
+  className,
 }: {
   items: {
     title: string
     url: string
     icon?: React.ReactNode
   }[]
+  className?: string
 }) {
   const location = useLocation()
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className={className}>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (

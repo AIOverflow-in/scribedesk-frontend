@@ -13,7 +13,6 @@ import { Button } from "@workspace/ui/components/button"
 import { ClinicalLexicalEditor } from "@/shared/components/clinical-editor"
 import { cn } from "@workspace/ui/lib/utils"
 import type { Template } from "../types"
-import { NativeScroll } from "@workspace/ui/components/native-scroll"
 
 interface TemplateDetailSheetProps {
   template: Template | null
@@ -40,15 +39,34 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
   }, [template?.id])
 
   const handleCopy = async () => {
-    const text = editedText || editedContent
-    if (!text) return
+    const plainText = editedText || editedContent || t?.content || ""
+    const htmlText = editedHtml || plainText
     
+    if (!plainText) return
+
     try {
-      await navigator.clipboard.writeText(text)
+      const typeText = "text/plain"
+      const typeHtml = "text/html"
+      const blobText = new Blob([plainText], { type: typeText })
+      const blobHtml = new Blob([htmlText], { type: typeHtml })
+      
+      const data = [new ClipboardItem({
+        [typeText]: blobText,
+        [typeHtml]: blobHtml,
+      })]
+      
+      await navigator.clipboard.write(data)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
-      console.error("Failed to copy:", err)
+      // Fallback to plain text only if ClipboardItem fails (some browsers)
+      try {
+        await navigator.clipboard.writeText(plainText)
+        setIsCopied(true)
+        setTimeout(() => setIsCopied(false), 2000)
+      } catch (fallbackErr) {
+        console.error("Failed to copy text: ", fallbackErr)
+      }
     }
   }
 
