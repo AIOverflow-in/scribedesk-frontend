@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as protectedScribeRouteImport } from './routes/(protected)/scribe'
+import { Route as protectedTemplatesIndexRouteImport } from './routes/(protected)/templates.index'
 import { Route as protectedPatientsIndexRouteImport } from './routes/(protected)/patients.index'
 import { Route as protectedChatsIndexRouteImport } from './routes/(protected)/chats.index'
 import { Route as protectedChatsIdRouteImport } from './routes/(protected)/chats.$id'
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const protectedScribeRoute = protectedScribeRouteImport.update({
   id: '/(protected)/scribe',
   path: '/scribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedTemplatesIndexRoute = protectedTemplatesIndexRouteImport.update({
+  id: '/(protected)/templates/',
+  path: '/templates/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const protectedPatientsIndexRoute = protectedPatientsIndexRouteImport.update({
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/chats/$id': typeof protectedChatsIdRoute
   '/chats/': typeof protectedChatsIndexRoute
   '/patients/': typeof protectedPatientsIndexRoute
+  '/templates/': typeof protectedTemplatesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/chats/$id': typeof protectedChatsIdRoute
   '/chats': typeof protectedChatsIndexRoute
   '/patients': typeof protectedPatientsIndexRoute
+  '/templates': typeof protectedTemplatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,12 +70,19 @@ export interface FileRoutesById {
   '/(protected)/chats/$id': typeof protectedChatsIdRoute
   '/(protected)/chats/': typeof protectedChatsIndexRoute
   '/(protected)/patients/': typeof protectedPatientsIndexRoute
+  '/(protected)/templates/': typeof protectedTemplatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/scribe' | '/chats/$id' | '/chats/' | '/patients/'
+  fullPaths:
+    | '/'
+    | '/scribe'
+    | '/chats/$id'
+    | '/chats/'
+    | '/patients/'
+    | '/templates/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/scribe' | '/chats/$id' | '/chats' | '/patients'
+  to: '/' | '/scribe' | '/chats/$id' | '/chats' | '/patients' | '/templates'
   id:
     | '__root__'
     | '/'
@@ -75,6 +90,7 @@ export interface FileRouteTypes {
     | '/(protected)/chats/$id'
     | '/(protected)/chats/'
     | '/(protected)/patients/'
+    | '/(protected)/templates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -83,6 +99,7 @@ export interface RootRouteChildren {
   protectedChatsIdRoute: typeof protectedChatsIdRoute
   protectedChatsIndexRoute: typeof protectedChatsIndexRoute
   protectedPatientsIndexRoute: typeof protectedPatientsIndexRoute
+  protectedTemplatesIndexRoute: typeof protectedTemplatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/scribe'
       fullPath: '/scribe'
       preLoaderRoute: typeof protectedScribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/templates/': {
+      id: '/(protected)/templates/'
+      path: '/templates'
+      fullPath: '/templates/'
+      preLoaderRoute: typeof protectedTemplatesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(protected)/patients/': {
@@ -131,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   protectedChatsIdRoute: protectedChatsIdRoute,
   protectedChatsIndexRoute: protectedChatsIndexRoute,
   protectedPatientsIndexRoute: protectedPatientsIndexRoute,
+  protectedTemplatesIndexRoute: protectedTemplatesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

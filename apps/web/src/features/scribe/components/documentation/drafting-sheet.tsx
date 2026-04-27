@@ -185,7 +185,7 @@ export function DraftingSheet() {
         </div>
 
         {/* Clinical Workspace (The Paper or Skeleton) */}
-        <div className="flex-1 min-h-0 bg-gray-100 dark:bg-gray-900 no-print flex flex-col items-center p-4 md:p-8">
+        <div className="flex-1 min-h-0 bg-gray-100 dark:bg-gray-900 no-print flex flex-col items-center px-5 pt-3 pb-4 md:px-8 md:pt-7 md:pb-8">
             {isGenerating ? (
               <ClinicalPaperSkeleton />
             ) : (

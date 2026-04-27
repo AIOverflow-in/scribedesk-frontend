@@ -117,7 +117,7 @@ export function ClinicalPaper({
   return (
     <>
       <div className={cn(
-        "w-full max-w-[850px] bg-white shadow-sm border rounded-sm flex flex-col h-full",
+        "w-full bg-white shadow-sm border rounded-sm flex flex-col h-full",
         isSigned && "ring-1 ring-blue-100"
       )}>
         {/* Screen Header - Fixed */}

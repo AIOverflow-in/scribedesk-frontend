@@ -9,6 +9,7 @@ import { TablePlugin } from "@lexical/react/LexicalTablePlugin"
 import { HeadingNode, QuoteNode } from "@lexical/rich-text"
 import { ListNode, ListItemNode } from "@lexical/list"
 import { TableNode, TableCellNode, TableRowNode } from "@lexical/table"
+import { NativeScroll } from "@workspace/ui/components/native-scroll"
 
 import { ToolbarPlugin } from "./clinical-editor-toolbar"
 import { MarkdownSyncPlugin, CLINICAL_TRANSFORMERS } from "./markdown-sync-plugin"
@@ -74,23 +75,25 @@ export function ClinicalLexicalEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="relative w-full h-full flex flex-col flex-1">
+      <div className="relative w-full h-full flex flex-col flex-1 min-h-0">
         {!readOnly && <ToolbarPlugin />}
-        <div className="relative flex-1 min-h-[300px] p-8 md:p-10 pt-4 md:pt-6">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable 
-                className="outline-none min-h-[300px] h-full" 
-              />
-            }
-            placeholder={
-              <div className="absolute top-4 md:top-6 left-8 md:left-10 text-muted-foreground pointer-events-none italic">
-                Enter clinical notes...
-              </div>
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-        </div>
+        <NativeScroll className="relative flex-1 min-h-[300px] hover:[&::-webkit-scrollbar-thumb]:bg-gray-300 transition-colors">
+          <div className="p-8 md:p-10 pt-4 md:pt-6 pb-8 md:pb-10">
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable 
+                  className="outline-none min-h-[300px] h-full" 
+                />
+              }
+              placeholder={
+                <div className="absolute top-4 md:top-6 left-8 md:left-10 text-muted-foreground pointer-events-none italic">
+                  Enter clinical notes...
+                </div>
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+          </div>
+        </NativeScroll>
         <ListPlugin />
         <TablePlugin />
         <HistoryPlugin />
