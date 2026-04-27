@@ -1,5 +1,5 @@
 import * as React from "react"
-import { PenLine } from "lucide-react"
+import { Drone } from "lucide-react"
 import { ChatHeader } from "./chat-header"
 import { ChatInput } from "./chat-input"
 import { ChatMessageList } from "./chat-message-list"
@@ -34,20 +34,18 @@ export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
       
       <div className="flex-1 overflow-hidden flex flex-col relative">
         {activeMessages.length === 0 ? (
-          <div className="flex-1 flex flex-col overflow-y-auto">
-            <div className="py-20">
-              <Empty className="border-none bg-transparent">
-                <EmptyHeader>
-                  <EmptyMedia variant="icon" className="size-16 bg-primary/10 text-primary shadow-xs">
-                    <PenLine className="size-8" />
-                  </EmptyMedia>
-                  <EmptyTitle className="text-lg">No conversations found</EmptyTitle>
-                  <EmptyDescription>
-                    Start a new conversation to analyze data, check history, or draft clinical documents.
-                  </EmptyDescription>
-                </EmptyHeader>
-              </Empty>
-            </div>
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <Empty className="border-none bg-transparent shadow-none">
+              <EmptyHeader className="items-center">
+                <EmptyMedia variant="icon" className="size-20 bg-primary/10 text-primary shadow-sm">
+                  <Drone className="size-10" />
+                </EmptyMedia>
+                <EmptyTitle className="text-2xl mt-4">How can I help you today?</EmptyTitle>
+                <EmptyDescription className="text-base max-w-sm text-center">
+                  I can help you analyze patient data, draft clinical summaries, or answer medical queries.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           </div>
         ) : (
           <div className="flex-1 relative min-h-0 flex flex-col">

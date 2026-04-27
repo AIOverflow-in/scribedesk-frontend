@@ -30,38 +30,44 @@ export function ChatHeader({ mode = 'workspace', onClose }: { mode?: 'sidecar' |
             </Link>
           </Button>
 
-          <Popover>
-            <ButtonGroup className="group/bg rounded-lg transition-colors hover:bg-muted border border-transparent">
-              <Button variant="ghost" className="font-medium text-base hover:bg-transparent cursor-pointer px-3 h-9" asChild>
-                <div className="truncate">{activeThread?.title || "New Chat"}</div>
-              </Button>
-              <ButtonGroupSeparator className="opacity-0 group-hover/bg:opacity-100 transition-opacity" />
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-transparent cursor-pointer rounded-r-lg rounded-l-none border-l-0">
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          {activeThread ? (
+            <Popover>
+              <ButtonGroup className="group/bg rounded-lg transition-colors hover:bg-muted border border-transparent">
+                <Button variant="ghost" className="font-medium text-base hover:bg-transparent cursor-pointer px-3 h-9" asChild>
+                  <div className="truncate">{activeThread.title}</div>
                 </Button>
-              </PopoverTrigger>
-            </ButtonGroup>
+                <ButtonGroupSeparator className="opacity-0 group-hover/bg:opacity-100 transition-opacity" />
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-transparent cursor-pointer rounded-r-lg rounded-l-none border-l-0">
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </PopoverTrigger>
+              </ButtonGroup>
 
-            <PopoverContent align="start" className="w-48 p-2">
-              <div className="flex flex-col gap-1">
-                 <Button variant="ghost" className="w-full justify-start text-sm cursor-pointer hover:bg-muted">
-                    <Star className="h-4 w-4 mr-2" />
-                    Star chat
-                 </Button>
-                 <Button 
-                   variant="ghost" 
-                   className="w-full justify-start text-sm text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
-                   onClick={() => {
-                     if (activeThread) deleteThread(activeThread.id)
-                   }}
-                 >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete chat
-                 </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
+              <PopoverContent align="start" className="w-48 p-2">
+                <div className="flex flex-col gap-1">
+                   <Button variant="ghost" className="w-full justify-start text-sm cursor-pointer hover:bg-muted">
+                      <Star className="h-4 w-4 mr-2" />
+                      Star chat
+                   </Button>
+                   <Button 
+                     variant="ghost" 
+                     className="w-full justify-start text-sm text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                     onClick={() => {
+                       deleteThread(activeThread.id)
+                     }}
+                   >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete chat
+                   </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <div className="px-3 py-1.5 rounded-lg transition-colors hover:bg-muted font-medium text-base">
+              New Chat
+            </div>
+          )}
         </div>
       </div>
     )

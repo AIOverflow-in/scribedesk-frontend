@@ -14,12 +14,18 @@ import {
   SidebarMenuItem,
   SidebarMenuAction,
 } from "@workspace/ui/components/sidebar"
-import { ChevronRightIcon, MoreHorizontal } from "lucide-react"
+import { ChevronRightIcon, MoreHorizontal, Star, Trash2 } from "lucide-react"
 import { useChatStore } from "@/features/chat/stores/chat-store"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
 
 export function NavChats() {
   const location = useLocation()
-  const { threads } = useChatStore()
+  const { threads, deleteThread } = useChatStore()
   
   // Show top 10 recent chats
   const recentChats = threads.slice(0, 10)
@@ -57,9 +63,28 @@ export function NavChats() {
                       <span className="truncate">{chat.title}</span>
                     </Link>
                   </SidebarMenuButton>
-                  <SidebarMenuAction>
-                    <MoreHorizontal className="size-4" />
-                  </SidebarMenuAction>
+                  
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <SidebarMenuAction className="cursor-pointer hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                        <MoreHorizontal className="size-4" />
+                        <span className="sr-only">More</span>
+                      </SidebarMenuAction>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="right" align="start" className="w-40">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Star className="mr-2 size-4 text-muted-foreground" />
+                        <span>Star chat</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-destructive focus:text-destructive cursor-pointer"
+                        onClick={() => deleteThread(chat.id)}
+                      >
+                        <Trash2 className="mr-2 size-4" />
+                        <span>Delete chat</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

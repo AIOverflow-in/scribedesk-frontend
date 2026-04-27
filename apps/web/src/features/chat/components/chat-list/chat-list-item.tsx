@@ -1,6 +1,12 @@
 import * as React from "react"
-import { Trash2, ChevronRight } from "lucide-react"
+import { Trash2, ChevronRight, MoreHorizontal, Star } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
 import { cn } from "@workspace/ui/lib/utils"
 import type { ChatThread } from "../../types"
 
@@ -24,7 +30,7 @@ export function ChatListItem({ thread, isActive, onClick, onDelete }: ChatListIt
     >
       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <h4 className={cn(
-          "text-base font-semibold truncate",
+          "text-base font-medium truncate",
           isActive ? "text-primary" : "text-foreground"
         )}>
           {thread.title}
@@ -36,18 +42,34 @@ export function ChatListItem({ thread, isActive, onClick, onDelete }: ChatListIt
       </div>
 
       <div className="flex items-center gap-2">
-         <Button 
-           variant="ghost" 
-           size="icon" 
-           className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/5 transition-all cursor-pointer"
-           onClick={onDelete}
-         >
-           <Trash2 className="h-4 w-4" />
-         </Button>
-         <ChevronRight className={cn(
-           "h-4 w-4 transition-all text-muted-foreground/30",
-           isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"
-         )} />
+         <DropdownMenu>
+           <DropdownMenuTrigger asChild>
+             <Button 
+               variant="ghost" 
+               size="icon" 
+               className="h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 hover:bg-muted-foreground/10 data-[state=open]:bg-muted-foreground/10 transition-all cursor-pointer"
+               onClick={(e) => e.stopPropagation()}
+             >
+               <MoreHorizontal className="h-4 w-4" />
+             </Button>
+           </DropdownMenuTrigger>
+           <DropdownMenuContent align="end" className="w-40">
+             <DropdownMenuItem className="cursor-pointer" onClick={(e) => e.stopPropagation()}>
+               <Star className="mr-2 h-4 w-4 text-muted-foreground" />
+               <span>Star chat</span>
+             </DropdownMenuItem>
+             <DropdownMenuItem 
+               className="text-destructive focus:text-destructive cursor-pointer"
+               onClick={(e) => {
+                 e.stopPropagation()
+                 onDelete(e)
+               }}
+             >
+               <Trash2 className="mr-2 h-4 w-4" />
+               <span>Delete chat</span>
+             </DropdownMenuItem>
+           </DropdownMenuContent>
+         </DropdownMenu>
       </div>
     </div>
   )

@@ -13,12 +13,6 @@ export const mockThreads: ChatThread[] = [
     title: "ACE Inhibitor Side Effects",
     lastMessageSnippet: "The patient is reporting a persistent dry cough.",
     updatedAt: new Date(Date.now() - 3600000).toISOString(),
-  },
-  {
-    id: "chat-3",
-    title: "Referral Coordination: Cardiology",
-    lastMessageSnippet: "I have prepared the draft referral for Dr. Aris.",
-    updatedAt: new Date(Date.now() - 86400000).toISOString(),
   }
 ]
 
