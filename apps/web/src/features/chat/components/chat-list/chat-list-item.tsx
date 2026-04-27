@@ -20,14 +20,13 @@ interface ChatListItemProps {
 export function ChatListItem({ thread, isActive, onClick, onDelete }: ChatListItemProps) {
   return (
     <div 
-      className={cn(
-        "group relative flex items-center gap-4 p-4 transition-all cursor-pointer",
-        isActive 
-          ? "bg-primary/5 ring-1 ring-primary/10" 
-          : "bg-background hover:bg-muted/80"
-      )}
+      className="group relative z-0 flex items-center gap-4 p-4 cursor-pointer"
       onClick={onClick}
     >
+      <div className={cn(
+        "absolute inset-0 rounded-xl transition-colors pointer-events-none -z-10",
+        isActive ? "bg-primary/5 ring-1 ring-primary/10" : "group-hover:bg-muted/80"
+      )} />
       <div className="flex-1 min-w-0 flex flex-col gap-0.5">
         <h4 className={cn(
           "text-base font-medium truncate",

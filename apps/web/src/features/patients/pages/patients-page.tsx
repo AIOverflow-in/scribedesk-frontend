@@ -49,7 +49,7 @@ export function PatientsPage() {
         <div className="flex-1 min-h-0">
           {filteredPatients.length > 0 ? (
             <ScrollArea className="flex-1">
-              <div className="flex flex-col border-b border-border mb-10">
+              <div className="flex flex-col mb-10 [&>*:hover]:border-t-transparent [&>*:hover+*]:border-t-transparent [&>*:first-child]:border-t-0 [&>*]:border-t [&>*]:border-border">
                 {filteredPatients.map((patient) => (
                   <PatientListItem
                     key={patient.id}

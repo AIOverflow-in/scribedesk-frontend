@@ -3,16 +3,28 @@ import type { ChatThread, ChatMessage } from "../types"
 export const mockThreads: ChatThread[] = [
   {
     id: "chat-1",
-    title: "Post-Op Knee Recovery Logic",
-    lastMessageSnippet: "Watch for fever > 101°F and increasing localized warmth.",
+    title: "Low-Back Pain in Desk Workers",
+    lastMessageSnippet: "The key is alternating between sitting and standing throughout the day.",
     updatedAt: new Date().toISOString(),
     context: { type: 'consultation', id: 'session-1' }
   },
   {
     id: "chat-2",
     title: "ACE Inhibitor Side Effects",
-    lastMessageSnippet: "The patient is reporting a persistent dry cough.",
+    lastMessageSnippet: "Switch to an ARB like Losartan or Valsartan.",
     updatedAt: new Date(Date.now() - 3600000).toISOString(),
+  },
+  {
+    id: "chat-3",
+    title: "Type 2 Diabetes Management",
+    lastMessageSnippet: "Metformin remains the first-line pharmacological treatment.",
+    updatedAt: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: "chat-4",
+    title: "Post-Op Wound Care",
+    lastMessageSnippet: "Monitor for signs of infection: redness, warmth, or drainage.",
+    updatedAt: new Date(Date.now() - 172800000).toISOString(),
   }
 ]
 
@@ -51,66 +63,6 @@ export const mockMessages: Record<string, ChatMessage[]> = {
       createdAt: new Date(Date.now() - 90000).toISOString()
     },
     {
-      id: "m3",
-      role: 'user',
-      content: "Does this protocol change if the patient has a history of venous thromboembolism (VTE)?",
-      createdAt: new Date(Date.now() - 80000).toISOString(),
-      status: 'sent'
-    },
-    {
-      id: "m4",
-      role: 'assistant',
-      content: `Yes, for patients with a history of VTE, the surveillance for DVT must be significantly more aggressive. 
-
-You should specifically monitor for these additional signs:
-*   **Localized Calf Tenderness**: Pain along the course of the deep venous system.
-*   **Pitting Edema**: New or worsening swelling that doesn't resolve with elevation.
-*   **Discoloration**: Erythema or cyanosis of the lower extremity.
-
-**Clinical Recommendation**: Ensure the patient is strictly adhering to their mechanical prophylaxis (compression stockings/SCDs) and pharmacological anticoagulation as prescribed.`,
-      createdAt: new Date(Date.now() - 70000).toISOString()
-    },
-    {
-      id: "m5",
-      role: 'user',
-      content: "Should I schedule a 1-week follow-up for wound check?",
-      createdAt: new Date(Date.now() - 60000).toISOString(),
-      status: 'sent'
-    },
-    {
-      id: "m6",
-      role: 'assistant',
-      content: "Standard arthroplasty protocols typically recommend a wound check between days 7-14. Given the VTE history, a 1-week visit is highly recommended to assess both incision healing and to perform a focused lower-extremity vascular screening. I have added this recommendation to the pending tasks list for this patient.",
-      createdAt: new Date(Date.now() - 50000).toISOString()
-    },
-    {
-      id: "m7",
-      role: 'user',
-      content: "Thanks. Please draft a quick patient-friendly summary of the VTE risks.",
-      createdAt: new Date(Date.now() - 40000).toISOString(),
-      status: 'sent'
-    },
-    {
-      id: "m8",
-      role: 'assistant',
-      content: `**Understanding Blood Clot Risks (VTE)**
-
-Because of your medical history, we take extra precautions to prevent blood clots. To stay safe:
-1. **Move often**: Perform ankle pumps and walk as much as tolerated.
-2. **Wear stockings**: Use your compression stockings as directed.
-3. **Take medication**: Do not skip any doses of your prescribed blood thinner.
-
-**Watch for**: Sudden leg swelling, sharp chest pain, or shortness of breath. Call us immediately if you experience these.`,
-      createdAt: new Date(Date.now() - 30000).toISOString()
-    },
-    {
-      id: "m9",
-      role: 'user',
-      content: "Final question: what about standing desks? Are they effective?",
-      createdAt: new Date(Date.now() - 20000).toISOString(),
-      status: 'sent'
-    },
-    {
       id: "m10",
       role: 'assistant',
       content: "Standing desks can be a useful component of an ergonomic setup, as they facilitate regular posture changes. However, they are not a 'silver bullet.' Prolonged static standing can also lead to lower-back and leg fatigue. The key is **alternating** between sitting and standing throughout the day, coupled with short movement breaks.",
@@ -130,6 +82,36 @@ Because of your medical history, we take extra precautions to prevent blood clot
       role: 'assistant',
       content: "A persistent dry cough is a well-documented side effect of ACE inhibitors like Lisinopril, occurring in approximately 5-20% of patients due to bradykinin accumulation.\n**Recommendation**: Switch to an ARB (Angiotensin II Receptor Blocker). Losartan or Valsartan are standard clinical choices as they offer similar cardio-protective benefits without the cough side effect.\n**Typical Starting Dose**: Losartan 25mg or 50mg once daily.",
       createdAt: new Date(Date.now() - 180000).toISOString()
+    }
+  ],
+  "chat-3": [
+    {
+      id: "m13",
+      role: "user",
+      content: "Summary of first-line meds for T2DM?",
+      createdAt: new Date(Date.now() - 300000).toISOString(),
+      status: "sent"
+    },
+    {
+      id: "m14",
+      role: "assistant",
+      content: "Metformin remains the first-line pharmacological treatment for Type 2 Diabetes Mellitus, provided there are no contraindications such as severe renal impairment (eGFR < 30). It is favored for its efficacy in lowering HbA1c, low risk of hypoglycemia, and weight-neutral or weight-loss benefits.",
+      createdAt: new Date(Date.now() - 250000).toISOString()
+    }
+  ],
+  "chat-4": [
+    {
+      id: "m15",
+      role: "user",
+      content: "What should I tell the patient about wound infection signs?",
+      createdAt: new Date(Date.now() - 400000).toISOString(),
+      status: "sent"
+    },
+    {
+      id: "m16",
+      role: "assistant",
+      content: "Patients should be instructed to monitor for the following signs of infection: increasing redness (erythema) spreading from the incision, increased warmth in the area, localized swelling, new or worsening pain, and any purulent drainage or foul odor. Systemic signs like fever or chills should also be reported immediately.",
+      createdAt: new Date(Date.now() - 350000).toISOString()
     }
   ]
 }

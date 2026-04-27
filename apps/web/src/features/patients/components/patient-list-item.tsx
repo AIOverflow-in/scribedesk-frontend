@@ -16,9 +16,10 @@ interface PatientListItemProps {
 export function PatientListItem({ patient, onClick }: PatientListItemProps) {
   return (
     <div 
-      className="group relative flex items-center gap-4 p-4 transition-all cursor-pointer bg-background hover:bg-muted/80 border-t border-border"
+      className="group relative z-0 flex items-center gap-4 p-4 cursor-pointer"
       onClick={onClick}
     >
+      <div className="absolute inset-0 rounded-xl transition-colors group-hover:bg-muted/80 pointer-events-none -z-10" />
       <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
         <User className="size-5 text-primary" />
       </div>
