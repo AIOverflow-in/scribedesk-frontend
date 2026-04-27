@@ -19,6 +19,7 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 import { ChevronsUpDownIcon, SettingsIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 
 export function NavUser({
   user,
@@ -71,14 +72,14 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <SettingsIcon
-                />
-                Settings
+              <DropdownMenuItem asChild>
+                <Link to="/settings">
+                  <SettingsIcon />
+                  Settings
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <BellIcon
-                />
+                <BellIcon />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>

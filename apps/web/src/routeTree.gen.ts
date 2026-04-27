@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as protectedScribeRouteImport } from './routes/(protected)/scribe'
 import { Route as protectedTemplatesIndexRouteImport } from './routes/(protected)/templates.index'
+import { Route as protectedSettingsIndexRouteImport } from './routes/(protected)/settings.index'
 import { Route as protectedPatientsIndexRouteImport } from './routes/(protected)/patients.index'
 import { Route as protectedChatsIndexRouteImport } from './routes/(protected)/chats.index'
 import { Route as protectedChatsIdRouteImport } from './routes/(protected)/chats.$id'
@@ -29,6 +30,11 @@ const protectedScribeRoute = protectedScribeRouteImport.update({
 const protectedTemplatesIndexRoute = protectedTemplatesIndexRouteImport.update({
   id: '/(protected)/templates/',
   path: '/templates/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedSettingsIndexRoute = protectedSettingsIndexRouteImport.update({
+  id: '/(protected)/settings/',
+  path: '/settings/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const protectedPatientsIndexRoute = protectedPatientsIndexRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/chats/$id': typeof protectedChatsIdRoute
   '/chats/': typeof protectedChatsIndexRoute
   '/patients/': typeof protectedPatientsIndexRoute
+  '/settings/': typeof protectedSettingsIndexRoute
   '/templates/': typeof protectedTemplatesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/chats/$id': typeof protectedChatsIdRoute
   '/chats': typeof protectedChatsIndexRoute
   '/patients': typeof protectedPatientsIndexRoute
+  '/settings': typeof protectedSettingsIndexRoute
   '/templates': typeof protectedTemplatesIndexRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/(protected)/chats/$id': typeof protectedChatsIdRoute
   '/(protected)/chats/': typeof protectedChatsIndexRoute
   '/(protected)/patients/': typeof protectedPatientsIndexRoute
+  '/(protected)/settings/': typeof protectedSettingsIndexRoute
   '/(protected)/templates/': typeof protectedTemplatesIndexRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/chats/$id'
     | '/chats/'
     | '/patients/'
+    | '/settings/'
     | '/templates/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/scribe' | '/chats/$id' | '/chats' | '/patients' | '/templates'
+  to:
+    | '/'
+    | '/scribe'
+    | '/chats/$id'
+    | '/chats'
+    | '/patients'
+    | '/settings'
+    | '/templates'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/(protected)/chats/$id'
     | '/(protected)/chats/'
     | '/(protected)/patients/'
+    | '/(protected)/settings/'
     | '/(protected)/templates/'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +117,7 @@ export interface RootRouteChildren {
   protectedChatsIdRoute: typeof protectedChatsIdRoute
   protectedChatsIndexRoute: typeof protectedChatsIndexRoute
   protectedPatientsIndexRoute: typeof protectedPatientsIndexRoute
+  protectedSettingsIndexRoute: typeof protectedSettingsIndexRoute
   protectedTemplatesIndexRoute: typeof protectedTemplatesIndexRoute
 }
 
@@ -123,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/templates'
       fullPath: '/templates/'
       preLoaderRoute: typeof protectedTemplatesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/settings/': {
+      id: '/(protected)/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof protectedSettingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(protected)/patients/': {
@@ -155,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   protectedChatsIdRoute: protectedChatsIdRoute,
   protectedChatsIndexRoute: protectedChatsIndexRoute,
   protectedPatientsIndexRoute: protectedPatientsIndexRoute,
+  protectedSettingsIndexRoute: protectedSettingsIndexRoute,
   protectedTemplatesIndexRoute: protectedTemplatesIndexRoute,
 }
 export const routeTree = rootRouteImport
