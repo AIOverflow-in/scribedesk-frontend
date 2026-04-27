@@ -20,7 +20,8 @@ export function ProfileSettings() {
       formData.lastName !== mockUser.lastName ||
       formData.email !== mockUser.email ||
       formData.dob !== mockUser.dob ||
-      formData.gender !== mockUser.gender
+      formData.gender !== mockUser.gender ||
+      formData.speciality !== mockUser.speciality
     )
   }, [formData])
 
@@ -95,6 +96,16 @@ export function ProfileSettings() {
               <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
             </SelectContent>
           </Select>
+        </Field>
+        <Field>
+          <FieldLabel className="text-muted-foreground font-medium text-xs">
+            Speciality
+          </FieldLabel>
+          <Input
+            className="rounded-md"
+            value={formData.speciality}
+            onChange={(e) => handleInputChange("speciality", e.target.value)}
+          />
         </Field>
       </div>
 

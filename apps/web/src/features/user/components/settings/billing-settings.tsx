@@ -128,9 +128,18 @@ function formatDate(dateStr: string): string {
 
 function StatusBadge({ status }: { status: "paid" | "pending" | "failed" }) {
   const config = {
-    paid: { icon: CheckCircle, className: "text-green-600 bg-green-50" },
-    pending: { icon: Clock, className: "text-amber-600 bg-amber-50" },
-    failed: { icon: XCircle, className: "text-red-600 bg-red-50" },
+    paid: { 
+      icon: CheckCircle, 
+      className: "text-green-600 bg-green-50 dark:bg-green-500/10 dark:text-green-400" 
+    },
+    pending: { 
+      icon: Clock, 
+      className: "text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400" 
+    },
+    failed: { 
+      icon: XCircle, 
+      className: "text-red-600 bg-red-50 dark:bg-red-500/10 dark:text-red-400" 
+    },
   }[status]
 
   const Icon = config.icon

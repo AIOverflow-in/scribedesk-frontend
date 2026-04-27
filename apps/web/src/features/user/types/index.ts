@@ -5,6 +5,7 @@ export interface User {
   email: string
   dob: string
   gender: "male" | "female" | "other"
+  speciality: string
   avatar: string
 }
 

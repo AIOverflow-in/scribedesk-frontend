@@ -1,0 +1,57 @@
+import { Button } from "@workspace/ui/components/button"
+import { Input } from "@workspace/ui/components/input"
+import { Field, FieldLabel } from "@workspace/ui/components/field"
+import { cn } from "@workspace/ui/lib/utils"
+
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
+  return (
+    <form className={cn("flex flex-col gap-5", className)} {...props}>
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <p className="text-sm text-balance text-muted-foreground">
+          Enter your email below to login to your account
+        </p>
+      </div>
+
+      <Field>
+        <FieldLabel htmlFor="email">Email</FieldLabel>
+        <Input id="email" type="email" placeholder="m@example.com" required />
+      </Field>
+
+      <Field>
+        <div className="flex items-center justify-between">
+          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <a
+            href="#"
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Forgot your password?
+          </a>
+        </div>
+        <Input id="password" type="password" required />
+      </Field>
+
+      <Button type="submit" className="w-full">Login</Button>
+
+      <div className="relative text-center text-sm">
+        <span className="relative z-10 bg-background px-2 text-muted-foreground">Or continue with</span>
+        <div className="absolute inset-0 top-1/2 -translate-y-1/2 border-t" />
+      </div>
+
+      <Button variant="outline" type="button" className="w-full">
+        <img src="/icons/auth/google.png" alt="Google" className="mr-2 h-6 w-6" />
+        Login with Google
+      </Button>
+
+      <p className="text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <a href="/register" className="underline underline-offset-4">
+          Sign up
+        </a>
+      </p>
+    </form>
+  )
+}

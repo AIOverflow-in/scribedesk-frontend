@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as protectedScribeRouteImport } from './routes/(protected)/scribe'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as protectedTemplatesIndexRouteImport } from './routes/(protected)/templates.index'
 import { Route as protectedSettingsIndexRouteImport } from './routes/(protected)/settings.index'
 import { Route as protectedPatientsIndexRouteImport } from './routes/(protected)/patients.index'
@@ -25,6 +27,16 @@ const IndexRoute = IndexRouteImport.update({
 const protectedScribeRoute = protectedScribeRouteImport.update({
   id: '/(protected)/scribe',
   path: '/scribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRegisterRoute = authRegisterRouteImport.update({
+  id: '/(auth)/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const protectedTemplatesIndexRoute = protectedTemplatesIndexRouteImport.update({
@@ -55,6 +67,8 @@ const protectedChatsIdRoute = protectedChatsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
   '/scribe': typeof protectedScribeRoute
   '/chats/$id': typeof protectedChatsIdRoute
   '/chats/': typeof protectedChatsIndexRoute
@@ -64,6 +78,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof authLoginRoute
+  '/register': typeof authRegisterRoute
   '/scribe': typeof protectedScribeRoute
   '/chats/$id': typeof protectedChatsIdRoute
   '/chats': typeof protectedChatsIndexRoute
@@ -74,6 +90,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/register': typeof authRegisterRoute
   '/(protected)/scribe': typeof protectedScribeRoute
   '/(protected)/chats/$id': typeof protectedChatsIdRoute
   '/(protected)/chats/': typeof protectedChatsIndexRoute
@@ -85,6 +103,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/register'
     | '/scribe'
     | '/chats/$id'
     | '/chats/'
@@ -94,6 +114,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/login'
+    | '/register'
     | '/scribe'
     | '/chats/$id'
     | '/chats'
@@ -103,6 +125,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/(auth)/login'
+    | '/(auth)/register'
     | '/(protected)/scribe'
     | '/(protected)/chats/$id'
     | '/(protected)/chats/'
@@ -113,6 +137,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  authLoginRoute: typeof authLoginRoute
+  authRegisterRoute: typeof authRegisterRoute
   protectedScribeRoute: typeof protectedScribeRoute
   protectedChatsIdRoute: typeof protectedChatsIdRoute
   protectedChatsIndexRoute: typeof protectedChatsIndexRoute
@@ -135,6 +161,20 @@ declare module '@tanstack/react-router' {
       path: '/scribe'
       fullPath: '/scribe'
       preLoaderRoute: typeof protectedScribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(protected)/templates/': {
@@ -177,6 +217,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  authLoginRoute: authLoginRoute,
+  authRegisterRoute: authRegisterRoute,
   protectedScribeRoute: protectedScribeRoute,
   protectedChatsIdRoute: protectedChatsIdRoute,
   protectedChatsIndexRoute: protectedChatsIndexRoute,
