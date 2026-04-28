@@ -8,6 +8,7 @@ import { mockPatients } from "../data/mock-patients"
 import { PatientListItem } from "../components/patient-list-item"
 import { PatientSearch } from "../components/patient-search"
 import { PatientDetailSheet } from "../components/patient-detail-sheet"
+import { AddPatientModal } from "../components/add-patient-modal"
 import { 
   Empty, 
   EmptyHeader, 
@@ -20,6 +21,7 @@ import type { Patient } from "../types/patient"
 export function PatientsPage() {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null)
+  const [addModalOpen, setAddModalOpen] = React.useState(false)
 
   const filteredPatients = mockPatients.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -34,8 +36,9 @@ export function PatientsPage() {
           title="Patients" 
           description="Manage patient records and view clinical histories."
           actions={
-            <Button 
+            <Button
               className="gap-2 h-9 px-4 font-semibold shadow-sm cursor-pointer"
+              onClick={() => setAddModalOpen(true)}
             >
               <UserPlus className="h-4 w-4" />
               Add Patient
@@ -49,7 +52,7 @@ export function PatientsPage() {
         <div className="flex-1 min-h-0">
           {filteredPatients.length > 0 ? (
             <ScrollArea className="flex-1">
-              <div className="flex flex-col mb-10 [&>*:hover]:border-t-transparent [&>*:hover+*]:border-t-transparent [&>*:first-child]:border-t-0 [&>*]:border-t [&>*]:border-border">
+              <div className="flex flex-col mb-10 [&>*:hover]:border-t-transparent [&>*:hover+*]:border-t-transparent [&>*:first-child]:border-t-0 *:border-t *:border-border">
                 {filteredPatients.map((patient) => (
                   <PatientListItem
                     key={patient.id}
@@ -77,9 +80,18 @@ export function PatientsPage() {
         </div>
       </div>
 
-      <PatientDetailSheet 
-        patient={selectedPatient} 
-        onClose={() => setSelectedPatient(null)} 
+      <PatientDetailSheet
+        patient={selectedPatient}
+        onClose={() => setSelectedPatient(null)}
+      />
+
+      <AddPatientModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onAdd={(patient) => {
+          console.log("New patient:", patient)
+          // TODO: integrate with actual patient creation
+        }}
       />
     </DashboardLayout>
   )

@@ -112,11 +112,7 @@ export function DocumentTypeModal() {
           </DialogTitle>
           <DialogDescription>
             {step === "CATEGORY" && "Select the type of document you want to generate."}
-            {step === "ITEM_SPECS" && (
-              selectedItem 
-                ? `Provide specific details to refine your ${selectedItemLabel}.` 
-                : `Select a document subtype and add context.`
-            )}
+            {step === "ITEM_SPECS" && "Select a document subtype and add context."}
             {step === "RX_BUILDER" && "Add medicines and instructions below."}
           </DialogDescription>
         </DialogHeader>

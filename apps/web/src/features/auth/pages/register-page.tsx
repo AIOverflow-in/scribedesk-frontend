@@ -21,7 +21,7 @@ export default function RegisterPage() {
             <div className="flex flex-col items-center gap-1 text-center mb-6">
               <h1 className="text-2xl font-bold">Create your account</h1>
               <p className="text-sm text-muted-foreground">
-                Join ClinScribe and start your free trial
+                Join ScribeDesk and start your free trial
               </p>
             </div>
             <RegisterForm />
