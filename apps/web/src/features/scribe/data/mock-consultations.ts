@@ -162,4 +162,167 @@ Straight leg raise test negative bilaterally. Lower extremity strength is 5/5. S
     transcript: longTranscript,
     reports: [],
   },
+  {
+    id: "6",
+    title: "Cardiology Consultation",
+    patient: { id: "p1", name: "John Doe", age: 45, gender: "male" },
+    date: "2023-06-12",
+    description: "Heart health evaluation following elevated blood pressure readings.",
+    duration: 40,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+45-year-old male referred by PCP for evaluation of borderline hypertension and family history of early CAD. Patient reports occasional palpitations with caffeine intake but denies chest pain or syncope.
+
+### OBJECTIVE
+BP 138/88. HR 76 regular. Cardiac exam reveals S1/S2 normal, no murmurs, rubs, or gallops. EKG shows normal sinus rhythm. BMI 28.5.
+
+### ASSESSMENT & PLAN
+- **Diagnosis:** Essential hypertension, stage 1. Low cardiovascular risk.
+- **Recommendation:** Lifestyle modifications (DASH diet, exercise 150min/week).
+- **Follow-up:** Return in 6 months for BP recheck.
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
+  {
+    id: "7",
+    title: "Dermatology Skin Check",
+    patient: { id: "p1", name: "John Doe", age: 45, gender: "male" },
+    date: "2023-04-08",
+    description: "Annual skin examination and removal of suspicious moles.",
+    duration: 25,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+Routine skin exam. Patient reports a new slightly raised lesion on his left forearm that has grown over 6 months.
+
+### OBJECTIVE
+Examination revealed 4mm flesh-colored papule left forearm, consistent with intradermal nevus. Two additional solar lentigines on dorsal hands. No melanoma suspicion.
+
+### ASSESSMENT & PLAN
+- **Nevus:** Benign appearance, no biopsy needed. Photograph for documentation.
+- **Sun protection:** Daily SPF 30 recommended.
+- **Next skin exam:** 12 months.
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
+  {
+    id: "8",
+    title: "Gastroenterology Consult",
+    patient: { id: "p1", name: "John Doe", age: 44, gender: "male" },
+    date: "2023-01-22",
+    description: "Evaluation of recurring acid reflux and bloating symptoms.",
+    duration: 35,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+44-year-old male with 3-month history of heartburn, regurgitation, and post-prandial bloating. Symptoms worse after coffee and fatty foods. No weight loss or dysphagia.
+
+### OBJECTIVE
+Abdomen soft, non-tender. No organomegaly. BMI 27.8.
+
+### ASSESSMENT & PLAN
+- **Diagnosis:** GERD with functional dyspepsia.
+- **Treatment:** PPI (Omeprazole 20mg daily) for 8 weeks, food diary.
+- **Lifestyle:** Elevate head of bed, avoid late meals.
+- **Follow-up:** If symptoms persist, consider endoscopy.
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
+  {
+    id: "9",
+    title: "Pulmonology Visit",
+    patient: { id: "p1", name: "John Doe", age: 44, gender: "male" },
+    date: "2022-11-15",
+    description: "Follow-up for mild asthma diagnosis and inhaler adjustment.",
+    duration: 30,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+Patient reports improved breathing since starting Flovent inhaler twice daily. Exercise-induced shortness of breath has decreased. No nighttime symptoms.
+
+### OBJECTIVE
+O2 sat 98% on room air. Lungs clear bilaterally. FEV1 92% predicted. Good airflow.
+
+### ASSESSMENT & PLAN
+- Continue Flovent 110mcg 2 puffs BID.
+- Albuterol rescue inhaler as needed.
+- Reassess in 3 months.
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
+  {
+    id: "10",
+    title: "Ophthalmology Exam",
+    patient: { id: "p1", name: "John Doe", age: 44, gender: "male" },
+    date: "2022-09-03",
+    description: "Routine eye examination with new prescription for reading glasses.",
+    duration: 20,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+Annual eye exam. Patient noticing difficulty focusing on close text, especially in low light. No visual disturbances, flashes, or floaters.
+
+### OBJECTIVE
+Visual acuity 20/25 OD, 20/20 OS. Intraocular pressure normal. Fundoscopic exam shows healthy optic discs. Cataracts absent.
+
+### ASSESSMENT & PLAN
+- **Prescription:** Readers +1.25 for close work.
+- **Advice:** Annual exam continued.
+- **Follow-up:** 12 months.
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
+  {
+    id: "11",
+    title: "ENT Consultation",
+    patient: { id: "p1", name: "John Doe", age: 43, gender: "male" },
+    date: "2022-06-18",
+    description: "Evaluation of chronic seasonal allergies and nasal congestion.",
+    duration: 30,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+Patient reports 2-year history of seasonal allergies causing nasal congestion, sneezing, and itchy eyes. Over-the-counter antihistamines provide partial relief.
+
+### OBJECTIVE
+Nasal mucosa slightly edematous but pink. No polyps. Sinuses non-tender to palpation. TMs clear bilaterally.
+
+### ASSESSMENT & PLAN
+- **Diagnosis:** Allergic rhinitis, moderate.
+- **Treatment:** Fluticasone nasal spray daily, continue cetirizine as needed.
+- **Allergen avoidance counseling provided.**
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
+  {
+    id: "12",
+    title: "Initial Physical",
+    patient: { id: "p1", name: "John Doe", age: 43, gender: "male" },
+    date: "2022-03-10",
+    description: "New patient comprehensive physical examination.",
+    duration: 60,
+    status: "completed",
+    summary: `
+### SUBJECTIVE
+43-year-old male establishing care. No acute complaints. Past medical history significant for childhood asthma (resolved). Family history notable for father with CAD at 52.
+
+### OBJECTIVE
+Vitals: BP 128/82, HR 68, BMI 26.2. General: Well-appearing male. Heart RRR, lungs clear. Abdomen soft, non-tender.
+
+### ASSESSMENT & PLAN
+- **Overall:** Healthy adult male, establish care.
+- **Preventive:** Updated vaccines, discussed colonoscopy at 50.
+- **Labs:** CBC, metabolic panel, lipid panel ordered.
+- **Follow-up:** 12 months for routine physical.
+    `.trim(),
+    transcript: longTranscript,
+    reports: [],
+  },
 ]

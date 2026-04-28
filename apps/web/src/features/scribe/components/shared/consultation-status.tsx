@@ -18,5 +18,12 @@ const statusConfig: Record<
 export function ConsultationStatusBadge({ status }: ConsultationStatusProps) {
   const config = statusConfig[status]
 
-  return <Badge variant={config.variant}>{config.label}</Badge>
+  return (
+    <Badge 
+      variant={config.variant} 
+      className="text-[9px] uppercase font-semibold tracking-wider h-4 px-1.5 leading-none"
+    >
+      {config.label}
+    </Badge>
+  )
 }

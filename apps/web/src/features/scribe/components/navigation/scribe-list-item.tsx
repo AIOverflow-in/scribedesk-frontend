@@ -49,12 +49,12 @@ export function ScribeListItem({
         <p className="text-base font-medium truncate pr-16">{consultation.title}</p>
 
         {/* Patient Details: name, date, duration */}
-        <p className="text-sm font-medium text-foreground/80 pr-16 mt-1">
-          {consultation.patient.name} <span className="text-xs text-foreground/60 ml-2">{formatDate(consultation.date)}</span>
+        <p className="text-[13px] font-medium text-foreground/80 pr-16 mt-0.5">
+          {consultation.patient.name} <span className="text-[11px] text-foreground/60 ml-2">{formatDate(consultation.date)}</span>
           {consultation.duration && (
             <>
-              <span className="mx-1.5 text-xs text-foreground/60">•</span>
-              <span className="text-xs text-foreground/60">{formatDuration(consultation.duration)}</span>
+              <span className="mx-1 text-[11px] text-foreground/60">•</span>
+              <span className="text-[11px] text-foreground/60">{formatDuration(consultation.duration)}</span>
             </>
           )}
         </p>
