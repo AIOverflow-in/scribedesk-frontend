@@ -1,19 +1,19 @@
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
 import { AppSidebar } from "@/shared/components/sidebar/app-sidebar"
-import { DashboardHeader } from "@/shared/layout/dashboard-header"
+import { MainHeader } from "@/shared/layout/main-header"
 
-interface DashboardLayoutProps {
+interface AppLayoutProps {
   children: React.ReactNode
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function AppLayout({ children }: AppLayoutProps) {
   return (
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <DashboardHeader />
+          <MainHeader />
           <div className="flex flex-1 flex-col gap-6 p-6 pt-6">
             {children}
           </div>

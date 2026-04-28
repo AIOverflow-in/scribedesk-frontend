@@ -76,9 +76,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       if (e.matches) setOpen(false)
     }
 
-    if (lgQuery.matches) setOpen(true)
-    else if (mdQuery.matches) setOpen(false)
-
     lgQuery.addEventListener("change", handleLgChange)
     mdQuery.addEventListener("change", handleMdChange)
 

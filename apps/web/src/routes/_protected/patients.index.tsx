@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { PatientsPage } from "@workspace/features/patients/pages/patients-page"
 
-export const Route = createFileRoute("/(protected)/patients/")({
+export const Route = createFileRoute("/_protected/patients/")({
   component: PatientsRoute,
 })
 

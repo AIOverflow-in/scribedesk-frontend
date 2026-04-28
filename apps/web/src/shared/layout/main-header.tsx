@@ -5,7 +5,7 @@ import { Input } from "@workspace/ui/components/input"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { Separator } from "@workspace/ui/components/separator"
 
-export function DashboardHeader() {
+export function MainHeader() {
   const { setTheme, theme } = useTheme()
 
   return (

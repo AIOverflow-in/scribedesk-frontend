@@ -9,25 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as protectedScribeRouteImport } from './routes/(protected)/scribe'
+import { Route as ProtectedRouteImport } from './routes/_protected'
+import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
+import { Route as ProtectedScribeRouteImport } from './routes/_protected/scribe'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
-import { Route as protectedTemplatesIndexRouteImport } from './routes/(protected)/templates.index'
-import { Route as protectedSettingsIndexRouteImport } from './routes/(protected)/settings.index'
-import { Route as protectedPatientsIndexRouteImport } from './routes/(protected)/patients.index'
-import { Route as protectedChatsIndexRouteImport } from './routes/(protected)/chats.index'
-import { Route as protectedChatsIdRouteImport } from './routes/(protected)/chats.$id'
+import { Route as ProtectedTemplatesIndexRouteImport } from './routes/_protected/templates.index'
+import { Route as ProtectedSettingsIndexRouteImport } from './routes/_protected/settings.index'
+import { Route as ProtectedPatientsIndexRouteImport } from './routes/_protected/patients.index'
+import { Route as ProtectedChatsIndexRouteImport } from './routes/_protected/chats.index'
+import { Route as ProtectedChatsIdRouteImport } from './routes/_protected/chats.$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
   getParentRoute: () => rootRouteImport,
 } as any)
-const protectedScribeRoute = protectedScribeRouteImport.update({
-  id: '/(protected)/scribe',
+const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedScribeRoute = ProtectedScribeRouteImport.update({
+  id: '/scribe',
   path: '/scribe',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
 const authRegisterRoute = authRegisterRouteImport.update({
   id: '/(auth)/register',
@@ -39,65 +44,66 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const protectedTemplatesIndexRoute = protectedTemplatesIndexRouteImport.update({
-  id: '/(protected)/templates/',
+const ProtectedTemplatesIndexRoute = ProtectedTemplatesIndexRouteImport.update({
+  id: '/templates/',
   path: '/templates/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const protectedSettingsIndexRoute = protectedSettingsIndexRouteImport.update({
-  id: '/(protected)/settings/',
+const ProtectedSettingsIndexRoute = ProtectedSettingsIndexRouteImport.update({
+  id: '/settings/',
   path: '/settings/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const protectedPatientsIndexRoute = protectedPatientsIndexRouteImport.update({
-  id: '/(protected)/patients/',
+const ProtectedPatientsIndexRoute = ProtectedPatientsIndexRouteImport.update({
+  id: '/patients/',
   path: '/patients/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const protectedChatsIndexRoute = protectedChatsIndexRouteImport.update({
-  id: '/(protected)/chats/',
+const ProtectedChatsIndexRoute = ProtectedChatsIndexRouteImport.update({
+  id: '/chats/',
   path: '/chats/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const protectedChatsIdRoute = protectedChatsIdRouteImport.update({
-  id: '/(protected)/chats/$id',
+const ProtectedChatsIdRoute = ProtectedChatsIdRouteImport.update({
+  id: '/chats/$id',
   path: '/chats/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof ProtectedIndexRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/scribe': typeof protectedScribeRoute
-  '/chats/$id': typeof protectedChatsIdRoute
-  '/chats/': typeof protectedChatsIndexRoute
-  '/patients/': typeof protectedPatientsIndexRoute
-  '/settings/': typeof protectedSettingsIndexRoute
-  '/templates/': typeof protectedTemplatesIndexRoute
+  '/scribe': typeof ProtectedScribeRoute
+  '/chats/$id': typeof ProtectedChatsIdRoute
+  '/chats/': typeof ProtectedChatsIndexRoute
+  '/patients/': typeof ProtectedPatientsIndexRoute
+  '/settings/': typeof ProtectedSettingsIndexRoute
+  '/templates/': typeof ProtectedTemplatesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
-  '/scribe': typeof protectedScribeRoute
-  '/chats/$id': typeof protectedChatsIdRoute
-  '/chats': typeof protectedChatsIndexRoute
-  '/patients': typeof protectedPatientsIndexRoute
-  '/settings': typeof protectedSettingsIndexRoute
-  '/templates': typeof protectedTemplatesIndexRoute
+  '/scribe': typeof ProtectedScribeRoute
+  '/': typeof ProtectedIndexRoute
+  '/chats/$id': typeof ProtectedChatsIdRoute
+  '/chats': typeof ProtectedChatsIndexRoute
+  '/patients': typeof ProtectedPatientsIndexRoute
+  '/settings': typeof ProtectedSettingsIndexRoute
+  '/templates': typeof ProtectedTemplatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_protected': typeof ProtectedRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
-  '/(protected)/scribe': typeof protectedScribeRoute
-  '/(protected)/chats/$id': typeof protectedChatsIdRoute
-  '/(protected)/chats/': typeof protectedChatsIndexRoute
-  '/(protected)/patients/': typeof protectedPatientsIndexRoute
-  '/(protected)/settings/': typeof protectedSettingsIndexRoute
-  '/(protected)/templates/': typeof protectedTemplatesIndexRoute
+  '/_protected/scribe': typeof ProtectedScribeRoute
+  '/_protected/': typeof ProtectedIndexRoute
+  '/_protected/chats/$id': typeof ProtectedChatsIdRoute
+  '/_protected/chats/': typeof ProtectedChatsIndexRoute
+  '/_protected/patients/': typeof ProtectedPatientsIndexRoute
+  '/_protected/settings/': typeof ProtectedSettingsIndexRoute
+  '/_protected/templates/': typeof ProtectedTemplatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -113,10 +119,10 @@ export interface FileRouteTypes {
     | '/templates/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
     | '/register'
     | '/scribe'
+    | '/'
     | '/chats/$id'
     | '/chats'
     | '/patients'
@@ -124,44 +130,46 @@ export interface FileRouteTypes {
     | '/templates'
   id:
     | '__root__'
-    | '/'
+    | '/_protected'
     | '/(auth)/login'
     | '/(auth)/register'
-    | '/(protected)/scribe'
-    | '/(protected)/chats/$id'
-    | '/(protected)/chats/'
-    | '/(protected)/patients/'
-    | '/(protected)/settings/'
-    | '/(protected)/templates/'
+    | '/_protected/scribe'
+    | '/_protected/'
+    | '/_protected/chats/$id'
+    | '/_protected/chats/'
+    | '/_protected/patients/'
+    | '/_protected/settings/'
+    | '/_protected/templates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  ProtectedRoute: typeof ProtectedRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
-  protectedScribeRoute: typeof protectedScribeRoute
-  protectedChatsIdRoute: typeof protectedChatsIdRoute
-  protectedChatsIndexRoute: typeof protectedChatsIndexRoute
-  protectedPatientsIndexRoute: typeof protectedPatientsIndexRoute
-  protectedSettingsIndexRoute: typeof protectedSettingsIndexRoute
-  protectedTemplatesIndexRoute: typeof protectedTemplatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_protected': {
+      id: '/_protected'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof ProtectedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(protected)/scribe': {
-      id: '/(protected)/scribe'
+    '/_protected/': {
+      id: '/_protected/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof ProtectedIndexRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/scribe': {
+      id: '/_protected/scribe'
       path: '/scribe'
       fullPath: '/scribe'
-      preLoaderRoute: typeof protectedScribeRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedScribeRouteImport
+      parentRoute: typeof ProtectedRoute
     }
     '/(auth)/register': {
       id: '/(auth)/register'
@@ -177,54 +185,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(protected)/templates/': {
-      id: '/(protected)/templates/'
+    '/_protected/templates/': {
+      id: '/_protected/templates/'
       path: '/templates'
       fullPath: '/templates/'
-      preLoaderRoute: typeof protectedTemplatesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedTemplatesIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/(protected)/settings/': {
-      id: '/(protected)/settings/'
+    '/_protected/settings/': {
+      id: '/_protected/settings/'
       path: '/settings'
       fullPath: '/settings/'
-      preLoaderRoute: typeof protectedSettingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedSettingsIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/(protected)/patients/': {
-      id: '/(protected)/patients/'
+    '/_protected/patients/': {
+      id: '/_protected/patients/'
       path: '/patients'
       fullPath: '/patients/'
-      preLoaderRoute: typeof protectedPatientsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedPatientsIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/(protected)/chats/': {
-      id: '/(protected)/chats/'
+    '/_protected/chats/': {
+      id: '/_protected/chats/'
       path: '/chats'
       fullPath: '/chats/'
-      preLoaderRoute: typeof protectedChatsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedChatsIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/(protected)/chats/$id': {
-      id: '/(protected)/chats/$id'
+    '/_protected/chats/$id': {
+      id: '/_protected/chats/$id'
       path: '/chats/$id'
       fullPath: '/chats/$id'
-      preLoaderRoute: typeof protectedChatsIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedChatsIdRouteImport
+      parentRoute: typeof ProtectedRoute
     }
   }
 }
 
+interface ProtectedRouteChildren {
+  ProtectedScribeRoute: typeof ProtectedScribeRoute
+  ProtectedIndexRoute: typeof ProtectedIndexRoute
+  ProtectedChatsIdRoute: typeof ProtectedChatsIdRoute
+  ProtectedChatsIndexRoute: typeof ProtectedChatsIndexRoute
+  ProtectedPatientsIndexRoute: typeof ProtectedPatientsIndexRoute
+  ProtectedSettingsIndexRoute: typeof ProtectedSettingsIndexRoute
+  ProtectedTemplatesIndexRoute: typeof ProtectedTemplatesIndexRoute
+}
+
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedScribeRoute: ProtectedScribeRoute,
+  ProtectedIndexRoute: ProtectedIndexRoute,
+  ProtectedChatsIdRoute: ProtectedChatsIdRoute,
+  ProtectedChatsIndexRoute: ProtectedChatsIndexRoute,
+  ProtectedPatientsIndexRoute: ProtectedPatientsIndexRoute,
+  ProtectedSettingsIndexRoute: ProtectedSettingsIndexRoute,
+  ProtectedTemplatesIndexRoute: ProtectedTemplatesIndexRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  ProtectedRoute: ProtectedRouteWithChildren,
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,
-  protectedScribeRoute: protectedScribeRoute,
-  protectedChatsIdRoute: protectedChatsIdRoute,
-  protectedChatsIndexRoute: protectedChatsIndexRoute,
-  protectedPatientsIndexRoute: protectedPatientsIndexRoute,
-  protectedSettingsIndexRoute: protectedSettingsIndexRoute,
-  protectedTemplatesIndexRoute: protectedTemplatesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

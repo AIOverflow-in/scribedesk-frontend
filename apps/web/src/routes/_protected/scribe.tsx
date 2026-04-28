@@ -8,7 +8,7 @@ const scribeSearchSchema = z.object({
 
 type ScribeSearch = z.infer<typeof scribeSearchSchema>
 
-export const Route = createFileRoute("/(protected)/scribe")({
+export const Route = createFileRoute("/_protected/scribe")({
   validateSearch: (search: Record<string, unknown>): ScribeSearch => 
     scribeSearchSchema.parse(search),
   component: ScribeRoute,
