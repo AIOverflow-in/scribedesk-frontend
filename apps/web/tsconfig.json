@@ -24,6 +24,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@workspace/api-client/*": ["../../packages/api-client/src/*"],
+      "@workspace/hooks/*": ["../../packages/hooks/src/*"],
+      "@workspace/schemas/*": ["../../packages/schemas/src/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"],
       "@workspace/features/*": ["./src/features/*"]
     }

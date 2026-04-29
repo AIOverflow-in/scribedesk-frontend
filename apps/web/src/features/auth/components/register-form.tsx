@@ -1,8 +1,12 @@
-import { useState } from "react"
+"use client";
+
+import { useState } from "react";
 import { cn } from "@workspace/ui/lib/utils"
 import { Check } from "lucide-react"
 import { StepPersonal } from "./steps/step-personal"
 import { StepClinic } from "./steps/step-clinic"
+import { useAuthRegister } from "../hooks/use-auth-flow"
+import { toast } from "@workspace/ui/components/sonner"
 import type { PersonalDetails, ClinicDetails } from "../types"
 
 export function RegisterForm({
@@ -28,9 +32,44 @@ export function RegisterForm({
     country: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const registerMutation = useAuthRegister()
+
+  const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault()
-    console.log({ personal, clinic })
+    submitForm()
+  }
+
+  const submitForm = () => {
+    registerMutation.mutate(
+      {
+        email: personal.email,
+        password: personal.password,
+        profile: {
+          first_name: personal.firstName,
+          last_name: personal.lastName || undefined,
+          dob: personal.dob || undefined,
+          gender: personal.gender === "male" ? "Male" : personal.gender === "female" ? "Female" : "Other",
+          speciality: personal.speciality || undefined,
+        },
+        clinic: {
+          name: clinic.name,
+          street: clinic.street || undefined,
+          city: clinic.city || undefined,
+          state: clinic.state || undefined,
+          pincode: clinic.pincode || undefined,
+          country: clinic.country,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Account created successfully")
+        },
+        onError: (error) => {
+          const message = error instanceof Error ? error.message : "Failed to create account"
+          toast.error(message)
+        },
+      }
+    )
   }
 
   return (
@@ -56,7 +95,8 @@ export function RegisterForm({
           data={clinic}
           onChange={setClinic}
           onBack={() => setStep(1)}
-          onSubmit={() => handleSubmit}
+          onSubmit={submitForm}
+          isPending={registerMutation.isPending}
         />
       )}
 

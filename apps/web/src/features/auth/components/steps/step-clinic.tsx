@@ -8,9 +8,10 @@ interface StepClinicProps {
   onChange: (data: ClinicDetails) => void
   onBack: () => void
   onSubmit: () => void
+  isPending?: boolean
 }
 
-export function StepClinic({ data, onChange, onBack, onSubmit }: StepClinicProps) {
+export function StepClinic({ data, onChange, onBack, onSubmit, isPending }: StepClinicProps) {
   const handleChange = (key: keyof ClinicDetails, value: string) => {
     onChange({ ...data, [key]: value })
   }
@@ -68,7 +69,8 @@ export function StepClinic({ data, onChange, onBack, onSubmit }: StepClinicProps
           <Input
             value={data.country}
             onChange={(e) => handleChange("country", e.target.value)}
-            placeholder="United States"
+            placeholder="US"
+            maxLength={2}
           />
         </Field>
       </div>
@@ -77,8 +79,8 @@ export function StepClinic({ data, onChange, onBack, onSubmit }: StepClinicProps
         <Button variant="outline" onClick={onBack} type="button">
           Back
         </Button>
-        <Button onClick={onSubmit} className="flex-1">
-          Create Account
+        <Button onClick={onSubmit} className="flex-1" disabled={isPending}>
+          {isPending ? "Creating Account..." : "Create Account"}
         </Button>
       </div>
     </div>

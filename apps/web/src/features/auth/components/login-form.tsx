@@ -1,14 +1,39 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { cn } from "@workspace/ui/lib/utils"
+import { useAuthLogin } from "../hooks/use-auth-flow"
+import { toast } from "@workspace/ui/components/sonner"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const loginMutation = useAuthLogin()
+
+  const handleSubmit = (e: React.SubmitEvent) => {
+    e.preventDefault()
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: () => {
+          toast.success("Logged in successfully")
+        },
+        onError: (error) => {
+          const message = error instanceof Error ? error.message : "Invalid email or password"
+          toast.error(message)
+        },
+      }
+    )
+  }
+
   return (
-    <form className={cn("flex flex-col gap-5", className)} {...props}>
+    <form onSubmit={handleSubmit} className={cn("flex flex-col gap-5", className)} {...props}>
       <div className="flex flex-col items-center gap-1 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-sm text-balance text-muted-foreground">
@@ -18,7 +43,14 @@ export function LoginForm({
 
       <Field>
         <FieldLabel htmlFor="email">Email</FieldLabel>
-        <Input id="email" type="email" placeholder="m@example.com" required />
+        <Input
+          id="email"
+          type="email"
+          placeholder="m@example.com"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </Field>
 
       <Field>
@@ -31,10 +63,18 @@ export function LoginForm({
             Forgot your password?
           </a>
         </div>
-        <Input id="password" type="password" required />
+        <Input
+          id="password"
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </Field>
 
-      <Button type="submit" className="w-full">Login</Button>
+      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+        {loginMutation.isPending ? "Logging in..." : "Login"}
+      </Button>
 
       <div className="relative text-center text-sm">
         <span className="relative z-10 bg-background px-2 text-muted-foreground">Or continue with</span>

@@ -1,7 +1,10 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
 import { ThemeProvider } from "@workspace/ui/components/theme-provider"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { Toaster } from "@workspace/ui/components/sonner"
 
 import appCss from "@workspace/ui/globals.css?url"
+import { AuthProvider } from "@/contexts/AuthContext"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,6 +30,15 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: false,
+    },
+  },
+})
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -34,14 +46,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </ThemeProvider>
+          <Toaster />
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>
