@@ -1,0 +1,23 @@
+{
+    "name": "@workspace/hooks",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+      ".": "./src/index.ts",
+      "./*": "./src/*.ts"
+    },
+    "scripts": {
+      "typecheck": "tsc --noEmit"
+    },
+    "dependencies": {
+      "@workspace/schemas": "workspace:*",
+      "@workspace/api-client": "workspace:*",
+      "@tanstack/react-query": "5.90.21",
+      "react": "^19.2.4"
+    },
+    "devDependencies": {
+      "@types/react": "^19.2.10",
+      "typescript": "^5.9.3"
+    }
+  }
