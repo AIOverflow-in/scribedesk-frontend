@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
+import type { CreatePatientRequest } from "@workspace/schemas"
 
 const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
 const GENDERS = ["male", "female", "other"] as const
@@ -23,15 +24,7 @@ const GENDERS = ["male", "female", "other"] as const
 interface AddPatientModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onAdd: (patient: {
-    name: string
-    email: string
-    identifier: string
-    dob: string
-    gender: "male" | "female" | "other"
-    bloodGroup: string
-    age: number
-  }) => void
+  onAdd: (data: CreatePatientRequest) => void
 }
 
 export function AddPatientModal({ open, onOpenChange, onAdd }: AddPatientModalProps) {
@@ -43,21 +36,18 @@ export function AddPatientModal({ open, onOpenChange, onAdd }: AddPatientModalPr
   const [bloodGroup, setBloodGroup] = React.useState("")
   const [dob, setDob] = React.useState("")
 
-  const isValid = firstName && lastName && email && ehrId && gender && bloodGroup && dob
+  const isValid = firstName && gender
 
   const handleAdd = () => {
     if (!isValid) return
-    const age = new Date().getFullYear() - new Date(dob).getFullYear()
     onAdd({
-      name: `${firstName} ${lastName}`,
-      email,
-      identifier: ehrId,
-      dob,
+      full_name: lastName ? `${firstName} ${lastName}` : firstName,
+      email: email || undefined,
+      identifier: ehrId || undefined,
+      date_of_birth: dob || undefined,
       gender,
-      bloodGroup,
-      age,
+      blood_group: bloodGroup || undefined,
     })
-    // Reset form
     setFirstName("")
     setLastName("")
     setEmail("")
@@ -133,7 +123,7 @@ export function AddPatientModal({ open, onOpenChange, onAdd }: AddPatientModalPr
                 <FieldLabel className="text-muted-foreground font-medium text-xs flex items-center gap-1.5">
                   <User className="size-3.5 text-primary" /> Gender
                 </FieldLabel>
-                <Select value={gender} onValueChange={(v) => setGender(v as any)}>
+                <Select value={gender} onValueChange={(v) => setGender(v as typeof GENDERS[number])}>
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>

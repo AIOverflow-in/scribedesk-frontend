@@ -9,10 +9,11 @@ import type {
 
 export function createSessionApi(client: ApiClient) {
   return {
-    list: (page: number = 1, pageSize: number = 20) =>
-      client.get<PaginatedSessionsResponse>(
-        `/sessions?page=${page}&page_size=${pageSize}`
-      ),
+    list: (page: number = 1, pageSize: number = 20, patientId?: string) => {
+      const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) })
+      if (patientId) params.set("patient_id", patientId)
+      return client.get<PaginatedSessionsResponse>(`/sessions?${params}`)
+    },
 
     get: (sessionId: string) =>
       client.get<SessionResponse>(`/sessions/${sessionId}`),
@@ -25,5 +26,8 @@ export function createSessionApi(client: ApiClient) {
 
     getTimeline: (sessionId: string) =>
       client.get<SessionTimelineEntry[]>(`/sessions/${sessionId}/timeline`),
+
+    delete: (sessionId: string) =>
+      client.delete(`/sessions/${sessionId}`),
   };
 }

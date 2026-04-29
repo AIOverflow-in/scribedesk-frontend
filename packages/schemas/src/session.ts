@@ -32,6 +32,21 @@ export const sessionResponseSchema = z.object({
   updated_at: z.string(),
 });
 
+export const sessionListItemSchema = z.object({
+  id: z.uuid(),
+  patient_id: z.uuid().optional(),
+  patient_name: z.string().optional(),
+  patient_gender: z.string().optional(),
+  patient_age: z.number().optional(),
+  title: z.string(),
+  description: z.string().optional(),
+  status: z.string(),
+  total_audio_seconds: z.number(),
+  current_segment_start: z.string().optional().nullable(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
 export const sessionTimelineEntrySchema = z.object({
   id: z.uuid(),
   session_id: z.uuid(),
@@ -43,7 +58,7 @@ export const sessionTimelineEntrySchema = z.object({
   created_at: z.string(),
 });
 
-export const paginatedSessionsResponseSchema = createPaginatedResponseSchema(sessionResponseSchema);
+export const paginatedSessionsResponseSchema = createPaginatedResponseSchema(sessionListItemSchema);
 
 export const wsReadySchema = z.object({
   type: z.literal("ready"),
@@ -61,6 +76,7 @@ export const wsEventSchema = z.discriminatedUnion("type", [wsReadySchema, wsTran
 export type CreateSessionRequest = z.infer<typeof createSessionRequestSchema>;
 export type UpdateSessionRequest = z.infer<typeof updateSessionRequestSchema>;
 export type SessionResponse = z.infer<typeof sessionResponseSchema>;
+export type SessionListItem = z.infer<typeof sessionListItemSchema>;
 export type SessionTimelineEntry = z.infer<typeof sessionTimelineEntrySchema>;
 export type PaginatedSessionsResponse = z.infer<typeof paginatedSessionsResponseSchema>;
 export type WsReady = z.infer<typeof wsReadySchema>;

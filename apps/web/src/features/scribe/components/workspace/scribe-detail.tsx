@@ -6,6 +6,7 @@ export interface ScribeDetailProps {
   consultation: Consultation
   isListVisible: boolean
   onToggleList: () => void
+  onDelete: (sessionId: string) => void
   isMobile?: boolean
 }
 
@@ -13,6 +14,7 @@ export function ScribeDetail({
   consultation,
   isListVisible,
   onToggleList,
+  onDelete,
   isMobile = false,
 }: ScribeDetailProps) {
   return (
@@ -21,6 +23,7 @@ export function ScribeDetail({
         consultation={consultation}
         isListVisible={isListVisible}
         onToggleList={onToggleList}
+        onDelete={onDelete}
         isMobile={isMobile}
       />
       <div className="flex-1 min-h-0">

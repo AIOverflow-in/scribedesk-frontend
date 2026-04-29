@@ -1,7 +1,8 @@
 import * as React from "react"
 import { 
   Copy, 
-  CircleCheck
+  CircleCheck,
+  PenLine
 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import { NativeScroll } from "@workspace/ui/components/native-scroll"
@@ -48,11 +49,11 @@ export function SummaryPanel({ consultation }: SummaryPanelProps) {
     <div className="border rounded-lg bg-background h-full flex flex-col overflow-hidden relative group/panel">
       
       {/* Persistent Action Bar */}
-      <div className="shrink-0 flex items-center justify-end px-4 pt-3 pb-0 z-20 bg-background/50">
+      <div className="absolute top-0 right-0 flex items-center justify-end px-4 pt-3 z-20">
         <Button 
           variant="outline" 
           size="icon" 
-          className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer transition-all duration-200 shadow-xs"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer transition-all duration-200 shadow-xs bg-background/50"
           onClick={handleCopy}
           title="Copy summary text"
         >
@@ -71,10 +72,11 @@ export function SummaryPanel({ consultation }: SummaryPanelProps) {
 
       {content ? (
         <NativeScroll className="flex-1 min-h-0">
-          <div className="px-8 md:px-10 pb-8 pt-1">
+          <div className="px-8 md:px-10 pt-10 pb-8">
             <div className="text-[14px] leading-relaxed text-foreground/90">
               <ReactMarkdown
                 components={{
+                  h2: ({node, ...props}) => <h2 className="text-[13px] font-bold text-foreground mt-6 mb-2 uppercase tracking-wide" {...props} />,
                   h3: ({node, ...props}) => <h3 className="text-[13px] font-bold text-foreground mt-6 mb-2 uppercase tracking-wide" {...props} />,
                   p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
                   ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-3 space-y-1" {...props} />,
@@ -92,7 +94,7 @@ export function SummaryPanel({ consultation }: SummaryPanelProps) {
           <Empty className="border-none">
             <EmptyHeader>
               <EmptyMedia variant="icon" className="bg-blue-500/10 text-blue-500">
-                <div className="w-5 h-5 border-2 border-blue-500 rounded-sm" />
+                <PenLine className="w-5 h-5" />
               </EmptyMedia>
               <EmptyTitle>No Summary Yet</EmptyTitle>
               <EmptyDescription>

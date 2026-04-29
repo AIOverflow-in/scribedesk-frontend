@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useNavigate } from "@tanstack/react-router"
 
 import { NavMain } from "@/shared/components/sidebar/nav-main"
 import { NavChats } from "@/shared/components/sidebar/nav-chats"
@@ -28,12 +29,12 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
+    name: "Chethan",
     email: "m@example.com",
     avatar: "/favicon.ico",
   },
   app: {
-    name: "Acme Inc",
+    name: "ScribeDesk",
     logo: <GalleryVerticalEndIcon />,
     plan: "Enterprise",
   },
@@ -62,6 +63,7 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigate = useNavigate()
   const { setOpen } = useSidebar()
 
   React.useEffect(() => {
@@ -97,6 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuButton 
                 className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors"
                 tooltip="New session"
+                onClick={() => navigate({ to: "/scribe", search: { newSession: "true" } as any })}
               >
                 <CirclePlus />
                 <span>New session</span>

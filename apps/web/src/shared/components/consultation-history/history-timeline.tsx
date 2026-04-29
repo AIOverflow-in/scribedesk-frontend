@@ -9,9 +9,10 @@ import { HistoryDetailModal } from "./history-detail-modal"
 export interface HistoryTimelineProps {
   history: Consultation[]
   currentConsultationId?: string
+  onSelectSession?: (sessionId: string) => void
 }
 
-export function HistoryTimeline({ history, currentConsultationId }: HistoryTimelineProps) {
+export function HistoryTimeline({ history, currentConsultationId, onSelectSession }: HistoryTimelineProps) {
   const [selectedHistoryId, setSelectedHistoryId] = React.useState<string | null>(null)
   
   const selectedConsultation = history.find(c => c.id === selectedHistoryId) || null

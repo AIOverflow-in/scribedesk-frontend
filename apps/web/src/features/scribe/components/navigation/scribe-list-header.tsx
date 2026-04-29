@@ -28,9 +28,8 @@ export function ScribeListHeader({ searchQuery, onSearchChange }: ScribeListHead
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[160px]">
             <DropdownMenuItem>All Status</DropdownMenuItem>
-            <DropdownMenuItem>In Progress</DropdownMenuItem>
+            <DropdownMenuItem>Active</DropdownMenuItem>
             <DropdownMenuItem>Completed</DropdownMenuItem>
-            <DropdownMenuItem>Draft</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

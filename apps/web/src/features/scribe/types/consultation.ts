@@ -1,10 +1,10 @@
-export type ConsultationStatus = "draft" | "in-progress" | "completed" | "archived"
+export type ConsultationStatus = "draft" | "in-progress" | "active" | "completed" | "archived"
 
 export interface Patient {
   id: string
   name: string
   age: number
-  gender: "male" | "female" | "other"
+  gender: string
 }
 
 export interface Consultation {

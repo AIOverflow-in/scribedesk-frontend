@@ -1,8 +1,3 @@
-export interface Template {
-  id: string
-  title: string
-  description: string
-  content: string
-  category: string
-  updatedAt: string
-}
+import type { TemplateResponse } from "@workspace/schemas"
+
+export type Template = TemplateResponse

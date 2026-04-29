@@ -1,8 +1,10 @@
 import { Calendar, User, ExternalLink, Copy, CircleCheck } from "lucide-react"
 import * as React from "react"
 import ReactMarkdown from "react-markdown"
+import { useScribeSession } from "@workspace/features/scribe/hooks/use-scribe-sessions"
 import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { Button } from "@workspace/ui/components/button"
+import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Badge } from "@workspace/ui/components/badge"
 import {
   Dialog,
@@ -17,6 +19,7 @@ import {
   EmptyDescription
 } from "@workspace/ui/components/empty"
 import type { Consultation } from "@workspace/features/scribe/types"
+import type { SessionResponse } from "@workspace/schemas/session"
 import { cn } from "@workspace/ui/lib/utils"
 
 interface HistoryDetailModalProps {
@@ -36,11 +39,12 @@ function stripMarkdown(text: string): string {
 
 export function HistoryDetailModal({ consultation, currentSessionId, onClose }: HistoryDetailModalProps) {
   const [isCopied, setIsCopied] = React.useState(false)
+  const { data: sessionData, isLoading: isSessionLoading } = useScribeSession(consultation?.id ?? "")
   
   if (!consultation) return null
 
   const isCurrent = consultation.id === currentSessionId
-  const summaryContent = consultation.summary || ""
+  const summaryContent = (sessionData as SessionResponse)?.clinical_summary ?? consultation.summary ?? ""
 
   const handleCopy = async () => {
     try {
@@ -80,7 +84,25 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
 
         {/* Content Area */}
           <div className="flex-1 min-h-0 px-6 pb-2 flex flex-col">
-            {summaryContent ? (
+            {isSessionLoading ? (
+              <div className="flex-1 flex flex-col gap-4 p-6 md:p-8">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-5/6" />
+                <Skeleton className="h-3 w-4/6" />
+                <div className="pt-2">
+                  <Skeleton className="h-4 w-1/4 mb-3" />
+                  <Skeleton className="h-3 w-full mb-2" />
+                  <Skeleton className="h-3 w-full mb-2" />
+                  <Skeleton className="h-3 w-3/4" />
+                </div>
+                <div className="pt-2">
+                  <Skeleton className="h-4 w-1/5 mb-3" />
+                  <Skeleton className="h-3 w-full mb-2" />
+                  <Skeleton className="h-3 w-2/3" />
+                </div>
+              </div>
+            ) : summaryContent ? (
               <div className="flex-1 min-h-0 relative group/summary flex flex-col">
                 {/* Contextual Copy Button */}
                 <div className="absolute top-3 right-3 z-20">
@@ -108,6 +130,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
                     <div className="text-[14px] leading-relaxed text-foreground/90">
                       <ReactMarkdown
                         components={{
+                          h2: ({node, ...props}) => <h2 className="text-[13px] font-bold text-foreground mt-4 mb-2 uppercase tracking-wide" {...props} />,
                           h3: ({node, ...props}) => <h3 className="text-[13px] font-bold text-foreground mt-4 mb-2 uppercase tracking-wide" {...props} />,
                           p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
                           ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-3 space-y-1" {...props} />,

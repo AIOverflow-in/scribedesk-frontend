@@ -46,22 +46,27 @@ export function DraftingSheet() {
   if (activeDocument) lastDoc.current = activeDocument
   const docToRender = activeDocument || lastDoc.current
 
-  // Simulate generation whenever the sheet opens with a new document
+  // Simulate generation only if the document has no content yet
   React.useEffect(() => {
     if (isSheetOpen) {
-      setIsGenerating(true)
-      setIsSigned(false)
       if (docToRender?.content) {
+        setIsGenerating(false)
         setEditedContent(docToRender.content)
         setEditedText(docToRender.content)
         setEditedHtml(docToRender.content)
+      } else {
+        setIsGenerating(true)
+        setIsSigned(false)
+        if (!docToRender?.id) {
+          // No document at all — fallback timer
+          const timer = setTimeout(() => {
+            setIsGenerating(false)
+          }, 1500)
+          return () => clearTimeout(timer)
+        }
       }
-      const timer = setTimeout(() => {
-        setIsGenerating(false)
-      }, 1500)
-      return () => clearTimeout(timer)
     }
-  }, [isSheetOpen, activeDocument?.id])
+  }, [isSheetOpen, activeDocument?.id, activeDocument?.content])
 
   const handleCopy = async () => {
     const plainText = editedText || editedContent || docToRender?.content || ""

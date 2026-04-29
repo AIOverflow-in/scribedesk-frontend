@@ -11,6 +11,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { UserResponse } from "@workspace/schemas/user";
 import { createApiClient } from "@workspace/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
+import { setWsToken } from "@/lib/ws-token";
 
 interface AuthContextValue {
   user: UserResponse | null;
@@ -54,6 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
+      setWsToken(null);
       setUser(null);
       navigate({ to: "/login" });
     }

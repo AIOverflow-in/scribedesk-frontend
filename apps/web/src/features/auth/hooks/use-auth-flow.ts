@@ -4,8 +4,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { authApi } from "@/lib/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
-import type { LoginRequest, RegisterRequest } from "@workspace/schemas/auth";
+import type { LoginRequest, RegisterRequest, AuthResponse } from "@workspace/schemas/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { setWsToken } from "@/lib/ws-token";
 
 export function useAuthLogin() {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ export function useAuthLogin() {
 
   return useMutation({
     mutationFn: (data: LoginRequest) => authApi.login(data),
-    onSuccess: async () => {
+    onSuccess: async (response: AuthResponse) => {
+      if (response.session_token) setWsToken(response.session_token)
       await refetchUser();
       navigate({ to: "/" });
     },
@@ -32,7 +34,8 @@ export function useAuthRegister() {
 
   return useMutation({
     mutationFn: (data: RegisterRequest) => authApi.register(data),
-    onSuccess: async () => {
+    onSuccess: async (response: AuthResponse) => {
+      if (response.session_token) setWsToken(response.session_token)
       await refetchUser();
       navigate({ to: "/" });
     },

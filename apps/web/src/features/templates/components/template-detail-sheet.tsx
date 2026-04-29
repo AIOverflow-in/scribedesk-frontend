@@ -1,8 +1,10 @@
 import * as React from "react"
-import { 
-  Copy, 
+import { useQueryClient } from "@tanstack/react-query"
+import {
+  Copy,
   CircleCheck,
-  X 
+  X,
+  Lock
 } from "lucide-react"
 import {
   Sheet,
@@ -12,7 +14,9 @@ import {
 import { Button } from "@workspace/ui/components/button"
 import { ClinicalLexicalEditor } from "@/shared/components/clinical-editor"
 import { cn } from "@workspace/ui/lib/utils"
+import { useUpdateTemplate } from "../hooks/use-templates"
 import type { Template } from "../types"
+import { toast } from "@workspace/ui/components/sonner"
 
 interface TemplateDetailSheetProps {
   template: Template | null
@@ -20,15 +24,17 @@ interface TemplateDetailSheetProps {
 }
 
 export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetProps) {
+  const queryClient = useQueryClient()
   const [editedContent, setEditedContent] = React.useState("")
   const [editedText, setEditedText] = React.useState("")
   const [editedHtml, setEditedHtml] = React.useState("")
   const [isCopied, setIsCopied] = React.useState(false)
 
-  // Preservation of data during exit animation
   const lastTemplate = React.useRef(template)
   if (template) lastTemplate.current = template
   const t = template || lastTemplate.current
+
+  const updateTemplate = useUpdateTemplate()
 
   React.useEffect(() => {
     if (template) {
@@ -41,7 +47,7 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
   const handleCopy = async () => {
     const plainText = editedText || editedContent || t?.content || ""
     const htmlText = editedHtml || plainText
-    
+
     if (!plainText) return
 
     try {
@@ -49,17 +55,16 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
       const typeHtml = "text/html"
       const blobText = new Blob([plainText], { type: typeText })
       const blobHtml = new Blob([htmlText], { type: typeHtml })
-      
+
       const data = [new ClipboardItem({
         [typeText]: blobText,
         [typeHtml]: blobHtml,
       })]
-      
+
       await navigator.clipboard.write(data)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
-      // Fallback to plain text only if ClipboardItem fails (some browsers)
       try {
         await navigator.clipboard.writeText(plainText)
         setIsCopied(true)
@@ -71,8 +76,21 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
   }
 
   const handleSave = () => {
-    console.log("Saving template:", editedContent)
-    onClose()
+    if (!t) return
+    updateTemplate.mutate(
+      { templateId: t.id, data: { content: editedContent } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["templates"] })
+          queryClient.invalidateQueries({ queryKey: ["template", t.id] })
+          toast.success("Template saved")
+          onClose()
+        },
+        onError: (error) => {
+          toast.error(error instanceof Error ? error.message : "Failed to save template")
+        },
+      }
+    )
   }
 
   if (!t) return null
@@ -85,15 +103,16 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
       >
         {/* Toolbar Header */}
         <div className="shrink-0 bg-background border-b h-11 flex items-center justify-between px-3">
-          <SheetTitle className="text-sm font-semibold truncate pr-4">
-            {t.title}
+          <SheetTitle className="text-sm font-semibold truncate pr-4 flex items-center gap-2">
+            {t.name}
+            {t.is_system && <Lock className="size-3.5 text-muted-foreground" />}
           </SheetTitle>
 
           <div className="flex items-center gap-1">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-7 w-7 cursor-pointer" 
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7 cursor-pointer"
               onClick={handleCopy}
               title="Copy to clipboard"
             >
@@ -116,27 +135,30 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
 
         {/* Editor Area */}
         <div className="flex-1 min-h-0 bg-muted/50 flex flex-col items-center px-5 pt-3 pb-4 md:px-8 md:pt-7 md:pb-8">
-           <div className="w-full max-w-[850px] bg-white shadow-sm border rounded-sm flex-1 flex flex-col overflow-hidden text-slate-900">
-             <div className="flex-1 flex flex-col min-h-0">
-               <ClinicalLexicalEditor
-                 initialContent={t.content}
-                 onChange={setEditedContent}
-                 onTextChange={setEditedText}
-                 onHtmlChange={setEditedHtml}
-               />
-             </div>
-           </div>
+          <div className="w-full max-w-[850px] bg-white shadow-sm border rounded-sm flex-1 flex flex-col overflow-hidden text-slate-900">
+            <div className="flex-1 flex flex-col min-h-0">
+              <ClinicalLexicalEditor
+                initialContent={t.content}
+                onChange={setEditedContent}
+                onTextChange={setEditedText}
+                onHtmlChange={setEditedHtml}
+                readOnly={t.is_system}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="h-14 border-t flex items-center justify-end px-4 gap-2 bg-background shrink-0">
-          <Button variant="outline" size="sm" className="cursor-pointer font-medium" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button size="sm" className="cursor-pointer px-6 font-medium" onClick={handleSave}>
-            Save Template
-          </Button>
-        </div>
+        {!t.is_system && (
+          <div className="h-14 border-t flex items-center justify-end px-4 gap-2 bg-background shrink-0">
+            <Button variant="outline" size="sm" className="cursor-pointer font-medium" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button size="sm" className="cursor-pointer px-6 font-medium" onClick={handleSave} disabled={updateTemplate.isPending}>
+              {updateTemplate.isPending ? "Saving..." : "Save Template"}
+            </Button>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   )

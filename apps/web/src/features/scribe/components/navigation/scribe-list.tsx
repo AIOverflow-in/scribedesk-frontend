@@ -2,11 +2,11 @@ import { useState } from "react"
 import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { ScribeListHeader } from "./scribe-list-header"
 import { ScribeListItem } from "./scribe-list-item"
-import { 
-  Empty, 
-  EmptyHeader, 
-  EmptyTitle, 
-  EmptyDescription 
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription
 } from "@workspace/ui/components/empty"
 import { Stethoscope } from "lucide-react"
 import type { Consultation } from "@workspace/features/scribe/types"
@@ -24,14 +24,11 @@ export function ScribeList({
 }: ScribeListProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
-  let filteredConsultations = consultations.filter((c) =>
+  const filteredConsultations = consultations.filter((c) =>
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.description.toLowerCase().includes(searchQuery.toLowerCase())
   )
-
-  // TEMPORARY: Uncomment the line below to see the empty state
-  // filteredConsultations = []
 
   return (
     <div className="flex flex-col h-full">

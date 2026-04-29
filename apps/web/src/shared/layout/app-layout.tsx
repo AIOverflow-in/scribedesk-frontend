@@ -12,9 +12,9 @@ export function AppLayout({ children }: AppLayoutProps) {
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="h-screen overflow-hidden">
           <MainHeader />
-          <div className="flex flex-1 flex-col gap-6 p-6 pt-6">
+          <div className="flex flex-1 flex-col gap-6 p-6 pt-6 overflow-hidden">
             {children}
           </div>
         </SidebarInset>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ApiClient } from "@workspace/api-client";
 import { createPatientApi } from "@workspace/api-client/features/patient/api";
 import type {
@@ -28,26 +28,36 @@ export function usePatient(client: ApiClient, patientId: string) {
 }
 
 export function useCreatePatient(client: ApiClient) {
-  // Mutation - invalidate ["patients"] on success at app level
+  const queryClient = useQueryClient();
   const patientApi = createPatientApi(client);
   return useMutation({
     mutationFn: (data: CreatePatientRequest) => patientApi.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    },
   });
 }
 
 export function useUpdatePatient(client: ApiClient) {
-  // Mutation - invalidate ["patients"] and ["patient", id] on success at app level
+  const queryClient = useQueryClient();
   const patientApi = createPatientApi(client);
   return useMutation({
     mutationFn: ({ patientId, data }: { patientId: string; data: UpdatePatientRequest }) =>
       patientApi.update(patientId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      queryClient.invalidateQueries({ queryKey: ["patient", variables.patientId] });
+    },
   });
 }
 
 export function useDeletePatient(client: ApiClient) {
-  // Mutation - invalidate ["patients"] on success at app level
+  const queryClient = useQueryClient();
   const patientApi = createPatientApi(client);
   return useMutation({
     mutationFn: (patientId: string) => patientApi.delete(patientId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    },
   });
 }

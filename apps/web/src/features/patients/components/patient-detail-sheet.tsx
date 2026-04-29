@@ -1,7 +1,5 @@
 import * as React from "react"
-import { 
-  User, 
-} from "lucide-react"
+import { User } from "lucide-react"
 import {
   Sheet,
   SheetContent,
@@ -9,8 +7,12 @@ import {
   SheetTitle,
 } from "@workspace/ui/components/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
-import { mockConsultations } from "@/features/scribe/data/mock-consultations"
+import { usePatient } from "../hooks/use-patients"
+import { useSessions } from "@workspace/hooks/session"
+import { apiClient } from "@/lib/api-client"
 import type { Patient } from "../types/patient"
+import type { Consultation } from "@workspace/features/scribe/types"
+import type { SessionListItem } from "@workspace/schemas"
 import { PatientDetailsForm } from "./patient-details-form"
 import { PatientHistoryView } from "./patient-history-view"
 
@@ -19,25 +21,53 @@ interface PatientDetailSheetProps {
   onClose: () => void
 }
 
+function mapSessionToConsultation(session: SessionListItem, patientName: string, patientAge: number, patientGender: string): Consultation {
+  return {
+    id: session.id,
+    title: session.title,
+    description: session.description ?? "",
+    date: session.created_at,
+    status: "completed",
+    patient: {
+      id: session.patient_id ?? "",
+      name: patientName,
+      age: patientAge,
+      gender: patientGender as "male" | "female" | "other",
+    },
+  }
+}
+
 export function PatientDetailSheet({ patient, onClose }: PatientDetailSheetProps) {
-  // Preservation of data during exit animation
   const lastPatient = React.useRef(patient)
   if (patient) lastPatient.current = patient
   const p = patient || lastPatient.current
 
-  const patientHistory = React.useMemo(() => {
-    if (!p) return []
-    return mockConsultations
-      .filter(c => c.patient.id === p.id)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  }, [p])
+  const { data: patientData } = usePatient(p?.id ?? "")
+  const { data: sessionsData } = useSessions(apiClient, 1, 100, p?.id)
+
+  const patientHistory = React.useMemo<Consultation[]>(() => {
+    if (!p || !sessionsData?.items) return []
+    const fullName = patientData?.full_name ?? p.full_name ?? ""
+    return (sessionsData.items as SessionListItem[])
+      .map((s: SessionListItem) =>
+        mapSessionToConsultation(
+          s,
+          fullName,
+          patientData?.date_of_birth
+            ? new Date().getFullYear() - new Date(patientData.date_of_birth).getFullYear()
+            : s.patient_age ?? 0,
+          patientData?.gender ?? s.patient_gender ?? "other"
+        )
+      )
+      .sort((a: Consultation, b: Consultation) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  }, [p, sessionsData, patientData])
 
   if (!p) return null
 
   return (
     <Sheet open={!!patient} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent 
-        side="right" 
+      <SheetContent
+        side="right"
         className="w-full sm:w-[50vw]! sm:max-w-none! flex flex-col p-0 gap-0 overflow-hidden"
       >
         <SheetHeader className="p-6 pb-4 shrink-0 border-b">
@@ -46,11 +76,11 @@ export function PatientDetailSheet({ patient, onClose }: PatientDetailSheetProps
               <User className="size-6 text-primary" />
             </div>
             <div className="flex flex-col">
-              <SheetTitle className="text-base font-semibold">{p.name}</SheetTitle>
+              <SheetTitle className="text-base font-semibold">{p.full_name}</SheetTitle>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-                <span className="capitalize">{p.gender}</span>
+                <span className="capitalize">{p.gender ?? "Unknown"}</span>
                 <span>•</span>
-                <span>{p.age} years old</span>
+                <span>{patientData?.date_of_birth ? `${new Date().getFullYear() - new Date(patientData.date_of_birth).getFullYear()} years old` : ""}</span>
               </div>
             </div>
           </div>

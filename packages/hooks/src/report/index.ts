@@ -16,9 +16,15 @@ export function useReport(client: ApiClient, reportId: string) {
 }
 
 export function useCreateReport(client: ApiClient) {
-  // Mutation - invalidate reports list on success at app level (if needed)
   const reportApi = createReportApi(client);
   return useMutation({
     mutationFn: (data: CreateReportRequest) => reportApi.create(data),
+  });
+}
+
+export function useDeleteReport(client: ApiClient) {
+  const reportApi = createReportApi(client);
+  return useMutation({
+    mutationFn: (reportId: string) => reportApi.delete(reportId),
   });
 }

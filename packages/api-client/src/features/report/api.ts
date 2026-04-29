@@ -8,5 +8,8 @@ export function createReportApi(client: ApiClient) {
 
     get: (reportId: string) =>
       client.get<ReportResponse>(`/reports/${reportId}`),
+
+    delete: (reportId: string) =>
+      client.delete(`/reports/${reportId}`),
   };
 }

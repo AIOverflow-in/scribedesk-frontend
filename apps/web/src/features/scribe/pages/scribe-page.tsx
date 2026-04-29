@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { ScribeList } from "@workspace/features/scribe/components/navigation/scribe-list"
 import { ScribeListSkeleton } from "@workspace/features/scribe/components/navigation/scribe-list-skeleton"
@@ -12,34 +12,70 @@ import { ScribeSidecar } from "@workspace/features/scribe/components/sidecar/sid
 import { AssistantLauncher } from "@workspace/features/scribe/components/sidecar/assistant-launcher"
 import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 import { cn } from "@workspace/ui/lib/utils"
-import { mockConsultations } from "../data/mock-consultations"
 import { ScribeProvider, useScribe } from "../context/scribe-context"
+import { useScribeSessions, useCreateScribeSession, useScribeSession, useDeleteScribeSession } from "../hooks/use-scribe-sessions"
+import type { Consultation } from "../types"
+import type { SessionResponse, SessionListItem } from "@workspace/schemas/session"
+
+function mapSessionToConsultation(session: SessionResponse | SessionListItem): Consultation {
+  return {
+    id: session.id,
+    title: session.title,
+    patient: {
+      id: session.patient_id ?? "",
+      name: session.patient_name ?? "Unknown Patient",
+      age: session.patient_age ?? 0,
+      gender: session.patient_gender ?? "unknown",
+    },
+    date: session.created_at,
+    description: session.description ?? "",
+    duration: session.total_audio_seconds ? Math.round(session.total_audio_seconds / 60) : undefined,
+    status: session.status as Consultation["status"],
+    summary: "clinical_summary" in session ? session.clinical_summary ?? undefined : undefined,
+    reports: "reports" in session
+      ? (session.reports ?? []).map((r: any) => ({
+          id: r.id,
+          title: r.title,
+          type: r.template_name ?? "Unknown",
+          createdAt: r.created_at,
+        }))
+      : undefined,
+  }
+}
 
 function ScribeContent() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false }) as any
   const selectedId = search.id
   const { setConsultation, isSidecarOpen } = useScribe()
-  
+  const [page] = useState(1)
+
   const [isListVisible, setIsListVisible] = useState(true)
-  const [isLoadingList, setIsLoadingList] = useState(true)
-  const [isFetchingDetail, setIsFetchingDetail] = useState(!!selectedId)
   const isMobile = useIsMobile()
 
-  const selectedConsultation = mockConsultations.find((c) => c.id === selectedId)
+  const { data: sessionsData, isLoading: isListLoading } = useScribeSessions(page, 50)
+  const { data: sessionData, isLoading: isDetailLoading } = useScribeSession(selectedId ?? "")
+
+  const consultations = useMemo<Consultation[]>(() => {
+    if (!sessionsData?.items) return []
+    return (sessionsData.items as SessionListItem[]).map(mapSessionToConsultation)
+  }, [sessionsData])
+
+  const selectedConsultation = useMemo<Consultation | null>(() => {
+    if (!sessionData) {
+      return selectedId ? consultations.find((c) => c.id === selectedId) ?? null : null
+    }
+    return mapSessionToConsultation(sessionData as SessionResponse)
+  }, [sessionData, selectedId, consultations])
+
+  const createSession = useCreateScribeSession()
+  const deleteSession = useDeleteScribeSession()
 
   useEffect(() => {
-    const listTimer = setTimeout(() => setIsLoadingList(false), 1000)
-    let detailTimer: NodeJS.Timeout
-    if (selectedId) {
-      setIsFetchingDetail(true)
-      detailTimer = setTimeout(() => setIsFetchingDetail(false), 800)
+    if (search.newSession === "true") {
+      createSession.mutate({})
     }
-    return () => {
-      clearTimeout(listTimer)
-      if (detailTimer) clearTimeout(detailTimer)
-    }
-  }, [selectedId])
+  }, [search.newSession])
 
   useEffect(() => {
     setConsultation(selectedConsultation || null)
@@ -58,6 +94,10 @@ function ScribeContent() {
     }
   }
 
+  const handleDeleteSession = (sessionId: string) => {
+    deleteSession.mutate(sessionId)
+  }
+
   const showList = isListVisible && (!isMobile || !selectedId)
   const showDetail = !isMobile || selectedId
 
@@ -65,18 +105,18 @@ function ScribeContent() {
     <>
       <div className="flex h-[calc(100vh-2.75rem)] overflow-hidden -m-6 bg-muted/40">
         {/* 1. Left Navigation Panel */}
-        <div 
+        <div
           className={cn(
             "shrink-0 border-r border-border bg-background transition-all duration-300 ease-in-out overflow-hidden flex flex-col",
             showList ? "w-full md:w-80 opacity-100" : "w-0 opacity-0 border-none"
           )}
         >
           <div className="w-full md:w-80 h-full flex flex-col">
-            {isLoadingList ? (
+            {isListLoading ? (
               <ScribeListSkeleton />
             ) : (
               <ScribeList
-                consultations={mockConsultations}
+                consultations={consultations}
                 selectedId={selectedId}
                 onSelectConsultation={handleSelectConsultation}
               />
@@ -85,13 +125,13 @@ function ScribeContent() {
         </div>
 
         {/* 2. Main Clinical Workspace & Sidecar */}
-        <div 
+        <div
           className={cn(
             "flex-1 min-w-0 transition-all duration-300 ease-in-out flex bg-background/50 relative",
             showDetail ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
           )}
         >
-          {isFetchingDetail ? (
+          {isDetailLoading ? (
             <ScribeDetailSkeleton />
           ) : selectedConsultation ? (
             <div className="flex flex-1 w-full h-full overflow-hidden">
@@ -104,10 +144,11 @@ function ScribeContent() {
                   consultation={selectedConsultation}
                   isListVisible={isListVisible}
                   onToggleList={handleToggleList}
+                  onDelete={handleDeleteSession}
                   isMobile={isMobile}
                 />
               </div>
-              
+
               {/* Assistant Sidecar Panel */}
               {!isMobile && (
                 <div className={cn(
@@ -123,7 +164,7 @@ function ScribeContent() {
           )}
         </div>
       </div>
-      
+
       <DocumentTypeModal />
       <EditSessionModal />
       <DraftingSheet />

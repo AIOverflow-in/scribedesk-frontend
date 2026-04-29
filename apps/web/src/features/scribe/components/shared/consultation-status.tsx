@@ -11,6 +11,7 @@ const statusConfig: Record<
 > = {
   draft: { label: "Draft", variant: "secondary" },
   "in-progress": { label: "In Progress", variant: "default" },
+  active: { label: "Active", variant: "default" },
   completed: { label: "Completed", variant: "outline" },
   archived: { label: "Archived", variant: "secondary" },
 }

@@ -8,12 +8,11 @@ import type {
   UpdateSessionRequest,
 } from "@workspace/schemas/session";
 
-export function useSessions(client: ApiClient, page: number = 1, pageSize: number = 20) {
-  // Query key: ["sessions", page, pageSize]
+export function useSessions(client: ApiClient, page: number = 1, pageSize: number = 20, patientId?: string) {
   const sessionApi = createSessionApi(client);
   return useQuery({
-    queryFn: () => sessionApi.list(page, pageSize),
-    queryKey: ["sessions", page, pageSize],
+    queryFn: () => sessionApi.list(page, pageSize, patientId),
+    queryKey: ["sessions", page, pageSize, patientId],
   });
 }
 
@@ -51,5 +50,12 @@ export function useUpdateSession(client: ApiClient) {
   return useMutation({
     mutationFn: ({ sessionId, data }: { sessionId: string; data: UpdateSessionRequest }) =>
       sessionApi.update(sessionId, data),
+  });
+}
+
+export function useDeleteSession(client: ApiClient) {
+  const sessionApi = createSessionApi(client);
+  return useMutation({
+    mutationFn: (sessionId: string) => sessionApi.delete(sessionId),
   });
 }

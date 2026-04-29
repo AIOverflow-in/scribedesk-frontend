@@ -13,9 +13,10 @@ import type { PrescriptionItem } from "./types"
 import { PrescriptionForm } from "./prescription-form"
 import { PrescriptionItemCard } from "./prescription-item-card"
 
-export function PrescriptionBuilder({ onGenerate, onBack }: { 
+export function PrescriptionBuilder({ onGenerate, onBack, isGenerating }: { 
   onGenerate: (data: PrescriptionItem[]) => void
   onBack: () => void 
+  isGenerating?: boolean
 }) {
   const [items, setItems] = React.useState<PrescriptionItem[]>([])
 
@@ -69,10 +70,10 @@ export function PrescriptionBuilder({ onGenerate, onBack }: {
         </Button>
         <Button 
           onClick={() => onGenerate(items)} 
-          disabled={items.length === 0} 
+          disabled={items.length === 0 || isGenerating} 
           className="cursor-pointer bg-red-600 hover:bg-red-700 text-white border-red-600 h-9 px-4 text-sm font-medium"
         >
-          Generate Final Prescription
+          {isGenerating ? "Generating..." : "Generate Final Prescription"}
         </Button>
       </div>
     </div>

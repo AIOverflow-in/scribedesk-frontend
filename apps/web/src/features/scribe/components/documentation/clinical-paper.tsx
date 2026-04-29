@@ -11,7 +11,6 @@ interface ClinicalPaperProps {
   }
   isSigned?: boolean
   showSignature?: boolean
-  doctorName?: string
   clinicName?: string
   onPrint?: () => void
   onContentChange?: (content: string) => void
@@ -24,13 +23,14 @@ export function ClinicalPaper({
   document: doc, 
   isSigned, 
   showSignature = true,
-  doctorName = "Dr. Alexander Care",
-  clinicName = "Acme Medical Center",
+  clinicName = "Norwich Hospital",
   onContentChange,
   onTextChange,
   onHtmlChange,
   currentHtml
 }: ClinicalPaperProps) {
+  
+  void showSignature; // kept for future signing feature
   
   const printPortal = typeof document !== 'undefined' ? createPortal(
     <div className="print-only-container font-sans text-gray-900">
@@ -72,8 +72,8 @@ export function ClinicalPaper({
       <div className="fixed bottom-0 left-0 w-full px-12 pb-8 pt-4 bg-white border-t border-gray-200 z-50 flex justify-between items-end">
         <div className="text-[10px] text-gray-500">
           <p className="font-bold" style={{ color: '#374151' }}>{clinicName}</p>
-          <p>123 Healthcare Way, Suite 500</p>
-          <p>New York, NY 10001</p>
+          <p>Colney Lane, Norwich</p>
+          <p>NR4 7UY, United Kingdom</p>
         </div>
         <div className="text-right text-[10px] text-gray-400">
           <p>PHI Confidential Record</p>
@@ -91,20 +91,6 @@ export function ClinicalPaper({
                 dangerouslySetInnerHTML={{ __html: currentHtml || "" }}
               />
               
-              {showSignature && (
-                <div className="mt-12 flex flex-col items-start">
-                  {isSigned && (
-                    <div className="mb-2">
-                      <div className="text-2xl font-serif italic text-blue-900">- {doctorName}</div>
-                      <div className="text-[9px] font-bold text-blue-600 uppercase tracking-widest print-color-exact">Digitally Verified</div>
-                    </div>
-                  )}
-                  <div className="w-48 pt-2 border-t border-gray-200">
-                    <p className="text-sm font-bold">{doctorName}</p>
-                    <p className="text-[10px] text-gray-500 uppercase">Medical Practitioner</p>
-                  </div>
-                </div>
-              )}
             </td>
           </tr>
         </tbody>
@@ -149,23 +135,6 @@ export function ClinicalPaper({
                   </div>
                 )}
             </div>
-
-            {showSignature && (
-              <div className="mt-10 mb-8 mx-8 md:mb-10 md:mx-10 flex flex-col items-start">
-                {isSigned && (
-                  <div className="mb-2 animate-in fade-in slide-in-from-bottom-1 duration-500">
-                    <div className="font-heading text-xl text-blue-900/80 italic tracking-tight underline decoration-blue-200 underline-offset-4">
-                      {doctorName}
-                    </div>
-                    <div className="text-[8px] text-blue-600/50 mt-0.5 font-semibold uppercase tracking-widest">Digital Verification</div>
-                  </div>
-                )}
-                <div className="w-40 border-t border-gray-200 pt-2">
-                  <p className="text-xs font-bold text-gray-900">{doctorName}</p>
-                  <p className="text-[9px] text-muted-foreground uppercase">Medical Practitioner</p>
-                </div>
-              </div>
-            )}
           </div>
         </ScrollArea>
 
@@ -174,7 +143,7 @@ export function ClinicalPaper({
           <div className="text-[9px] text-muted-foreground leading-relaxed flex justify-between items-end">
             <div>
               <p className="font-semibold text-gray-600">{clinicName}</p>
-              <p>123 Healthcare Way, Suite 500, New York, NY 10001</p>
+              <p>Colney Lane, Norwich, NR4 7UY, United Kingdom</p>
             </div>
             <div className="text-right">
               <p>PHI Confidential Record</p>
