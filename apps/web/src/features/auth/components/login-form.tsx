@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { cn } from "@workspace/ui/lib/utils"
 import { useAuthLogin } from "../hooks/use-auth-flow"
 import { toast } from "@workspace/ui/components/sonner"
+import { Eye, EyeOff } from "lucide-react"
+
+const loginSchema = z.object({
+  email: z.email(),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+})
 
 export function LoginForm({
   className,
@@ -14,10 +21,32 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [errorTimeout, setErrorTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
   const loginMutation = useAuthLogin()
+
+  const clearErrorsAfterDelay = () => {
+    if (errorTimeout) clearTimeout(errorTimeout)
+    const timeout = setTimeout(() => setErrors({}), 5000)
+    setErrorTimeout(timeout)
+  }
 
   const handleSubmit = (e: React.SubmitEvent) => {
     e.preventDefault()
+    setErrors({})
+
+    const result = loginSchema.safeParse({ email, password })
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors
+      setErrors({
+        email: fieldErrors.email?.[0],
+        password: fieldErrors.password?.[0],
+      })
+      clearErrorsAfterDelay()
+      return
+    }
+
     loginMutation.mutate(
       { email, password },
       {
@@ -49,8 +78,12 @@ export function LoginForm({
           placeholder="m@example.com"
           required
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value)
+            setErrors((prev) => ({ ...prev, email: undefined }))
+          }}
         />
+        {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
       </Field>
 
       <Field>
@@ -63,13 +96,27 @@ export function LoginForm({
             Forgot your password?
           </a>
         </div>
-        <Input
-          id="password"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            required
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setErrors((prev) => ({ ...prev, password: undefined }))
+            }}
+            className="pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
       </Field>
 
       <Button type="submit" className="w-full" disabled={loginMutation.isPending}>

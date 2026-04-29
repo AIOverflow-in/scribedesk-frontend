@@ -2,22 +2,19 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { createApiClient, createAuthApi } from "@workspace/api-client";
+import { authApi } from "@/lib/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
 import type { LoginRequest, RegisterRequest } from "@workspace/schemas/auth";
-
-const apiClient = createApiClient({
-  baseUrl: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
-});
-
-const authApi = createAuthApi(apiClient);
+import { useAuth } from "@/contexts/AuthContext";
 
 export function useAuthLogin() {
   const navigate = useNavigate();
+  const { refetchUser } = useAuth();
 
   return useMutation({
     mutationFn: (data: LoginRequest) => authApi.login(data),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refetchUser();
       navigate({ to: "/" });
     },
     onError: (error: unknown) => {
@@ -31,10 +28,12 @@ export function useAuthLogin() {
 
 export function useAuthRegister() {
   const navigate = useNavigate();
+  const { refetchUser } = useAuth();
 
   return useMutation({
     mutationFn: (data: RegisterRequest) => authApi.register(data),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refetchUser();
       navigate({ to: "/" });
     },
     onError: (error: unknown) => {

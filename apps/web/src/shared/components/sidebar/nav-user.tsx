@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   Avatar,
   AvatarFallback,
@@ -18,8 +19,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@workspace/ui/components/alert-dialog"
 import { ChevronsUpDownIcon, SettingsIcon, BellIcon, LogOutIcon } from "lucide-react"
 import { Link } from "@tanstack/react-router"
+import { useAuth } from "@/contexts/AuthContext"
 
 export function NavUser({
   user,
@@ -31,6 +43,8 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()
+  const [open, setOpen] = useState(false)
 
   return (
     <SidebarMenu>
@@ -84,11 +98,31 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" className="destructive-hover">
-              <LogOutIcon
-              />
-              Log out
-            </DropdownMenuItem>
+            <AlertDialog open={open} onOpenChange={setOpen}>
+              <DropdownMenuItem
+                variant="destructive"
+                className="destructive-hover"
+                onSelect={(e) => {
+                  e.preventDefault()
+                  setOpen(true)
+                }}
+              >
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will log you out of your account. You will need to sign in again to access your data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => logout()}>Log out</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

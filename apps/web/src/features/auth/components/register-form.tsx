@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { cn } from "@workspace/ui/lib/utils"
 import { Check } from "lucide-react"
 import { StepPersonal } from "./steps/step-personal"
@@ -8,6 +9,25 @@ import { StepClinic } from "./steps/step-clinic"
 import { useAuthRegister } from "../hooks/use-auth-flow"
 import { toast } from "@workspace/ui/components/sonner"
 import type { PersonalDetails, ClinicDetails } from "../types"
+
+export const personalSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().optional(),
+  email: z.email(),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  dob: z.string().optional(),
+  gender: z.enum(["male", "female", "other"]),
+  speciality: z.string().optional(),
+})
+
+export const clinicSchema = z.object({
+  name: z.string().min(1, "Clinic name is required"),
+  street: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  pincode: z.string().optional(),
+  country: z.string().min(1, "Country is required"),
+})
 
 export function RegisterForm({
   className,
@@ -31,15 +51,47 @@ export function RegisterForm({
     pincode: "",
     country: "",
   })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [errorTimeout, setErrorTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
 
   const registerMutation = useAuthRegister()
 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    e.preventDefault()
-    submitForm()
+  const clearErrorsAfterDelay = () => {
+    if (errorTimeout) clearTimeout(errorTimeout)
+    const timeout = setTimeout(() => setErrors({}), 5000)
+    setErrorTimeout(timeout)
+  }
+
+  const handlePersonalNext = () => {
+    setErrors({})
+    const result = personalSchema.safeParse(personal)
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors
+      const mapped: Record<string, string> = {}
+      Object.entries(fieldErrors).forEach(([key, value]) => {
+        if (value) mapped[key] = value[0]
+      })
+      setErrors(mapped)
+      clearErrorsAfterDelay()
+      return
+    }
+    setStep(2)
   }
 
   const submitForm = () => {
+    setErrors({})
+    const clinicResult = clinicSchema.safeParse(clinic)
+    if (!clinicResult.success) {
+      const fieldErrors = clinicResult.error.flatten().fieldErrors
+      const mapped: Record<string, string> = {}
+      Object.entries(fieldErrors).forEach(([key, value]) => {
+        if (value) mapped[`clinic.${key}`] = value[0]
+      })
+      setErrors(mapped)
+      clearErrorsAfterDelay()
+      return
+    }
+
     registerMutation.mutate(
       {
         email: personal.email,
@@ -73,7 +125,7 @@ export function RegisterForm({
   }
 
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
+    <form className={cn("flex flex-col gap-6", className)} {...props}>
       {/* Step Indicator */}
       <div className="flex items-center justify-center gap-0">
         <StepIndicator step={1} currentStep={step} label="Personal" />
@@ -86,7 +138,8 @@ export function RegisterForm({
         <StepPersonal
           data={personal}
           onChange={setPersonal}
-          onNext={() => setStep(2)}
+          onNext={handlePersonalNext}
+          errors={errors}
         />
       )}
 
@@ -97,6 +150,7 @@ export function RegisterForm({
           onBack={() => setStep(1)}
           onSubmit={submitForm}
           isPending={registerMutation.isPending}
+          errors={errors}
         />
       )}
 

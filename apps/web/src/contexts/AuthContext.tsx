@@ -7,6 +7,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { UserResponse } from "@workspace/schemas/user";
 import { createApiClient } from "@workspace/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
@@ -28,6 +29,7 @@ const apiClient = createApiClient({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const isAuthenticated = !!user;
 
@@ -53,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Logout error:", error);
     } finally {
       setUser(null);
-      window.location.href = "/login";
+      navigate({ to: "/login" });
     }
   };
 

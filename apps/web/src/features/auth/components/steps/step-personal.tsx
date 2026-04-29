@@ -9,14 +9,19 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import type { PersonalDetails } from "../../types"
+import { Eye, EyeOff } from "lucide-react"
+import { useState } from "react"
 
 interface StepPersonalProps {
   data: PersonalDetails
   onChange: (data: PersonalDetails) => void
   onNext: () => void
+  errors?: Record<string, string>
 }
 
-export function StepPersonal({ data, onChange, onNext }: StepPersonalProps) {
+export function StepPersonal({ data, onChange, onNext, errors = {} }: StepPersonalProps) {
+  const [showPassword, setShowPassword] = useState(false)
+
   const handleChange = (key: keyof PersonalDetails, value: string) => {
     onChange({ ...data, [key]: value })
   }
@@ -31,6 +36,7 @@ export function StepPersonal({ data, onChange, onNext }: StepPersonalProps) {
             onChange={(e) => handleChange("firstName", e.target.value)}
             placeholder="John"
           />
+          {errors.firstName && <p className="text-sm text-destructive">{errors.firstName}</p>}
         </Field>
         <Field>
           <FieldLabel>Last name</FieldLabel>
@@ -50,16 +56,28 @@ export function StepPersonal({ data, onChange, onNext }: StepPersonalProps) {
           onChange={(e) => handleChange("email", e.target.value)}
           placeholder="john@example.com"
         />
+        {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
       </Field>
 
       <Field>
         <FieldLabel>Password</FieldLabel>
-        <Input
-          type="password"
-          value={data.password}
-          onChange={(e) => handleChange("password", e.target.value)}
-          placeholder="Create a password"
-        />
+        <div className="relative">
+          <Input
+            type={showPassword ? "text" : "password"}
+            value={data.password}
+            onChange={(e) => handleChange("password", e.target.value)}
+            placeholder="Create a password (min 8 characters)"
+            className="pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
       </Field>
 
       <div className="grid grid-cols-2 gap-4">
@@ -95,7 +113,7 @@ export function StepPersonal({ data, onChange, onNext }: StepPersonalProps) {
         />
       </Field>
 
-      <Button onClick={onNext}>Continue to Clinic Details</Button>
+      <Button type="button" onClick={onNext}>Continue to Clinic Details</Button>
     </div>
   )
 }
