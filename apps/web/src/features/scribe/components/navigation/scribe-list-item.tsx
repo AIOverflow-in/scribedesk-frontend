@@ -60,7 +60,7 @@ export function ScribeListItem({
 
         {/* Duration tag - top right */}
         {consultation.duration && (
-          <div className="absolute top-3 right-3 z-10">
+          <div className="absolute top-3 right-3">
             <span className="text-[11px] font-medium text-foreground/50 bg-muted px-1.5 py-0.5 rounded">
               {formatDuration(consultation.duration)}
             </span>

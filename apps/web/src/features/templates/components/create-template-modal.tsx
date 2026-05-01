@@ -84,12 +84,12 @@ export function CreateTemplateModal({ open, onOpenChange }: CreateTemplateModalP
         </div>
 
         {/* Name + Type Fields & Editor */}
-        <div className="flex-1 min-h-0 bg-muted/50 flex flex-col">
-          <div className="shrink-0 px-6 md:px-10 pt-5 pb-5 flex gap-4">
+        <div className="flex-1 min-h-0 flex flex-col">
+          <div className="shrink-0 px-5 pt-5 pb-5 flex gap-4">
             <Field className="flex-1">
               <FieldLabel className="text-muted-foreground font-medium text-xs">Name</FieldLabel>
               <Input
-                className="rounded-md h-8 text-sm bg-background"
+                className="rounded-md h-8 text-sm"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. My Custom SOAP Note"
@@ -99,7 +99,7 @@ export function CreateTemplateModal({ open, onOpenChange }: CreateTemplateModalP
             <Field className="w-[180px]">
               <FieldLabel className="text-muted-foreground font-medium text-xs">Type</FieldLabel>
               <Select value={rootType} onValueChange={setRootType}>
-                <SelectTrigger className="rounded-md h-8 text-sm bg-background">
+                <SelectTrigger className="rounded-md h-8 text-sm">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -113,14 +113,12 @@ export function CreateTemplateModal({ open, onOpenChange }: CreateTemplateModalP
             </Field>
           </div>
 
-          <div className="flex-1 min-h-0 flex flex-col items-center px-6 pb-4 md:px-10 md:pb-8">
-            <div className="w-full max-w-[850px] bg-white shadow-sm border rounded-sm flex-1 flex flex-col overflow-hidden text-slate-900">
-              <div className="flex-1 flex flex-col min-h-0">
-                <ClinicalLexicalEditor
-                  initialContent=""
-                  onChange={setContent}
-                />
-              </div>
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-0">
+              <ClinicalLexicalEditor
+                initialContent=""
+                onChange={setContent}
+              />
             </div>
           </div>
         </div>

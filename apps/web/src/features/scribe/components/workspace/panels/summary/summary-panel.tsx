@@ -73,11 +73,11 @@ export function SummaryPanel({ consultation }: SummaryPanelProps) {
       {content ? (
         <NativeScroll className="flex-1 min-h-0">
           <div className="px-8 md:px-10 pt-10 pb-8">
-            <div className="text-[14px] leading-relaxed text-foreground/90">
+            <div className="text-[15px] leading-relaxed text-foreground/90">
               <ReactMarkdown
                 components={{
-                  h2: ({node, ...props}) => <h2 className="text-[13px] font-bold text-foreground mt-6 mb-2 uppercase tracking-wide" {...props} />,
-                  h3: ({node, ...props}) => <h3 className="text-[13px] font-bold text-foreground mt-6 mb-2 uppercase tracking-wide" {...props} />,
+                  h2: ({node, ...props}) => <h2 className="text-[14px] font-bold text-foreground mt-6 mb-2 uppercase tracking-wide" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-[14px] font-bold text-foreground mt-6 mb-2 uppercase tracking-wide" {...props} />,
                   p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
                   ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-3 space-y-1" {...props} />,
                   li: ({node, ...props}) => <li className="pl-1" {...props} />,

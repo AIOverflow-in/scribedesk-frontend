@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useNavigate } from "@tanstack/react-router"
+import { useAuth } from "@/contexts/AuthContext"
 
 import { NavMain } from "@/shared/components/sidebar/nav-main"
 import { NavChats } from "@/shared/components/sidebar/nav-chats"
@@ -28,11 +29,6 @@ import {
 } from "lucide-react"
 
 const data = {
-  user: {
-    name: "Chethan",
-    email: "m@example.com",
-    avatar: "/favicon.ico",
-  },
   app: {
     name: "ScribeDesk",
     logo: <GalleryVerticalEndIcon />,
@@ -65,6 +61,13 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate()
   const { setOpen } = useSidebar()
+  const { user: authUser } = useAuth()
+
+  const user = {
+    name: authUser ? `${authUser.first_name} ${authUser.last_name ?? ""}`.trim() : "User",
+    email: authUser?.email ?? "",
+    avatar: authUser?.clinic?.logo_url ?? "/favicon.ico",
+  }
 
   React.useEffect(() => {
     const lgQuery = window.matchMedia("(min-width: 1024px)")
@@ -111,7 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavChats />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

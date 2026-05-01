@@ -56,12 +56,12 @@ export function TranscriptPanel({ consultation }: TranscriptPanelProps) {
         <TranscriptPanelSkeleton />
       ) : hasContent ? (
         <NativeScroll className="flex-1">
-          <div className="p-4 md:p-6 space-y-4">
+          <div className="p-4 md:p-6 space-y-4 max-w-[120ch]">
             {/* Sorted timeline entries (events + transcripts merged) */}
             {sortedEntries.map((entry: any) => (
               entry.type === "event" ? (
                 <div key={entry.id}>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-sm text-muted-foreground">
                     {entry.event_type === "started" ? "Transcript started at" : entry.event_type === "resumed" ? "Transcript resumed at" : "Transcript stopped at"}{" "}
                     {formatEventDate(entry.created_at)}
                   </div>
@@ -72,7 +72,7 @@ export function TranscriptPanel({ consultation }: TranscriptPanelProps) {
                   <div className="text-xs font-medium text-foreground/60 mb-1 tabular-nums">
                     {formatTime(entry.relative_seconds)}
                   </div>
-                  <p className="text-sm text-foreground/80 leading-relaxed">
+                  <p className="text-base text-foreground/80 leading-relaxed">
                     {entry.content}
                   </p>
                 </div>
@@ -85,7 +85,7 @@ export function TranscriptPanel({ consultation }: TranscriptPanelProps) {
                 <div className="text-xs font-medium text-foreground/60 mb-1 tabular-nums">
                   {formatTime(chunk.timestamp)}
                 </div>
-                <p className="text-sm text-foreground/80 leading-relaxed">
+                <p className="text-base text-foreground/80 leading-relaxed">
                   {chunk.text}
                 </p>
               </div>
@@ -98,7 +98,7 @@ export function TranscriptPanel({ consultation }: TranscriptPanelProps) {
                   LIVE
                 </div>
                 <div>
-                  <p className="text-sm text-foreground/90 leading-relaxed">
+                  <p className="text-base text-foreground/90 leading-relaxed">
                     {currentPartial}
                   </p>
                   {isRecording && (
