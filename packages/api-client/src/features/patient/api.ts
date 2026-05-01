@@ -9,9 +9,9 @@ import type {
 
 export function createPatientApi(client: ApiClient) {
   return {
-    list: (page: number = 1, pageSize: number = 20) =>
+    list: (page: number = 1, pageSize: number = 20, search?: string) =>
       client.get<PaginatedPatientsResponse>(
-        `/patients?page=${page}&page_size=${pageSize}`
+        `/patients?page=${page}&page_size=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ""}`
       ),
 
     get: (patientId: string) =>

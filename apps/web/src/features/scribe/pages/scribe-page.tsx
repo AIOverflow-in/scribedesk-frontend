@@ -1,9 +1,8 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import { useNavigate, useSearch } from "@tanstack/react-router"
 import { ScribeList } from "@workspace/features/scribe/components/navigation/scribe-list"
-import { ScribeListSkeleton } from "@workspace/features/scribe/components/navigation/scribe-list-skeleton"
 import { ScribeDetail } from "@workspace/features/scribe/components/workspace/scribe-detail"
-import { ScribeDetailSkeleton } from "@workspace/features/scribe/components/workspace/scribe-detail-skeleton"
+import { Skeleton } from "@workspace/ui/components/skeleton"
 import { ScribeEmptyState } from "@workspace/features/scribe/components/navigation/scribe-empty-state"
 import { DocumentTypeModal } from "@workspace/features/scribe/components/documentation/document-modal/document-type-modal"
 import { EditSessionModal } from "@workspace/features/scribe/components/workspace/modals/edit-session-modal"
@@ -14,8 +13,11 @@ import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
 import { cn } from "@workspace/ui/lib/utils"
 import { ScribeProvider, useScribe } from "../context/scribe-context"
 import { useScribeSessions, useCreateScribeSession, useScribeSession, useDeleteScribeSession } from "../hooks/use-scribe-sessions"
+import { usePatients } from "@workspace/hooks/patient"
+import { apiClient } from "@/lib/api-client"
 import type { Consultation } from "../types"
 import type { SessionResponse, SessionListItem } from "@workspace/schemas/session"
+import type { PaginatedPatientsResponse } from "@workspace/schemas/patient"
 
 function mapSessionToConsultation(session: SessionResponse | SessionListItem): Consultation {
   return {
@@ -53,7 +55,37 @@ function ScribeContent() {
   const [isListVisible, setIsListVisible] = useState(true)
   const isMobile = useIsMobile()
 
-  const { data: sessionsData, isLoading: isListLoading } = useScribeSessions(page, 50)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [sortBy, setSortBy] = useState<"created_at" | "title" | "patient_name">("created_at")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [filterPatientId, setFilterPatientId] = useState<string | null>(null)
+
+  const { data: patientsData } = usePatients(apiClient, { pageSize: 200 })
+  const patients = (patientsData as PaginatedPatientsResponse | undefined)?.items ?? []
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value)
+  }, [])
+
+  const handleSortChange = useCallback((column: "created_at" | "title" | "patient_name", order: "asc" | "desc") => {
+    setSortBy(column)
+    setSortOrder(order)
+  }, [])
+
+  const { data: sessionsData, isPending: isListPending } = useScribeSessions({
+    page,
+    pageSize: 50,
+    search: debouncedSearch || undefined,
+    sortBy,
+    sortOrder,
+    patientId: filterPatientId ?? undefined,
+  })
   const { data: sessionData, isLoading: isDetailLoading } = useScribeSession(selectedId ?? "")
 
   const consultations = useMemo<Consultation[]>(() => {
@@ -112,15 +144,20 @@ function ScribeContent() {
           )}
         >
           <div className="w-full md:w-80 h-full flex flex-col">
-            {isListLoading ? (
-              <ScribeListSkeleton />
-            ) : (
-              <ScribeList
-                consultations={consultations}
-                selectedId={selectedId}
-                onSelectConsultation={handleSelectConsultation}
-              />
-            )}
+            <ScribeList
+              consultations={consultations}
+              selectedId={selectedId}
+              onSelectConsultation={handleSelectConsultation}
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onSortChange={handleSortChange}
+              isPending={isListPending}
+              filterPatientId={filterPatientId}
+              onPatientFilterChange={setFilterPatientId}
+              patients={patients}
+            />
           </div>
         </div>
 
@@ -132,7 +169,27 @@ function ScribeContent() {
           )}
         >
           {isDetailLoading ? (
-            <ScribeDetailSkeleton />
+            <div className="flex flex-col h-full px-4 pt-2 pb-4 gap-6 animate-pulse">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-7 w-7 rounded-md" />
+                  <Skeleton className="h-4 w-40" />
+                </div>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-48" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Skeleton className="h-9 w-24 rounded-md" />
+                    <Skeleton className="h-9 w-24 rounded-md" />
+                  </div>
+                </div>
+              </div>
+            </div>
           ) : selectedConsultation ? (
             <div className="flex flex-1 w-full h-full overflow-hidden">
               {/* Workspace Panel */}

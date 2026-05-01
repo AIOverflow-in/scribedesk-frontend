@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useMemo } from "react"
 import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { ScribeListHeader } from "./scribe-list-header"
 import { ScribeListItem } from "./scribe-list-item"
+import { ScribeListSkeleton } from "./scribe-list-skeleton"
 import {
   Empty,
   EmptyHeader,
@@ -10,44 +11,114 @@ import {
 } from "@workspace/ui/components/empty"
 import { Stethoscope } from "lucide-react"
 import type { Consultation } from "@workspace/features/scribe/types"
+import { getDateKey } from "@/shared/lib/utils"
 
 export interface ScribeListProps {
   consultations: Consultation[]
   selectedId?: string
   onSelectConsultation: (id: string) => void
+  searchQuery: string
+  onSearchChange: (value: string) => void
+  sortBy: "created_at" | "title" | "patient_name"
+  sortOrder: "asc" | "desc"
+  onSortChange: (column: "created_at" | "title" | "patient_name", order: "asc" | "desc") => void
+  isPending?: boolean
+  filterPatientId: string | null
+  onPatientFilterChange: (patientId: string | null) => void
+  patients: any[]
+}
+
+const formatDateHeader = (dateKey: string) => {
+  const todayKey = getDateKey(new Date().toISOString())
+  if (dateKey === todayKey) return "Today"
+
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (dateKey === getDateKey(yesterday.toISOString())) return "Yesterday"
+
+  const [y, m, d] = dateKey.split("-").map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
 }
 
 export function ScribeList({
   consultations,
   selectedId,
   onSelectConsultation,
+  searchQuery,
+  onSearchChange,
+  sortBy,
+  sortOrder,
+  onSortChange,
+  isPending,
+  filterPatientId,
+  onPatientFilterChange,
+  patients,
 }: ScribeListProps) {
-  const [searchQuery, setSearchQuery] = useState("")
+  const isDateGrouped = sortBy === "created_at"
 
-  const filteredConsultations = consultations.filter((c) =>
-    c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.description.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const grouped = useMemo(() => {
+    if (isDateGrouped) {
+      const groups: Record<string, Consultation[]> = {}
+      for (const c of consultations) {
+        const key = getDateKey(c.date)
+        if (!groups[key]) groups[key] = []
+        groups[key].push(c)
+      }
+      return Object.entries(groups).sort(([a], [b]) =>
+        sortOrder === "asc" ? a.localeCompare(b) : b.localeCompare(a)
+      )
+    }
+    return null
+  }, [consultations, isDateGrouped, sortOrder])
 
   return (
     <div className="flex flex-col h-full">
       <ScribeListHeader
         searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onSearchChange={onSearchChange}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortChange={onSortChange}
+        filterPatientId={filterPatientId}
+        onPatientFilterChange={onPatientFilterChange}
+        patients={patients}
       />
 
       <NativeScroll className="flex-1">
-        {filteredConsultations.length > 0 ? (
+        {isPending ? (
+          <ScribeListSkeleton />
+        ) : consultations.length > 0 ? (
           <div>
-            {filteredConsultations.map((consultation) => (
-              <ScribeListItem
-                key={consultation.id}
-                consultation={consultation}
-                isSelected={selectedId === consultation.id}
-                onClick={() => onSelectConsultation(consultation.id)}
-              />
-            ))}
+            {grouped ? (
+              grouped.map(([dateKey, items]) => (
+                <div key={dateKey}>
+                  <div className="sticky top-0 z-10 bg-background/95 backdrop-blur px-3 py-2 text-[11px] font-semibold text-foreground/50 uppercase tracking-wider">
+                    {formatDateHeader(dateKey)}
+                  </div>
+                  {items.map((consultation) => (
+                    <ScribeListItem
+                      key={consultation.id}
+                      consultation={consultation}
+                      isSelected={selectedId === consultation.id}
+                      onClick={() => onSelectConsultation(consultation.id)}
+                    />
+                  ))}
+                </div>
+              ))
+            ) : (
+              consultations.map((consultation) => (
+                <ScribeListItem
+                  key={consultation.id}
+                  consultation={consultation}
+                  isSelected={selectedId === consultation.id}
+                  onClick={() => onSelectConsultation(consultation.id)}
+                />
+              ))
+            )}
           </div>
         ) : (
           <div className="h-full flex items-center justify-center p-8 pb-31">

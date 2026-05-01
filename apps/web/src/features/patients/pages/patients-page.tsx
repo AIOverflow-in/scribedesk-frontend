@@ -24,25 +24,21 @@ import { toast } from "@workspace/ui/components/sonner"
 export function PatientsPage() {
   const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = React.useState("")
+  const [debouncedSearch, setDebouncedSearch] = React.useState("")
   const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null)
   const [addModalOpen, setAddModalOpen] = React.useState(false)
   const [page] = React.useState(1)
 
-  const { data, isLoading } = usePatients(page, 20)
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  const { data, isLoading } = usePatients({ page, pageSize: 20, search: debouncedSearch || undefined })
   const createPatient = useCreatePatient()
   const deletePatient = useDeletePatient()
 
   const patients = (data as PaginatedPatientsResponse | undefined)?.items ?? []
-
-  const filteredPatients = React.useMemo(() => {
-    if (!searchQuery.trim()) return patients
-    const q = searchQuery.toLowerCase()
-    return patients.filter((p: Patient) =>
-      (p.full_name?.toLowerCase().includes(q) ?? false) ||
-      (p.email?.toLowerCase().includes(q) ?? false) ||
-      (p.identifier?.toLowerCase().includes(q) ?? false)
-    )
-  }, [patients, searchQuery])
 
   const handleCreatePatient = (reqData: CreatePatientRequest) => {
     createPatient.mutate(reqData, {
@@ -93,10 +89,10 @@ export function PatientsPage() {
           <div className="flex items-center justify-center h-full">
             <Spinner className="size-6 text-primary" />
           </div>
-        ) : filteredPatients.length > 0 ? (
+        ) : patients.length > 0 ? (
           <ScrollArea className="flex-1">
             <div className="flex flex-col mb-10 [&>*:hover]:border-t-transparent [&>*:hover+*]:border-t-transparent [&>*:first-child]:border-t-0 *:border-t *:border-border">
-              {filteredPatients.map((patient) => (
+              {patients.map((patient) => (
                 <PatientListItem
                   key={patient.id}
                   patient={patient}

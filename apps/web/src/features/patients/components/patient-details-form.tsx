@@ -30,7 +30,8 @@ export function PatientDetailsForm({ patient, onCancel }: PatientDetailsFormProp
 
   const isDirty = React.useMemo(() => {
     return (
-      formData.full_name !== patient.full_name ||
+      formData.first_name !== patient.first_name ||
+      formData.last_name !== patient.last_name ||
       formData.email !== patient.email ||
       formData.identifier !== patient.identifier ||
       formData.date_of_birth !== patient.date_of_birth ||
@@ -47,7 +48,8 @@ export function PatientDetailsForm({ patient, onCancel }: PatientDetailsFormProp
 
   const handleSave = () => {
     const data: UpdatePatientRequest = {}
-    if (formData.full_name !== patient.full_name) data.full_name = formData.full_name
+    if (formData.first_name !== patient.first_name) data.first_name = formData.first_name
+    if (formData.last_name !== patient.last_name) data.last_name = formData.last_name
     if (formData.email !== patient.email) data.email = formData.email
     if (formData.identifier !== patient.identifier) data.identifier = formData.identifier
     if (formData.date_of_birth !== patient.date_of_birth) data.date_of_birth = formData.date_of_birth
@@ -76,12 +78,22 @@ export function PatientDetailsForm({ patient, onCancel }: PatientDetailsFormProp
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
             <Field>
               <FieldLabel className="text-muted-foreground font-medium text-xs flex items-center gap-1.5">
-                <User className="size-3.5 text-primary" /> Full name
+                <User className="size-3.5 text-primary" /> First name
               </FieldLabel>
               <Input
                 className="rounded-md"
-                value={formData.full_name ?? ""}
-                onChange={(e) => handleInputChange("full_name", e.target.value)}
+                value={formData.first_name ?? ""}
+                onChange={(e) => handleInputChange("first_name", e.target.value)}
+              />
+            </Field>
+            <Field>
+              <FieldLabel className="text-muted-foreground font-medium text-xs flex items-center gap-1.5">
+                <User className="size-3.5 text-primary" /> Last name
+              </FieldLabel>
+              <Input
+                className="rounded-md"
+                value={formData.last_name ?? ""}
+                onChange={(e) => handleInputChange("last_name", e.target.value)}
               />
             </Field>
             <Field>

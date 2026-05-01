@@ -1,5 +1,5 @@
 import { cn } from "@workspace/ui/lib/utils"
-import { ConsultationStatusBadge } from "@workspace/features/scribe/components/shared/consultation-status"
+import { capitalize, formatDuration } from "@/shared/lib/utils"
 import type { Consultation } from "@workspace/features/scribe/types"
 
 export interface ScribeListItemProps {
@@ -8,21 +8,10 @@ export interface ScribeListItemProps {
   onClick: () => void
 }
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  })
-}
-
-const formatDuration = (minutes?: number) => {
-  if (!minutes) return null
-  if (minutes < 60) return `${minutes}m`
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`
+const genderStyles: Record<string, string> = {
+  male: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  female: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+  other: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
 }
 
 export function ScribeListItem({
@@ -30,6 +19,9 @@ export function ScribeListItem({
   isSelected = false,
   onClick,
 }: ScribeListItemProps) {
+  const gender = consultation.patient.gender?.toLowerCase() ?? "other"
+  const hasPatient = consultation.patient.name && consultation.patient.name !== "Unknown Patient"
+
   return (
     <button
       onClick={onClick}
@@ -38,29 +30,36 @@ export function ScribeListItem({
         isSelected && "bg-accent"
       )}
     >
-      {/* Status Badge - positioned absolutely on top */}
-      <div className="absolute top-3 right-3 z-10 bg-inherit">
-        <ConsultationStatusBadge status={consultation.status} />
-      </div>
-
-      {/* Content - extends full width */}
       <div>
         {/* Title */}
         <p className="text-base font-medium truncate pr-16">{consultation.title}</p>
 
-        {/* Patient Details: name, date, duration */}
-        <p className="text-[13px] font-medium text-foreground/80 pr-16 mt-0.5">
-          {consultation.patient.name} <span className="text-[11px] text-foreground/60 ml-2">{formatDate(consultation.date)}</span>
-          {consultation.duration && (
-            <>
-              <span className="mx-1 text-[11px] text-foreground/60">•</span>
-              <span className="text-[11px] text-foreground/60">{formatDuration(consultation.duration)}</span>
-            </>
-          )}
-        </p>
+        {/* Duration tag - top right */}
+        {consultation.duration && (
+          <div className="absolute top-3 right-3 z-10">
+            <span className="text-[11px] font-medium text-foreground/50 bg-muted px-1.5 py-0.5 rounded">
+              {formatDuration(consultation.duration)}
+            </span>
+          </div>
+        )}
+
+        {/* Patient: Name · Gender · Age */}
+        {hasPatient ? (
+          <p className="text-[13px] font-medium text-foreground/60 mt-0.5">
+            {consultation.patient.name}
+            <span className="text-foreground/30 mx-1">·</span>
+            <span className={cn("text-[11px] font-medium px-1.5 rounded", genderStyles[gender] ?? genderStyles.other)}>
+              {capitalize(consultation.patient.gender)}
+            </span>
+            <span className="text-foreground/30 mx-1">·</span>
+            <span className="text-[12px] text-foreground/50">{consultation.patient.age}y</span>
+          </p>
+        ) : (
+          <p className="text-[13px] text-foreground/40 mt-0.5 italic">No patient assigned</p>
+        )}
 
         {/* Description */}
-        <p className="text-xs text-muted-foreground line-clamp-3 mt-2">
+        <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5">
           {consultation.description}
         </p>
       </div>

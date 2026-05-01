@@ -43,7 +43,7 @@ export function PatientListItem({ patient, onClick, onDelete }: PatientListItemP
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
           <div className="flex items-center gap-2">
             <h4 className="text-base font-medium truncate text-foreground">
-              {patient.full_name}
+              {[patient.first_name, patient.last_name].filter(Boolean).join(" ")}
             </h4>
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
               {patient.gender}
@@ -105,7 +105,7 @@ export function PatientListItem({ patient, onClick, onDelete }: PatientListItemP
             </AlertDialogMedia>
             <AlertDialogTitle>Delete patient?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete {patient.full_name}'s record. This action cannot be undone.
+              This will permanently delete {[patient.first_name, patient.last_name].filter(Boolean).join(" ")}'s record. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

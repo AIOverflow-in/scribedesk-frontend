@@ -9,7 +9,7 @@ export const createSessionRequestSchema = z.object({
 export const updateSessionRequestSchema = z.object({
   title: z.string().min(1).max(255).optional(),
   description: z.string().optional(),
-  patient_id: z.uuid().optional(),
+  patient_id: z.uuid().nullable().optional(),
   clinical_summary: z.string().optional(),
 });
 

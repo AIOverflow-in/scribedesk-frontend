@@ -6,10 +6,20 @@ import { sessionApi } from "@/lib/api-client";
 import type { CreateSessionRequest, UpdateSessionRequest, SessionResponse } from "@workspace/schemas/session";
 import { toast } from "@workspace/ui/components/sonner";
 
-export function useScribeSessions(page: number = 1, pageSize: number = 20) {
+type UseScribeSessionsOptions = {
+  page?: number
+  pageSize?: number
+  search?: string
+  sortBy?: string
+  sortOrder?: string
+  patientId?: string
+}
+
+export function useScribeSessions(options: UseScribeSessionsOptions = {}) {
+  const { page = 1, pageSize = 20, search, sortBy = "created_at", sortOrder = "desc", patientId } = options
   return useQuery({
-    queryFn: () => sessionApi.list(page, pageSize),
-    queryKey: ["sessions", page, pageSize],
+    queryFn: () => sessionApi.list(page, pageSize, patientId, search, sortBy, sortOrder),
+    queryKey: ["sessions", page, pageSize, search, sortBy, sortOrder, patientId],
   });
 }
 

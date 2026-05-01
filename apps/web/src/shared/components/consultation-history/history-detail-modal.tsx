@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown"
 import { useScribeSession } from "@workspace/features/scribe/hooks/use-scribe-sessions"
 import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { Button } from "@workspace/ui/components/button"
-import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Badge } from "@workspace/ui/components/badge"
 import {
   Dialog,
@@ -12,15 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyDescription
-} from "@workspace/ui/components/empty"
 import type { Consultation } from "@workspace/features/scribe/types"
 import type { SessionResponse } from "@workspace/schemas/session"
 import { cn } from "@workspace/ui/lib/utils"
+import { HistoryDetailEmpty } from "./history-detail-empty"
+import { HistoryDetailSkeleton } from "./history-detail-skeleton"
 
 interface HistoryDetailModalProps {
   consultation: Consultation | null
@@ -59,7 +54,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
 
   return (
     <Dialog open={!!consultation} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[750px] max-h-[85vh] flex flex-col p-0 overflow-hidden [&>button]:cursor-pointer">
+      <DialogContent className="sm:max-w-[750px] max-h-[92vh] flex flex-col p-0 overflow-hidden [&>button]:cursor-pointer">
         {/* Modal Header */}
         <DialogHeader className="p-6 pb-4 shrink-0">
           <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-widest mb-1">
@@ -85,23 +80,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
         {/* Content Area */}
           <div className="flex-1 min-h-0 px-6 pb-2 flex flex-col">
             {isSessionLoading ? (
-              <div className="flex-1 flex flex-col gap-4 p-6 md:p-8">
-                <Skeleton className="h-4 w-1/3" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-5/6" />
-                <Skeleton className="h-3 w-4/6" />
-                <div className="pt-2">
-                  <Skeleton className="h-4 w-1/4 mb-3" />
-                  <Skeleton className="h-3 w-full mb-2" />
-                  <Skeleton className="h-3 w-full mb-2" />
-                  <Skeleton className="h-3 w-3/4" />
-                </div>
-                <div className="pt-2">
-                  <Skeleton className="h-4 w-1/5 mb-3" />
-                  <Skeleton className="h-3 w-full mb-2" />
-                  <Skeleton className="h-3 w-2/3" />
-                </div>
-              </div>
+              <HistoryDetailSkeleton />
             ) : summaryContent ? (
               <div className="flex-1 min-h-0 relative group/summary flex flex-col">
                 {/* Contextual Copy Button */}
@@ -145,12 +124,7 @@ export function HistoryDetailModal({ consultation, currentSessionId, onClose }: 
                 </NativeScroll>
               </div>
             ) : (
-              <Empty className="flex-1 min-h-0 py-12 bg-transparent border border-dashed rounded-xl flex items-center justify-center">
-                <EmptyHeader>
-                  <EmptyTitle>No Summary Available</EmptyTitle>
-                  <EmptyDescription>This consultation doesn't have a generated summary.</EmptyDescription>
-                </EmptyHeader>
-              </Empty>
+              <HistoryDetailEmpty />
             )}
           </div>
 

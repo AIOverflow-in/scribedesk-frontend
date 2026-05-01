@@ -8,12 +8,19 @@ import type {
   UpdatePatientRequest,
 } from "@workspace/schemas/patient";
 
-export function usePatients(client: ApiClient, page: number = 1, pageSize: number = 20) {
-  // Query key: ["patients", page, pageSize]
+type UsePatientsOptions = {
+  page?: number
+  pageSize?: number
+  search?: string
+}
+
+export function usePatients(client: ApiClient, options: UsePatientsOptions = {}) {
+  const { page = 1, pageSize = 20, search } = options
+  // Query key: ["patients", page, pageSize, search]
   const patientApi = createPatientApi(client);
   return useQuery({
-    queryFn: () => patientApi.list(page, pageSize),
-    queryKey: ["patients", page, pageSize],
+    queryFn: () => patientApi.list(page, pageSize, search),
+    queryKey: ["patients", page, pageSize, search ?? ""],
   });
 }
 

@@ -10,6 +10,7 @@ import {
 } from "@workspace/ui/components/empty"
 import { useScribeStore } from "../../../../stores/scribe-store"
 import { useScribeTimeline } from "../../../../hooks/use-scribe-sessions"
+import { TranscriptPanelSkeleton } from "./transcript-panel-skeleton"
 import type { Consultation } from "@workspace/features/scribe/types"
 
 export interface TranscriptPanelProps {
@@ -52,9 +53,7 @@ export function TranscriptPanel({ consultation }: TranscriptPanelProps) {
   return (
     <div className="border rounded-lg bg-background h-full flex flex-col overflow-hidden">
       {isLoading ? (
-        <div className="flex items-center justify-center flex-1 p-8">
-          <p className="text-sm text-muted-foreground">Loading transcript...</p>
-        </div>
+        <TranscriptPanelSkeleton />
       ) : hasContent ? (
         <NativeScroll className="flex-1">
           <div className="p-4 md:p-6 space-y-4">

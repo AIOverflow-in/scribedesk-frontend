@@ -2,7 +2,8 @@ import { z } from "zod";
 import { createPaginatedResponseSchema } from "./common";
 
 export const createPatientRequestSchema = z.object({
-  full_name: z.string().min(1).max(255),
+  first_name: z.string().min(1).max(100),
+  last_name: z.string().max(100).optional(),
   identifier: z.string().max(100).optional(),
   date_of_birth: z.string().optional(),
   gender: z.string().max(20).optional(),
@@ -11,7 +12,8 @@ export const createPatientRequestSchema = z.object({
 });
 
 export const updatePatientRequestSchema = z.object({
-  full_name: z.string().min(1).max(255).optional(),
+  first_name: z.string().min(1).max(100).optional(),
+  last_name: z.string().max(100).optional(),
   identifier: z.string().max(100).optional(),
   date_of_birth: z.string().optional(),
   gender: z.string().max(20).optional(),
@@ -21,7 +23,8 @@ export const updatePatientRequestSchema = z.object({
 
 export const patientResponseSchema = z.object({
   id: z.uuid(),
-  full_name: z.string(),
+  first_name: z.string(),
+  last_name: z.string().optional(),
   identifier: z.string().optional(),
   date_of_birth: z.string().optional(),
   gender: z.string().optional(),

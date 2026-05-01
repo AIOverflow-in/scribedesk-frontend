@@ -4,10 +4,17 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { patientApi } from "@/lib/api-client";
 import type { CreatePatientRequest, UpdatePatientRequest } from "@workspace/schemas";
 
-export function usePatients(page: number = 1, pageSize: number = 20) {
+type UsePatientsOptions = {
+  page?: number
+  pageSize?: number
+  search?: string
+}
+
+export function usePatients(options: UsePatientsOptions = {}) {
+  const { page = 1, pageSize = 20, search } = options
   return useQuery({
-    queryFn: () => patientApi.list(page, pageSize),
-    queryKey: ["patients", page, pageSize],
+    queryFn: () => patientApi.list(page, pageSize, search),
+    queryKey: ["patients", page, pageSize, search ?? ""],
   });
 }
 

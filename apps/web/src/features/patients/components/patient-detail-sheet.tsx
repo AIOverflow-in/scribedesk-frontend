@@ -43,11 +43,11 @@ export function PatientDetailSheet({ patient, onClose }: PatientDetailSheetProps
   const p = patient || lastPatient.current
 
   const { data: patientData } = usePatient(p?.id ?? "")
-  const { data: sessionsData } = useSessions(apiClient, 1, 100, p?.id)
+  const { data: sessionsData } = useSessions(apiClient, { page: 1, pageSize: 100, patientId: p?.id })
 
   const patientHistory = React.useMemo<Consultation[]>(() => {
     if (!p || !sessionsData?.items) return []
-    const fullName = patientData?.full_name ?? p.full_name ?? ""
+    const fullName = [patientData?.first_name, patientData?.last_name].filter(Boolean).join(" ") || [p.first_name, p.last_name].filter(Boolean).join(" ")
     return (sessionsData.items as SessionListItem[])
       .map((s: SessionListItem) =>
         mapSessionToConsultation(
@@ -76,7 +76,7 @@ export function PatientDetailSheet({ patient, onClose }: PatientDetailSheetProps
               <User className="size-6 text-primary" />
             </div>
             <div className="flex flex-col">
-              <SheetTitle className="text-base font-semibold">{p.full_name}</SheetTitle>
+              <SheetTitle className="text-base font-semibold">{[p.first_name, p.last_name].filter(Boolean).join(" ")}</SheetTitle>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
                 <span className="capitalize">{p.gender ?? "Unknown"}</span>
                 <span>•</span>

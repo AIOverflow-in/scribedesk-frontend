@@ -41,7 +41,8 @@ export function AddPatientModal({ open, onOpenChange, onAdd }: AddPatientModalPr
   const handleAdd = () => {
     if (!isValid) return
     onAdd({
-      full_name: lastName ? `${firstName} ${lastName}` : firstName,
+      first_name: firstName,
+      last_name: lastName || undefined,
       email: email || undefined,
       identifier: ehrId || undefined,
       date_of_birth: dob || undefined,

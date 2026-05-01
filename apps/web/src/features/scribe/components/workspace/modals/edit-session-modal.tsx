@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import {
   Dialog,
   DialogContent,
@@ -31,10 +31,12 @@ export function EditSessionModal() {
   const [selectedPatientName, setSelectedPatientName] = useState<string | null>(null)
 
   const updateSession = useUpdateScribeSession()
-  const { data: patientsData } = usePatients(apiClient, 1, 200)
+  const { data: patientsData } = usePatients(apiClient, { page: 1, pageSize: 200 })
 
   const patients = patientsData?.items ?? []
-  const patientNames = patients.map((p: any) => p.full_name ?? p.name)
+  const patientNames = patients.map((p: any) =>
+    [p.first_name, p.last_name].filter(Boolean).join(" ")
+  )
 
   useEffect(() => {
     if (consultation) {
@@ -44,16 +46,25 @@ export function EditSessionModal() {
     }
   }, [consultation, isEditModalOpen])
 
+  const patientFilter = (name: string, query: string) => {
+    const parts = query.toLowerCase().trim().split(/\s+/).filter(Boolean)
+    if (parts.length === 0) return true
+    const normalized = name.toLowerCase().replace(/\s+/g, " ").trim()
+    return parts.every((part) => normalized.includes(part))
+  }
+
   const handleSave = () => {
     if (!consultation) return
-    const patientId = patients.find((p: any) => (p.full_name ?? p.name) === selectedPatientName)?.id ?? null
+    const patientId = patients.find((p: any) =>
+      [p.first_name, p.last_name].filter(Boolean).join(" ") === selectedPatientName
+    )?.id ?? null
     updateSession.mutate(
       {
         sessionId: consultation.id,
         data: {
           title: title || undefined,
           description: description || undefined,
-          patient_id: patientId || undefined,
+          patient_id: patientId,
         },
       },
       { onSuccess: () => closeEditModal() }
@@ -90,6 +101,7 @@ export function EditSessionModal() {
               items={patientNames}
               value={selectedPatientName}
               onValueChange={(val: any) => setSelectedPatientName(val)}
+              filter={patientFilter}
             >
               <ComboboxInput
                 id="patient"

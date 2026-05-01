@@ -8,11 +8,21 @@ import type {
   UpdateSessionRequest,
 } from "@workspace/schemas/session";
 
-export function useSessions(client: ApiClient, page: number = 1, pageSize: number = 20, patientId?: string) {
+type UseSessionsOptions = {
+  page?: number
+  pageSize?: number
+  patientId?: string
+  search?: string
+  sortBy?: string
+  sortOrder?: string
+}
+
+export function useSessions(client: ApiClient, options: UseSessionsOptions = {}) {
+  const { page = 1, pageSize = 20, patientId, search, sortBy = "created_at", sortOrder = "desc" } = options
   const sessionApi = createSessionApi(client);
   return useQuery({
-    queryFn: () => sessionApi.list(page, pageSize, patientId),
-    queryKey: ["sessions", page, pageSize, patientId],
+    queryFn: () => sessionApi.list(page, pageSize, patientId, search, sortBy, sortOrder),
+    queryKey: ["sessions", page, pageSize, patientId, search, sortBy, sortOrder],
   });
 }
 

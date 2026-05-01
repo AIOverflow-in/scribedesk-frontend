@@ -28,7 +28,7 @@ export interface HistoryPanelProps {
 
 export function HistoryPanel({ consultation }: HistoryPanelProps) {
   const navigate = useNavigate()
-  const { data: sessionsData, isLoading } = useScribeSessions(1, 100)
+  const { data: sessionsData, isLoading } = useScribeSessions({ page: 1, pageSize: 100 })
 
   const patientHistory = React.useMemo(() => {
     if (!sessionsData?.items) return []
