@@ -12,6 +12,7 @@ import {
 import { Stethoscope } from "lucide-react"
 import type { Consultation } from "@workspace/features/scribe/types"
 import { getDateKey } from "@/shared/lib/utils"
+import { useScribeStore } from "../../stores/scribe-store"
 
 export interface ScribeListProps {
   consultations: Consultation[]
@@ -59,6 +60,13 @@ export function ScribeList({
   patients,
 }: ScribeListProps) {
   const isDateGrouped = sortBy === "created_at"
+  const isRecording = useScribeStore((s) => s.isRecording)
+  const recordingSessionId = useScribeStore((s) => s.recordingSessionId)
+
+  const handleSelect = (id: string) => {
+    if (isRecording && id !== recordingSessionId) return
+    onSelectConsultation(id)
+  }
 
   const grouped = useMemo(() => {
     if (isDateGrouped) {
@@ -104,7 +112,7 @@ export function ScribeList({
                       key={consultation.id}
                       consultation={consultation}
                       isSelected={selectedId === consultation.id}
-                      onClick={() => onSelectConsultation(consultation.id)}
+                      onClick={() => handleSelect(consultation.id)}
                     />
                   ))}
                 </div>
@@ -115,7 +123,7 @@ export function ScribeList({
                   key={consultation.id}
                   consultation={consultation}
                   isSelected={selectedId === consultation.id}
-                  onClick={() => onSelectConsultation(consultation.id)}
+                  onClick={() => handleSelect(consultation.id)}
                 />
               ))
             )}

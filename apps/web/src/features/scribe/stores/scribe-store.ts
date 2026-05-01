@@ -13,6 +13,7 @@ interface ScribeState {
   audioSource: AudioSource
   isRecording: boolean
   isSaving: boolean
+  recordingSessionId: string | null
 
   // Timer Logic
   baseDuration: number
@@ -32,6 +33,7 @@ interface ScribeState {
   addLiveChunk: (text: string, timestamp: number) => void
   setCurrentPartial: (text: string) => void
   setActiveChatId: (id: string | null) => void
+  setRecordingSessionId: (id: string | null) => void
   reset: () => void
 }
 
@@ -40,6 +42,7 @@ export const useScribeStore = create<ScribeState>((set) => ({
   audioSource: "mic",
   isRecording: false,
   isSaving: false,
+  recordingSessionId: null,
   baseDuration: 0,
   startTime: null,
   volume: 0,
@@ -68,10 +71,13 @@ export const useScribeStore = create<ScribeState>((set) => ({
 
   setActiveChatId: (activeChatId) => set({ activeChatId }),
 
+  setRecordingSessionId: (recordingSessionId) => set({ recordingSessionId }),
+
   reset: () => set({
     status: "idle",
     isRecording: false,
     isSaving: false,
+    recordingSessionId: null,
     baseDuration: 0,
     startTime: null,
     volume: 0,

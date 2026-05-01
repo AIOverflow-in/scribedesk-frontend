@@ -63,6 +63,7 @@ export function ScribeDetailHeader({
   const handleResumeClick = () => {
     if (isRecording) {
       disconnect()
+      useScribeStore.setState({ liveChunks: [], currentPartial: "" })
       setSaving(true)
       clearTimeout(savingTimerRef.current)
       savingTimerRef.current = setTimeout(() => {
@@ -161,10 +162,16 @@ export function ScribeDetailHeader({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Button className="rounded-md cursor-pointer gap-2" onClick={openDocModal}>
-              <CirclePlus className="h-4 w-4" />
-              Create
-            </Button>
+            {!isRecording && !isSaving && (
+              <Button
+                className="rounded-md cursor-pointer gap-2"
+                onClick={openDocModal}
+                disabled={!consultation.duration}
+              >
+                <CirclePlus className="h-4 w-4" />
+                Create
+              </Button>
+            )}
 
             <ButtonGroup>
               <Button
@@ -174,32 +181,34 @@ export function ScribeDetailHeader({
                 disabled={isSaving}
               >
                 {isSaving ? null : isRecording ? <Square className="h-4 w-4" /> : options[activeOption].icon}
-                {isSaving ? "Saving..." : isRecording ? "Stop" : activeOption === "transcribe" ? "Record" : "Resume"}
+                {isSaving ? "Saving..." : isRecording ? "Stop" : consultation.duration ? "Resume" : options[activeOption].label}
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="w-8 px-0 rounded-md cursor-pointer">
-                    <ChevronDown className="h-4 w-4" />
-                    <span className="sr-only">Resume options</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[160px]">
-                  <DropdownMenuItem
-                    className="gap-2 cursor-pointer"
-                    onClick={() => setActiveOption("transcribe")}
-                  >
-                    <AudioLines className="h-4 w-4 text-red-500" />
-                    <span>Transcribe</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="gap-2 cursor-pointer"
-                    onClick={() => setActiveOption("telehealth")}
-                  >
-                    <ScreenShare className="h-4 w-4 text-blue-500" />
-                    <span>Telehealth</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {!isRecording && !isSaving && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon" className="w-8 px-0 rounded-md cursor-pointer">
+                      <ChevronDown className="h-4 w-4" />
+                      <span className="sr-only">Options</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[160px]">
+                    <DropdownMenuItem
+                      className="gap-2 cursor-pointer"
+                      onClick={() => setActiveOption("transcribe")}
+                    >
+                      <AudioLines className="h-4 w-4 text-red-500" />
+                      <span>Transcribe</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="gap-2 cursor-pointer"
+                      onClick={() => setActiveOption("telehealth")}
+                    >
+                      <ScreenShare className="h-4 w-4 text-blue-500" />
+                      <span>Telehealth</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </ButtonGroup>
           </div>
         </div>

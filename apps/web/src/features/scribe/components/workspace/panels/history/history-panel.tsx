@@ -2,6 +2,14 @@ import * as React from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { useScribeSessions } from "../../../../hooks/use-scribe-sessions"
 import { Spinner } from "@workspace/ui/components/spinner"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@workspace/ui/components/empty"
+import { Layers } from "lucide-react"
 import type { Consultation } from "@workspace/features/scribe/types"
 import type { SessionListItem } from "@workspace/schemas/session"
 import { HistoryTimeline } from "@/shared/components/consultation-history/history-timeline"
@@ -47,6 +55,26 @@ export function HistoryPanel({ consultation }: HistoryPanelProps) {
     return (
       <div className="h-full flex items-center justify-center bg-background rounded-lg border">
         <Spinner className="size-5 text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (!consultation.patient.id) {
+    return (
+      <div className="h-full flex flex-col bg-background rounded-lg border overflow-hidden">
+        <div className="flex items-center justify-center flex-1 p-8">
+          <Empty className="border-none">
+            <EmptyHeader>
+              <EmptyMedia variant="icon" className="bg-amber-500/10 text-amber-500">
+                <Layers className="w-5 h-5" />
+              </EmptyMedia>
+              <EmptyTitle>No Patient Selected</EmptyTitle>
+              <EmptyDescription>
+                Select a patient to view their session history.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        </div>
       </div>
     )
   }

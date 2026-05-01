@@ -1,5 +1,6 @@
 import { cn } from "@workspace/ui/lib/utils"
 import { capitalize, formatDuration } from "@/shared/lib/utils"
+import { useScribeStore } from "../../stores/scribe-store"
 import type { Consultation } from "@workspace/features/scribe/types"
 
 export interface ScribeListItemProps {
@@ -21,6 +22,9 @@ export function ScribeListItem({
 }: ScribeListItemProps) {
   const gender = consultation.patient.gender?.toLowerCase() ?? "other"
   const hasPatient = consultation.patient.name && consultation.patient.name !== "Unknown Patient"
+  const isRecording = useScribeStore((s) => s.isRecording)
+  const recordingSessionId = useScribeStore((s) => s.recordingSessionId)
+  const isLive = isRecording && recordingSessionId === consultation.id
 
   return (
     <button
@@ -30,9 +34,29 @@ export function ScribeListItem({
         isSelected && "bg-accent"
       )}
     >
+      <style>{`
+@keyframes live-ping {
+  0% { transform: scale(1); opacity: 1; }
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
+.animate-live-ping {
+  animation: live-ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+`}</style>
       <div>
-        {/* Title */}
-        <p className="text-base font-medium truncate pr-16">{consultation.title}</p>
+        {/* Title + Live badge */}
+        <div className="flex items-center gap-2 pr-16">
+          <p className="text-base font-medium truncate">{consultation.title}</p>
+          {isLive && (
+            <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-white bg-red-600 px-1.5 py-1 rounded uppercase tracking-wide leading-none shrink-0 shadow-sm">
+              <span className="relative flex items-center justify-center w-2 h-2">
+                <span className="block w-1.5 h-1.5 rounded-full bg-white animate-live-ping absolute" />
+                <span className="block w-1 h-1 rounded-full bg-white relative" />
+              </span>
+              Live
+            </span>
+          )}
+        </div>
 
         {/* Duration tag - top right */}
         {consultation.duration && (
@@ -48,7 +72,7 @@ export function ScribeListItem({
           <p className="text-[13px] font-medium text-foreground/60 mt-0.5">
             {consultation.patient.name}
             <span className="text-foreground/30 mx-1">·</span>
-            <span className={cn("text-[11px] font-medium px-1.5 rounded", genderStyles[gender] ?? genderStyles.other)}>
+            <span className={cn("text-[11px] font-medium px-1.5 py-0.5 rounded-md", genderStyles[gender] ?? genderStyles.other)}>
               {capitalize(consultation.patient.gender)}
             </span>
             <span className="text-foreground/30 mx-1">·</span>
