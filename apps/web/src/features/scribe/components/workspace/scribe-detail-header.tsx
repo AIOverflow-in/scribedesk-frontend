@@ -111,7 +111,7 @@ export function ScribeDetailHeader({
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/scribe">Sessions</BreadcrumbLink>
+                <BreadcrumbPage className="text-muted-foreground">Sessions</BreadcrumbPage>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>

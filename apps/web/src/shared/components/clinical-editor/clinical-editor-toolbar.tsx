@@ -161,13 +161,13 @@ function BlockFormatDropdown() {
 
 function FontSizeControl() {
   const [editor] = useLexicalComposerContext()
-  const [fontSize, setFontSize] = useState("13px")
+  const [fontSize, setFontSize] = useState("15px")
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection()
     if ($isRangeSelection(selection)) {
-      const size = $getSelectionStyleValueForProperty(selection, "font-size", "13px")
-      setFontSize(size || "13px")
+      const size = $getSelectionStyleValueForProperty(selection, "font-size", "15px")
+      setFontSize(size || "15px")
     }
   }, [])
 
@@ -209,7 +209,7 @@ function FontSizeControl() {
     })
   }, [editor])
 
-  const currentSize = parseInt(fontSize) || 13
+  const currentSize = parseInt(fontSize) || 15
 
   return (
     <div className="flex items-center gap-0.5">

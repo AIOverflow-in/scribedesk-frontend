@@ -143,7 +143,7 @@ function ScribeContent() {
             showList ? "w-full md:w-80 opacity-100" : "w-0 opacity-0 border-none"
           )}
         >
-          <div className="w-full md:w-80 h-full flex flex-col">
+          <div className="w-full md:w-80 h-full flex flex-col pl-1.5">
             <ScribeList
               consultations={consultations}
               selectedId={selectedId}

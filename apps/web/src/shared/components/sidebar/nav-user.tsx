@@ -27,6 +27,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogMedia,
   AlertDialogTitle,
 } from "@workspace/ui/components/alert-dialog"
 import { ChevronsUpDownIcon, SettingsIcon, BellIcon, LogOutIcon } from "lucide-react"
@@ -110,11 +111,14 @@ export function NavUser({
                 <LogOutIcon />
                 Log out
               </DropdownMenuItem>
-              <AlertDialogContent>
+              <AlertDialogContent size="sm">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogMedia className="bg-destructive/10 text-destructive">
+                    <LogOutIcon />
+                  </AlertDialogMedia>
+                  <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will log you out of your account. You will need to sign in again to access your data.
+                    You will need to sign in again to access your account and data.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

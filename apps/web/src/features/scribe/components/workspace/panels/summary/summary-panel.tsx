@@ -16,18 +16,10 @@ import {
 } from "@workspace/ui/components/empty"
 import type { Consultation } from "@workspace/features/scribe/types"
 import { cn } from "@workspace/ui/lib/utils"
+import { stripMarkdown, markdownToHtml } from "@/shared/lib/utils/markdown"
 
 export interface SummaryPanelProps {
   consultation: Consultation
-}
-
-function stripMarkdown(text: string): string {
-  return text
-    .replace(/^#+\s+/gm, '') 
-    .replace(/\*\*(.*?)\*\*/g, '$1') 
-    .replace(/\*(.*?)\*/g, '$1') 
-    .replace(/^\s*-\s+/gm, '• ') 
-    .trim()
 }
 
 export function SummaryPanel({ consultation }: SummaryPanelProps) {
@@ -35,13 +27,33 @@ export function SummaryPanel({ consultation }: SummaryPanelProps) {
   const content = consultation.summary || ""
 
   const handleCopy = async () => {
+    const plainText = stripMarkdown(content)
+    const htmlText = markdownToHtml(content)
+
+    if (!plainText) return
+
     try {
-      const cleanText = stripMarkdown(content)
-      await navigator.clipboard.writeText(cleanText)
+      const typeText = "text/plain"
+      const typeHtml = "text/html"
+      const blobText = new Blob([plainText], { type: typeText })
+      const blobHtml = new Blob([htmlText], { type: typeHtml })
+
+      const data = [new ClipboardItem({
+        [typeText]: blobText,
+        [typeHtml]: blobHtml,
+      })]
+
+      await navigator.clipboard.write(data)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
-      console.error("Failed to copy text: ", err)
+      try {
+        await navigator.clipboard.writeText(plainText)
+        setIsCopied(true)
+        setTimeout(() => setIsCopied(false), 2000)
+      } catch (fallbackErr) {
+        console.error("Failed to copy text: ", fallbackErr)
+      }
     }
   }
 

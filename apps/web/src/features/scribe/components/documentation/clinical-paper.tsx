@@ -120,7 +120,7 @@ export function ClinicalPaper({
         {/* Content Area - Scrollable */}
         <ScrollArea className="flex-1 min-h-0 bg-white">
           <div className="flex flex-col min-h-full">
-            <div className="text-[13px] text-gray-700 leading-relaxed flex-1 flex flex-col">
+            <div className="text-[15px] text-gray-700 leading-relaxed flex-1 flex flex-col">
                 {doc.content ? (
                   <ClinicalLexicalEditor 
                     initialContent={doc.content} 
