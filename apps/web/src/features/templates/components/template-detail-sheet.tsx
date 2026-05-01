@@ -35,6 +35,7 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
   const t = template || lastTemplate.current
 
   const updateTemplate = useUpdateTemplate()
+  const hasChanges = t ? editedContent !== t.content : false
 
   React.useEffect(() => {
     if (template) {
@@ -154,8 +155,8 @@ export function TemplateDetailSheet({ template, onClose }: TemplateDetailSheetPr
             <Button variant="outline" size="sm" className="cursor-pointer font-medium" onClick={onClose}>
               Cancel
             </Button>
-            <Button size="sm" className="cursor-pointer px-6 font-medium" onClick={handleSave} disabled={updateTemplate.isPending}>
-              {updateTemplate.isPending ? "Saving..." : "Save Template"}
+            <Button size="sm" className="cursor-pointer px-6 font-medium" onClick={handleSave} disabled={!hasChanges || updateTemplate.isPending}>
+              {updateTemplate.isPending ? "Saving..." : "Save"}
             </Button>
           </div>
         )}

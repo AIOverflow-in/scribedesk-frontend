@@ -88,11 +88,11 @@ export function PatientDetailSheet({ patient, onClose }: PatientDetailSheetProps
 
         <Tabs defaultValue="details" className="flex-1 flex flex-col min-h-0">
           <div className="px-6 pt-4 shrink-0">
-            <TabsList className="w-fit h-11 bg-muted/50 p-1 rounded-sm">
-              <TabsTrigger value="details" className="px-6 cursor-pointer rounded-sm text-base font-medium">
+            <TabsList variant="line">
+              <TabsTrigger value="details" className="text-base">
                 Details
               </TabsTrigger>
-              <TabsTrigger value="history" className="px-6 cursor-pointer rounded-sm text-base font-medium">
+              <TabsTrigger value="history" className="text-base">
                 History
               </TabsTrigger>
             </TabsList>
