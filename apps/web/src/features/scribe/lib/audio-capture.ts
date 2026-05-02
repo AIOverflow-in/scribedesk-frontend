@@ -14,7 +14,7 @@
  * - Proper resource cleanup
  */
 
-const TARGET_SAMPLE_RATE = 16000
+export const TARGET_SAMPLE_RATE = 16000
 const CHUNK_DURATION_MS = 100 // 100 ms chunks — Deepgram sweet spot
 const CHUNK_SAMPLES = (TARGET_SAMPLE_RATE * CHUNK_DURATION_MS) / 1000 // 1 600 samples
 
@@ -131,8 +131,11 @@ export class AudioCapture {
   /**
    * Start capturing microphone audio and streaming it to the given WebSocket.
    * Waits for the WebSocket to be OPEN before beginning capture.
+   *
+   * If `stream` is provided, skips getUserMedia and uses the given stream directly
+   * (e.g. for telehealth mixed audio).
    */
-  async start(ws: WebSocket): Promise<void> {
+  async start(ws: WebSocket, stream?: MediaStream): Promise<void> {
     if (this.isRunning || this.isStarting) {
       console.warn("[AudioCapture] Already running");
       return;
@@ -144,23 +147,28 @@ export class AudioCapture {
     const signal = this.abortController.signal;
 
     try {
-      /* 1. Acquire microphone (request 16 kHz ideal) */
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: { ideal: TARGET_SAMPLE_RATE },
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-        },
-      });
+      /* 1. Acquire microphone (request 16 kHz ideal) unless stream is provided */
+      if (stream) {
+        this.stream = stream;
+        console.log("[AudioCapture] Using provided stream");
+      } else {
+        this.stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            sampleRate: { ideal: TARGET_SAMPLE_RATE },
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        });
+      }
 
       if (signal.aborted) throw new Error("Capture aborted");
 
       const track = this.stream.getAudioTracks()[0];
       const trackSettings = track.getSettings();
       const sourceRate = trackSettings.sampleRate || 48000;
-      console.log(`[AudioCapture] Mic sample rate: ${sourceRate}Hz`);
+      console.log(`[AudioCapture] Source sample rate: ${sourceRate}Hz`);
 
       /* 2. AudioContext at 16 kHz — browser resamples internally if needed */
       try {
@@ -184,11 +192,8 @@ export class AudioCapture {
 
       if (signal.aborted) throw new Error("Capture aborted");
 
-      /* 4. Build graph: mic -> worklet -> gain(0) -> destination */
+      /* 4. Build graph: source -> worklet -> gain(0) -> destination */
       this.sourceNode = this.audioCtx.createMediaStreamSource(this.stream);
-      /* AudioContext({sampleRate: 16000}) already resampled mic audio to 16kHz.
-         The worklet receives 16kHz audio, so sourceRate === targetRate === ctxRate.
-         No additional downsampling needed in the worklet. */
       this.workletNode = new AudioWorkletNode(this.audioCtx, "pcm-encoder", {
         processorOptions: {
           sourceRate: ctxRate,

@@ -37,6 +37,7 @@ interface ScribeState {
   setCurrentPartial: (text: string) => void
   setActiveChatId: (id: string | null) => void
   setRecordingSessionId: (id: string | null) => void
+  setAudioSource: (source: AudioSource) => void
   reset: () => void
 }
 
@@ -83,6 +84,8 @@ export const useScribeStore = create<ScribeState>((set) => ({
   setActiveChatId: (activeChatId) => set({ activeChatId }),
 
   setRecordingSessionId: (recordingSessionId) => set({ recordingSessionId }),
+
+  setAudioSource: (audioSource) => set({ audioSource }),
 
   reset: () => set({
     status: "idle",

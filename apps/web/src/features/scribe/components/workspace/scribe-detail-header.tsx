@@ -55,6 +55,7 @@ export function ScribeDetailHeader({
   const isRecording = useScribeStore((s: any) => s.isRecording)
   const isSaving = useScribeStore((s: any) => s.isSaving)
   const setSaving = useScribeStore((s: any) => s.setSaving)
+  const setAudioSource = useScribeStore((s: any) => s.setAudioSource)
   const { connect, disconnect } = useScribeWs(consultation.id)
   const pauseMutation = usePauseScribeSession()
 
@@ -73,7 +74,7 @@ export function ScribeDetailHeader({
   const handleResumeClick = () => {
     if (isRecording) {
       handleStop(true)
-    } else if (activeOption === "transcribe") {
+    } else {
       connect()
     }
   }
@@ -212,14 +213,20 @@ export function ScribeDetailHeader({
                   <DropdownMenuContent align="end" className="w-[160px]">
                     <DropdownMenuItem
                       className="gap-2 cursor-pointer"
-                      onClick={() => setActiveOption("transcribe")}
+                      onClick={() => {
+                        setActiveOption("transcribe")
+                        setAudioSource("mic")
+                      }}
                     >
                       <AudioLines className="h-4 w-4 text-red-500" />
                       <span>Transcribe</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="gap-2 cursor-pointer"
-                      onClick={() => setActiveOption("telehealth")}
+                      onClick={() => {
+                        setActiveOption("telehealth")
+                        setAudioSource("webrtc")
+                      }}
                     >
                       <ScreenShare className="h-4 w-4 text-blue-500" />
                       <span>Telehealth</span>
