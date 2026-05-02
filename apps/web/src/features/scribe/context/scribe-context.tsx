@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useMemo, type ReactNode } from "react"
 import type { Consultation, Report } from "../types"
-import { mockReports } from "../data/mock-reports"
 
 export type SidecarView = "chat" | "history" | "suggestions"
 
@@ -14,7 +13,7 @@ interface ScribeContextType {
   // Current active consultation
   consultation: Consultation | null
   setConsultation: (consultation: Consultation | null) => void
-  
+
   // Document Selection Modal
   isDocModalOpen: boolean
   openDocModal: () => void
@@ -24,34 +23,33 @@ interface ScribeContextType {
   isEditModalOpen: boolean
   openEditModal: () => void
   closeEditModal: () => void
-  
+
   // Drafting Sheet
   isSheetOpen: boolean
   activeDocument: Partial<Report> | null
   openSheet: (doc: Partial<Report>) => void
   closeSheet: () => void
-  
+
   // Sidecar
   isSidecarOpen: boolean
   sidecarView: SidecarView
   toggleSidecar: (view?: SidecarView) => void
   setSidecarView: (view: SidecarView) => void
-  
+
   // Chat State
   chats: ChatSession[]
   activeChatId: string | null
   setActiveChatId: (id: string | null) => void
   createNewChat: () => void
-  
+
   // Actions
-  generateDocument: (type: string, _data?: any) => Promise<void>
 }
 
 const ScribeContext = createContext<ScribeContextType | undefined>(undefined)
 
 export function ScribeProvider({ children }: { children: ReactNode }) {
   const [consultation, setConsultation] = useState<Consultation | null>(null)
-  
+
   // Modal/Sheet states
   const [isDocModalOpen, setIsDocModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -80,7 +78,7 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
 
   const createNewChat = () => {
     const newChat = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).slice(2, 11),
       title: "New Conversation",
       createdAt: new Date().toISOString()
     }
@@ -88,22 +86,6 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
     setActiveChatId(newChat.id)
     setSidecarView("chat")
     setIsSidecarOpen(true)
-  }
-
-  const generateDocument = async (type: string, _data?: any) => {
-    setIsDocModalOpen(false)
-    const mockKey = type === 'soap' ? 'soap-long' : type === 'referral' ? 'referral-letter-1' : null
-    const mockData = mockKey ? mockReports[mockKey] : null
-
-    setTimeout(() => {
-      setActiveDocument({ 
-        title: mockData?.title || `New ${type}`, 
-        type: type,
-        createdAt: new Date().toISOString(),
-        content: mockData?.content || ""
-      })
-      setIsSheetOpen(true)
-    }, 350)
   }
 
   const value = useMemo(() => ({
@@ -133,7 +115,6 @@ export function ScribeProvider({ children }: { children: ReactNode }) {
     activeChatId,
     setActiveChatId,
     createNewChat,
-    generateDocument
   }), [consultation, isDocModalOpen, isEditModalOpen, isSheetOpen, activeDocument, isSidecarOpen, sidecarView, chats, activeChatId])
 
   return (

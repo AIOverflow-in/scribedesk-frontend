@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { AppLayout } from "@/shared/layout/app-layout"
 import { useAuth } from "@/contexts/AuthContext"
+import { ScribeSessionProvider } from "@/features/scribe/context/scribe-session-provider"
 
 export const Route = createFileRoute("/_protected")({
   component: ProtectedLayout,
@@ -36,8 +37,10 @@ function ProtectedLayout() {
   }
 
   return (
-    <AppLayout>
-      <Outlet />
-    </AppLayout>
+    <ScribeSessionProvider>
+      <AppLayout>
+        <Outlet />
+      </AppLayout>
+    </ScribeSessionProvider>
   )
 }

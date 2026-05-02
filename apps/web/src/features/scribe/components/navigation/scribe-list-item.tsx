@@ -46,7 +46,7 @@ export function ScribeListItem({
       <div>
         {/* Title + Live badge */}
         <div className="flex items-center gap-2 pr-16">
-          <p className="text-base font-medium truncate">{consultation.title}</p>
+          <p className="text-base font-medium truncate leading-none">{consultation.title}</p>
           {isLive && (
             <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-white bg-red-600 px-1.5 py-1 rounded uppercase tracking-wide leading-none shrink-0 shadow-sm">
               <span className="relative flex items-center justify-center w-2 h-2">

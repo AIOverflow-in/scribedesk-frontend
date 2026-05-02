@@ -10,6 +10,7 @@ import {
   EmptyDescription
 } from "@workspace/ui/components/empty"
 import { Stethoscope } from "lucide-react"
+import { toast } from "@workspace/ui/components/sonner"
 import type { Consultation } from "@workspace/features/scribe/types"
 import { formatDateKey } from "@/shared/utils"
 import { useScribeStore } from "../../stores/scribe-store"
@@ -64,7 +65,10 @@ export function ScribeList({
   const recordingSessionId = useScribeStore((s) => s.recordingSessionId)
 
   const handleSelect = (id: string) => {
-    if (isRecording && id !== recordingSessionId) return
+    if (isRecording && id !== recordingSessionId) {
+      toast.info("Pause or stop the active session to browse other sessions.")
+      return
+    }
     onSelectConsultation(id)
   }
 

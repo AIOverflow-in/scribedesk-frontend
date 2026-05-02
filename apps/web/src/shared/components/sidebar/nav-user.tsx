@@ -30,7 +30,7 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from "@workspace/ui/components/alert-dialog"
-import { ChevronsUpDownIcon, SettingsIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { ChevronsUpDownIcon, SettingsIcon, BellIcon, LogOutIcon, User } from "lucide-react"
 import { Link } from "@tanstack/react-router"
 import { useAuth } from "@/contexts/AuthContext"
 
@@ -57,8 +57,9 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  <User className="h-5 w-5 text-sidebar-primary" />
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -76,8 +77,9 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    <User className="h-5 w-5 text-sidebar-primary" />
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>

@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearch } from "@tanstack/react-router"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { PageHeader } from "@/shared/components/page-header"
 import { ProfileSettings } from "../components/settings/profile-settings"
@@ -6,7 +7,14 @@ import { ClinicSettings } from "../components/settings/clinic-settings"
 import { BillingSettings } from "../components/settings/billing-settings"
 
 export function SettingsPage() {
+  const search = useSearch({ strict: false }) as any
   const [activeTab, setActiveTab] = useState("profile")
+
+  useEffect(() => {
+    if (search.tab && ["profile", "clinic", "billing"].includes(search.tab)) {
+      setActiveTab(search.tab)
+    }
+  }, [search.tab])
 
   return (
     <div className="flex flex-col h-full w-full px-8 py-10 gap-8">

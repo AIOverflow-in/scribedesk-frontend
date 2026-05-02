@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { PanelLeft, ArrowLeft, Pencil, Trash2, CirclePlus, ChevronDown, AudioLines, ScreenShare, Square, Pause, User } from "lucide-react"
+import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import {
@@ -27,6 +28,11 @@ import {
   AlertDialogTitle,
 } from "@workspace/ui/components/alert-dialog"
 import { ButtonGroup } from "@workspace/ui/components/button-group"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
 import type { Consultation } from "@workspace/features/scribe/types"
 import { useScribe } from "../../context/scribe-context"
 import { useScribeWs } from "../../hooks/use-scribe-ws"
@@ -142,18 +148,36 @@ export function ScribeDetailHeader({
 
             <div className="flex-1 min-w-0">
               <div
-                className="group flex items-center gap-2 cursor-pointer w-fit"
-                onClick={openEditModal}
+                className="group flex items-center gap-2 w-fit"
+                onClick={isRecording ? undefined : openEditModal}
               >
                 <h2 className="text-xl font-medium">{consultation.title}</h2>
-                <Pencil className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                <Trash2
-                  className="h-3.5 w-3.5 text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive/80"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setDeleteOpen(true)
-                  }}
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className={isRecording ? "cursor-not-allowed" : "cursor-pointer"}>
+                      <Pencil className={cn("h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity", isRecording && "pointer-events-none")} />
+                    </span>
+                  </TooltipTrigger>
+                  {isRecording && (
+                    <TooltipContent>Not available during recording</TooltipContent>
+                  )}
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className={isRecording ? "cursor-not-allowed" : "cursor-pointer"}>
+                      <Trash2
+                        className={cn("h-3.5 w-3.5 text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive/80", isRecording && "pointer-events-none")}
+                        onClick={isRecording ? undefined : (e) => {
+                          e.stopPropagation()
+                          setDeleteOpen(true)
+                        }}
+                      />
+                    </span>
+                  </TooltipTrigger>
+                  {isRecording && (
+                    <TooltipContent>Not available during recording</TooltipContent>
+                  )}
+                </Tooltip>
               </div>
               <div className="flex items-center gap-2 mt-1 text-sm">
                 {consultation.patient.name && consultation.patient.name !== "Unknown Patient" ? (
@@ -178,7 +202,7 @@ export function ScribeDetailHeader({
                 className="rounded-md cursor-pointer gap-2"
                 onClick={() => handleStop(false)}
               >
-                <Pause className="h-4 w-4" />
+                <Pause className="h-4 w-4 text-amber-500" />
                 Pause
               </Button>
             ) : !isSaving && (

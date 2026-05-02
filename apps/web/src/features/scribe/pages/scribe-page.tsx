@@ -16,34 +16,9 @@ import { useScribeSessions, useCreateScribeSession, useScribeSession, useDeleteS
 import { usePatients } from "@workspace/hooks/patient"
 import { apiClient } from "@/lib/api-client"
 import type { Consultation } from "../types"
+import { mapSessionToConsultation } from "../types"
 import type { SessionResponse, SessionListItem } from "@workspace/schemas/session"
 import type { PaginatedPatientsResponse } from "@workspace/schemas/patient"
-
-function mapSessionToConsultation(session: SessionResponse | SessionListItem): Consultation {
-  return {
-    id: session.id,
-    title: session.title,
-    patient: {
-      id: session.patient_id ?? "",
-      name: session.patient_name ?? "Unknown Patient",
-      age: session.patient_age ?? 0,
-      gender: session.patient_gender ?? "unknown",
-    },
-    date: session.created_at,
-    description: session.description ?? "",
-    duration: session.total_audio_seconds ? Math.round(session.total_audio_seconds / 60) : undefined,
-    status: session.status as Consultation["status"],
-    summary: "clinical_summary" in session ? session.clinical_summary ?? undefined : undefined,
-    reports: "reports" in session
-      ? (session.reports ?? []).map((r: any) => ({
-          id: r.id,
-          title: r.title,
-          type: r.template_name ?? "Unknown",
-          createdAt: r.created_at,
-        }))
-      : undefined,
-  }
-}
 
 function ScribeContent() {
   const navigate = useNavigate()
@@ -169,21 +144,21 @@ function ScribeContent() {
           )}
         >
           {isDetailLoading ? (
-            <div className="flex flex-col h-full px-4 pt-2 pb-4 gap-6 animate-pulse">
-              <div className="space-y-4">
+            <div className="flex flex-col h-full w-full px-4 pt-2 pb-4 gap-6 animate-pulse">
+              <div className="space-y-3 w-full">
                 <div className="flex items-center gap-2">
                   <Skeleton className="h-7 w-7 rounded-md" />
                   <Skeleton className="h-4 w-40" />
                 </div>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-3 flex-1">
+                    <Skeleton className="h-12 w-12 shrink-0 rounded-full" />
+                    <div className="flex-1 min-w-0 space-y-2">
                       <Skeleton className="h-6 w-48" />
                       <Skeleton className="h-3 w-32" />
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Skeleton className="h-9 w-24 rounded-md" />
                     <Skeleton className="h-9 w-24 rounded-md" />
                   </div>

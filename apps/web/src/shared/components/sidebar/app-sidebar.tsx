@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { useAuth } from "@/contexts/AuthContext"
 
 import { NavMain } from "@/shared/components/sidebar/nav-main"
@@ -19,14 +19,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
-import { 
-  GalleryVerticalEndIcon, 
+import { GalleryVerticalEndIcon, 
   AudioLinesIcon,
   UsersIcon, 
   SquarePenIcon,
   NotebookPen,
   CirclePlus
 } from "lucide-react"
+import { useScribeStore } from "@/features/scribe/stores/scribe-store"
 
 const data = {
   app: {
@@ -62,6 +62,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigate = useNavigate()
   const { setOpen } = useSidebar()
   const { user: authUser } = useAuth()
+  const isRecording = useScribeStore((s) => s.isRecording)
+  const recordingSessionId = useScribeStore((s) => s.recordingSessionId)
 
   const user = {
     name: authUser ? `${authUser.first_name} ${authUser.last_name ?? ""}`.trim() : "User",
@@ -111,6 +113,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
         <NavMain items={data.navMain} />
+        {isRecording && recordingSessionId && (
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  tooltip="Live session"
+                  isActive
+                >
+                  <Link to="/scribe" search={{ id: recordingSessionId }}>
+                    <span className="flex size-4 shrink-0 items-center justify-center">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                      </span>
+                    </span>
+                    <span>Live Session</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
         <NavChats />
       </SidebarContent>
       <SidebarFooter>
