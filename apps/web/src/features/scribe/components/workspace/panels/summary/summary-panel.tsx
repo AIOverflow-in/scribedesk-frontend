@@ -16,7 +16,7 @@ import {
 } from "@workspace/ui/components/empty"
 import type { Consultation } from "@workspace/features/scribe/types"
 import { cn } from "@workspace/ui/lib/utils"
-import { stripMarkdown, markdownToHtml } from "@/shared/lib/utils/markdown"
+import { stripMarkdown, markdownToHtml } from "@/shared/utils/markdown"
 
 export interface SummaryPanelProps {
   consultation: Consultation

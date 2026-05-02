@@ -13,6 +13,10 @@ export const updateSessionRequestSchema = z.object({
   clinical_summary: z.string().optional(),
 });
 
+export const pauseSessionRequestSchema = z.object({
+  generate_summary: z.boolean(),
+});
+
 export const sessionResponseSchema = z.object({
   id: z.uuid(),
   user_id: z.uuid(),
@@ -75,6 +79,7 @@ export const wsEventSchema = z.discriminatedUnion("type", [wsReadySchema, wsTran
 
 export type CreateSessionRequest = z.infer<typeof createSessionRequestSchema>;
 export type UpdateSessionRequest = z.infer<typeof updateSessionRequestSchema>;
+export type PauseSessionRequest = z.infer<typeof pauseSessionRequestSchema>;
 export type SessionResponse = z.infer<typeof sessionResponseSchema>;
 export type SessionListItem = z.infer<typeof sessionListItemSchema>;
 export type SessionTimelineEntry = z.infer<typeof sessionTimelineEntrySchema>;

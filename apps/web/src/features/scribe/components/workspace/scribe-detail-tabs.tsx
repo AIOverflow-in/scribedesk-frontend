@@ -60,19 +60,19 @@ export function ScribeDetailTabs({ consultation }: ScribeDetailTabsProps) {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="transcript" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
+      <TabsContent forceMount value="transcript" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
         <TranscriptPanel consultation={consultation} />
       </TabsContent>
 
-      <TabsContent value="summary" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
+      <TabsContent forceMount value="summary" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
         <SummaryPanel consultation={consultation} />
       </TabsContent>
 
-      <TabsContent value="reports" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
+      <TabsContent forceMount value="reports" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
         <ReportsPanel consultation={consultation} />
       </TabsContent>
 
-      <TabsContent value="history" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
+      <TabsContent forceMount value="history" className="flex-1 min-h-0 mt-2 data-[state=inactive]:hidden">
         <HistoryPanel consultation={consultation} />
       </TabsContent>
     </Tabs>

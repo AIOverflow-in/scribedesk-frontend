@@ -16,6 +16,7 @@ export function useScribeWs(sessionId: string | null) {
     setRecording,
     setRecordingSessionId,
     addLiveChunk,
+    appendPendingChunk,
     reset,
     baseDuration,
   } = useScribeStore();
@@ -51,7 +52,9 @@ export function useScribeWs(sessionId: string | null) {
             console.error("[useScribeWs] Audio capture failed:", err);
             ws.close();
           });
-        } else if (data.type === "transcript") {
+        } else if (data.type === "transcript_partial") {
+          appendPendingChunk(data.text);
+        } else if (data.type === "transcript_chunk") {
           addLiveChunk(data.text, data.timestamp);
         }
       } catch {
@@ -76,7 +79,7 @@ export function useScribeWs(sessionId: string | null) {
       captureRef.current = null;
       wsRef.current = null;
     };
-  }, [sessionId, setStatus, setRecording, setRecordingSessionId, addLiveChunk, baseDuration]);
+  }, [sessionId, setStatus, setRecording, setRecordingSessionId, addLiveChunk, appendPendingChunk, baseDuration]);
 
   const disconnect = useCallback(() => {
     captureRef.current?.stop();

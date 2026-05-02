@@ -73,7 +73,7 @@ export function PatientDetailSheet({ patient, onClose }: PatientDetailSheetProps
         <SheetHeader className="p-6 pb-4 shrink-0 border-b">
           <div className="flex items-center gap-3">
             <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <User className="size-6 text-primary" />
+              <User className="size-6 text-primary dark:text-blue-400" />
             </div>
             <div className="flex flex-col">
               <SheetTitle className="text-base font-semibold">{[p.first_name, p.last_name].filter(Boolean).join(" ")}</SheetTitle>

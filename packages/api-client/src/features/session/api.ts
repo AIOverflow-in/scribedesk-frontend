@@ -2,6 +2,7 @@ import type { ApiClient } from "../../core/client";
 import type {
   CreateSessionRequest,
   UpdateSessionRequest,
+  PauseSessionRequest,
   SessionResponse,
   SessionTimelineEntry,
   PaginatedSessionsResponse,
@@ -29,6 +30,9 @@ export function createSessionApi(client: ApiClient) {
 
     getTimeline: (sessionId: string) =>
       client.get<SessionTimelineEntry[]>(`/sessions/${sessionId}/timeline`),
+
+    pause: (sessionId: string, data: PauseSessionRequest) =>
+      client.post<SessionResponse>(`/sessions/${sessionId}/pause`, data),
 
     delete: (sessionId: string) =>
       client.delete(`/sessions/${sessionId}`),

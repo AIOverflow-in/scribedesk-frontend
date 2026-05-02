@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { sessionApi } from "@/lib/api-client";
-import type { CreateSessionRequest, UpdateSessionRequest, SessionResponse } from "@workspace/schemas/session";
+import type { CreateSessionRequest, UpdateSessionRequest, PauseSessionRequest, SessionResponse } from "@workspace/schemas/session";
 import { toast } from "@workspace/ui/components/sonner";
 
 type UseScribeSessionsOptions = {
@@ -68,6 +68,22 @@ export function useScribeTimeline(sessionId: string) {
     queryFn: () => sessionApi.getTimeline(sessionId),
     queryKey: ["sessionTimeline", sessionId],
     enabled: !!sessionId,
+  });
+}
+
+export function usePauseScribeSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ sessionId, data }: { sessionId: string; data: PauseSessionRequest }) =>
+      sessionApi.pause(sessionId, data),
+    onSuccess: (session, variables) => {
+      queryClient.setQueryData(["session", variables.sessionId], session);
+      queryClient.invalidateQueries({ queryKey: ["sessionTimeline", variables.sessionId] });
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+    onError: (error: Error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to pause session");
+    },
   });
 }
 

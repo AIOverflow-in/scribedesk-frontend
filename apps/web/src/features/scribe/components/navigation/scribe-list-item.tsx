@@ -1,5 +1,5 @@
 import { cn } from "@workspace/ui/lib/utils"
-import { capitalize, formatDuration } from "@/shared/lib/utils"
+import { capitalize, formatDuration } from "@/shared/utils"
 import { useScribeStore } from "../../stores/scribe-store"
 import type { Consultation } from "@workspace/features/scribe/types"
 

@@ -22,6 +22,7 @@ interface ScribeState {
   // Ephemeral UI Data
   volume: number
   liveChunks: LiveChunk[]
+  pendingChunks: string
   currentPartial: string
   activeChatId: string | null
 
@@ -31,6 +32,8 @@ interface ScribeState {
   setSaving: (saving: boolean) => void
   setVolume: (volume: number) => void
   addLiveChunk: (text: string, timestamp: number) => void
+  appendPendingChunk: (text: string) => void
+  clearPendingChunks: () => void
   setCurrentPartial: (text: string) => void
   setActiveChatId: (id: string | null) => void
   setRecordingSessionId: (id: string | null) => void
@@ -47,6 +50,7 @@ export const useScribeStore = create<ScribeState>((set) => ({
   startTime: null,
   volume: 0,
   liveChunks: [],
+  pendingChunks: "",
   currentPartial: "",
   activeChatId: null,
 
@@ -65,7 +69,14 @@ export const useScribeStore = create<ScribeState>((set) => ({
   addLiveChunk: (text, timestamp) => set((state) => ({
     liveChunks: [...state.liveChunks, { text, timestamp }],
     currentPartial: "",
+    pendingChunks: "",
   })),
+
+  appendPendingChunk: (text) => set((state) => ({
+    pendingChunks: state.pendingChunks + " " + text,
+  })),
+
+  clearPendingChunks: () => set({ pendingChunks: "" }),
 
   setCurrentPartial: (text) => set({ currentPartial: text }),
 
@@ -82,6 +93,7 @@ export const useScribeStore = create<ScribeState>((set) => ({
     startTime: null,
     volume: 0,
     liveChunks: [],
+    pendingChunks: "",
     currentPartial: "",
     activeChatId: null,
   }),

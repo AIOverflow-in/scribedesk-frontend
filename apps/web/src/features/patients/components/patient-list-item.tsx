@@ -2,6 +2,8 @@ import * as React from "react"
 import { User, Mail, Fingerprint, MoreHorizontal, Eye, Trash2 } from "lucide-react"
 import type { Patient } from "../types/patient"
 import { Button } from "@workspace/ui/components/button"
+import { cn } from "@workspace/ui/lib/utils"
+import { capitalize } from "@/shared/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +22,12 @@ import {
   AlertDialogTitle,
 } from "@workspace/ui/components/alert-dialog"
 
+const genderStyles: Record<string, string> = {
+  male: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  female: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+  other: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+}
+
 interface PatientListItemProps {
   patient: Patient
   onClick: () => void
@@ -37,7 +45,7 @@ export function PatientListItem({ patient, onClick, onDelete }: PatientListItemP
       >
         <div className="absolute inset-0 rounded-xl transition-colors group-hover:bg-muted/80 pointer-events-none -z-10" />
         <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <User className="size-5 text-primary" />
+          <User className="size-5 text-primary dark:text-blue-400" />
         </div>
 
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
@@ -45,20 +53,22 @@ export function PatientListItem({ patient, onClick, onDelete }: PatientListItemP
             <h4 className="text-base font-medium truncate text-foreground">
               {[patient.first_name, patient.last_name].filter(Boolean).join(" ")}
             </h4>
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
-              {patient.gender}
+            <span className={cn("text-[11px] font-medium px-1.5 py-0.5 rounded-md", genderStyles[patient.gender?.toLowerCase() ?? "other"])}>
+              {capitalize(patient.gender)}
             </span>
           </div>
 
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
-              <Fingerprint className="size-3" />
-              <span>{patient.identifier}</span>
-            </div>
-            <div className="flex items-center gap-1">
               <Mail className="size-3" />
               <span className="truncate max-w-[150px]">{patient.email}</span>
             </div>
+            {patient.identifier && (
+              <div className="flex items-center gap-1">
+                <Fingerprint className="size-3" />
+                <span>{patient.identifier}</span>
+              </div>
+            )}
           </div>
         </div>
 

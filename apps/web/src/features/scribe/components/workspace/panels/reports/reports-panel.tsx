@@ -82,7 +82,7 @@ export function ReportsPanel({ consultation }: ReportsPanelProps) {
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <FileText className="h-5 w-5 text-primary" />
+                        <FileText className="h-5 w-5 text-primary dark:text-blue-400" />
                       </div>
                       <div>
                         <CardTitle className="text-base">{r.title}</CardTitle>

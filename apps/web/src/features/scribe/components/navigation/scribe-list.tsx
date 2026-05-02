@@ -11,7 +11,7 @@ import {
 } from "@workspace/ui/components/empty"
 import { Stethoscope } from "lucide-react"
 import type { Consultation } from "@workspace/features/scribe/types"
-import { getDateKey } from "@/shared/lib/utils"
+import { formatDateKey } from "@/shared/utils"
 import { useScribeStore } from "../../stores/scribe-store"
 
 export interface ScribeListProps {
@@ -30,12 +30,12 @@ export interface ScribeListProps {
 }
 
 const formatDateHeader = (dateKey: string) => {
-  const todayKey = getDateKey(new Date().toISOString())
+  const todayKey = formatDateKey(new Date().toISOString())
   if (dateKey === todayKey) return "Today"
 
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
-  if (dateKey === getDateKey(yesterday.toISOString())) return "Yesterday"
+  if (dateKey === formatDateKey(yesterday.toISOString())) return "Yesterday"
 
   const [y, m, d] = dateKey.split("-").map(Number)
   return new Date(y, m - 1, d).toLocaleDateString("en-US", {
@@ -72,7 +72,7 @@ export function ScribeList({
     if (isDateGrouped) {
       const groups: Record<string, Consultation[]> = {}
       for (const c of consultations) {
-        const key = getDateKey(c.date)
+        const key = formatDateKey(c.date)
         if (!groups[key]) groups[key] = []
         groups[key].push(c)
       }

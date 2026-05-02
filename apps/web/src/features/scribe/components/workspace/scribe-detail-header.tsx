@@ -1,12 +1,10 @@
-import { useState, useRef } from "react"
-import { useQueryClient } from "@tanstack/react-query"
-import { PanelLeft, ArrowLeft, Pencil, Trash2, CirclePlus, ChevronDown, AudioLines, ScreenShare, Square } from "lucide-react"
+import { useState } from "react"
+import { PanelLeft, ArrowLeft, Pencil, Trash2, CirclePlus, ChevronDown, AudioLines, ScreenShare, Square, Pause, User } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbSeparator,
   BreadcrumbList,
   BreadcrumbPage,
@@ -33,6 +31,7 @@ import type { Consultation } from "@workspace/features/scribe/types"
 import { useScribe } from "../../context/scribe-context"
 import { useScribeWs } from "../../hooks/use-scribe-ws"
 import { useScribeStore } from "../../stores/scribe-store"
+import { usePauseScribeSession } from "../../hooks/use-scribe-sessions"
 
 export interface ScribeDetailHeaderProps {
   consultation: Consultation
@@ -57,21 +56,23 @@ export function ScribeDetailHeader({
   const isSaving = useScribeStore((s: any) => s.isSaving)
   const setSaving = useScribeStore((s: any) => s.setSaving)
   const { connect, disconnect } = useScribeWs(consultation.id)
-  const queryClient = useQueryClient()
-  const savingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const pauseMutation = usePauseScribeSession()
+
+  const handleStop = (generateSummary: boolean) => {
+    disconnect()
+    useScribeStore.setState({ pendingChunks: "", currentPartial: "" })
+    setSaving(true)
+    pauseMutation.mutate(
+      { sessionId: consultation.id, data: { generate_summary: generateSummary } },
+      {
+        onSettled: () => setSaving(false),
+      }
+    )
+  }
 
   const handleResumeClick = () => {
     if (isRecording) {
-      disconnect()
-      useScribeStore.setState({ liveChunks: [], currentPartial: "" })
-      setSaving(true)
-      clearTimeout(savingTimerRef.current)
-      savingTimerRef.current = setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ["session", consultation.id] })
-        queryClient.invalidateQueries({ queryKey: ["sessionTimeline", consultation.id] })
-        queryClient.invalidateQueries({ queryKey: ["sessions"] })
-        setSaving(false)
-      }, 5000)
+      handleStop(true)
     } else if (activeOption === "transcribe") {
       connect()
     }
@@ -126,13 +127,15 @@ export function ScribeDetailHeader({
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3 flex-1">
             <Avatar className="shrink-0 h-12! w-12!">
-              <AvatarFallback className="bg-primary/10 text-primary text-lg! font-medium">
-                {consultation.patient.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2)}
+              <AvatarFallback className="bg-primary/10 text-primary dark:text-blue-400 text-lg! font-medium">
+                {consultation.patient.name && consultation.patient.name !== "Unknown Patient"
+                  ? consultation.patient.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)
+                  : <User className="h-6 w-6 dark:text-blue-400" />}
               </AvatarFallback>
             </Avatar>
 
@@ -151,18 +154,33 @@ export function ScribeDetailHeader({
                   }}
                 />
               </div>
-              <div className="flex items-center gap-2 mt-1 text-xs">
-                <span className="font-medium text-foreground/90">
-                  {consultation.patient.name}
-                </span>
-                <span className="text-muted-foreground">•</span>
-                <span className="text-muted-foreground">{consultation.patient.age} yrs, {consultation.patient.gender.charAt(0).toUpperCase() + consultation.patient.gender.slice(1)}</span>
+              <div className="flex items-center gap-2 mt-1 text-sm">
+                {consultation.patient.name && consultation.patient.name !== "Unknown Patient" ? (
+                  <>
+                    <span className="font-medium text-foreground/90">
+                      {consultation.patient.name}
+                    </span>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">{consultation.patient.age} yrs, {consultation.patient.gender.charAt(0).toUpperCase() + consultation.patient.gender.slice(1)}</span>
+                  </>
+                ) : (
+                  <span className="text-muted-foreground italic">Patient not assigned</span>
+                )}
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {!isRecording && !isSaving && (
+            {isRecording && !isSaving ? (
+              <Button
+                variant="outline"
+                className="rounded-md cursor-pointer gap-2"
+                onClick={() => handleStop(false)}
+              >
+                <Pause className="h-4 w-4" />
+                Pause
+              </Button>
+            ) : !isSaving && (
               <Button
                 className="rounded-md cursor-pointer gap-2"
                 onClick={openDocModal}

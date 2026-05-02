@@ -39,7 +39,7 @@ export function TemplateListItem({ template, onClick, onDelete }: TemplateListIt
         <div className="absolute inset-0 rounded-xl transition-colors group-hover:bg-muted/80 pointer-events-none -z-10" />
 
         <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <FileText className="size-5 text-primary" />
+          <FileText className="size-5 text-primary dark:text-blue-400" />
         </div>
 
         <div className="flex-1 min-w-0 flex flex-col gap-0.5">
