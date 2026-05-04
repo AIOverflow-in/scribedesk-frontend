@@ -93,7 +93,7 @@ export function StepClinic({ data, onChange, onBack, onSubmit, isPending, errors
         <Button variant="outline" onClick={onBack} type="button">
           Back
         </Button>
-        <Button onClick={onSubmit} className="flex-1" disabled={isPending}>
+        <Button onClick={onSubmit} type="button" className="flex-1" disabled={isPending}>
           {isPending ? "Creating Account..." : "Create Account"}
         </Button>
       </div>
