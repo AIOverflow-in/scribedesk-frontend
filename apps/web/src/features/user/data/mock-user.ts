@@ -5,7 +5,7 @@ export const mockUser: User = {
   firstName: "Sarah",
   lastName: "Mitchell",
   email: "sarah.mitchell@clinic.com",
-  dob: "1985-03-22",
+
   gender: "female",
   speciality: "Family Medicine",
   avatar: "https://i.pravatar.cc/150?u=sarah",

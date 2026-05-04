@@ -13,6 +13,7 @@ import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as ProtectedIndexRouteImport } from './routes/_protected/index'
 import { Route as ProtectedScribeRouteImport } from './routes/_protected/scribe'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as authOnboardingRouteImport } from './routes/(auth)/onboarding'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as ProtectedTemplatesIndexRouteImport } from './routes/_protected/templates.index'
 import { Route as ProtectedSettingsIndexRouteImport } from './routes/_protected/settings.index'
@@ -37,6 +38,11 @@ const ProtectedScribeRoute = ProtectedScribeRouteImport.update({
 const authRegisterRoute = authRegisterRouteImport.update({
   id: '/(auth)/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authOnboardingRoute = authOnboardingRouteImport.update({
+  id: '/(auth)/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authLoginRoute = authLoginRouteImport.update({
@@ -73,6 +79,7 @@ const ProtectedChatsIdRoute = ProtectedChatsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof ProtectedIndexRoute
   '/login': typeof authLoginRoute
+  '/onboarding': typeof authOnboardingRoute
   '/register': typeof authRegisterRoute
   '/scribe': typeof ProtectedScribeRoute
   '/chats/$id': typeof ProtectedChatsIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
+  '/onboarding': typeof authOnboardingRoute
   '/register': typeof authRegisterRoute
   '/scribe': typeof ProtectedScribeRoute
   '/': typeof ProtectedIndexRoute
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_protected': typeof ProtectedRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
+  '/(auth)/onboarding': typeof authOnboardingRoute
   '/(auth)/register': typeof authRegisterRoute
   '/_protected/scribe': typeof ProtectedScribeRoute
   '/_protected/': typeof ProtectedIndexRoute
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/onboarding'
     | '/register'
     | '/scribe'
     | '/chats/$id'
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/onboarding'
     | '/register'
     | '/scribe'
     | '/'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_protected'
     | '/(auth)/login'
+    | '/(auth)/onboarding'
     | '/(auth)/register'
     | '/_protected/scribe'
     | '/_protected/'
@@ -145,6 +157,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   authLoginRoute: typeof authLoginRoute
+  authOnboardingRoute: typeof authOnboardingRoute
   authRegisterRoute: typeof authRegisterRoute
 }
 
@@ -176,6 +189,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/onboarding': {
+      id: '/(auth)/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof authOnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/login': {
@@ -250,6 +270,7 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   authLoginRoute: authLoginRoute,
+  authOnboardingRoute: authOnboardingRoute,
   authRegisterRoute: authRegisterRoute,
 }
 export const routeTree = rootRouteImport

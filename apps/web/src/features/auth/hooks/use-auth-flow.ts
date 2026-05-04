@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { authApi } from "@/lib/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
-import type { LoginRequest, RegisterRequest, AuthResponse } from "@workspace/schemas/auth";
+import type { LoginRequest, RegisterRequest, OnboardingRequest, AuthResponse } from "@workspace/schemas/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { setWsToken } from "@/lib/ws-token";
 
@@ -17,7 +17,11 @@ export function useAuthLogin() {
     onSuccess: async (response: AuthResponse) => {
       if (response.session_token) setWsToken(response.session_token)
       await refetchUser();
-      navigate({ to: "/" });
+      if (response.onboarding_pending) {
+        navigate({ to: "/onboarding" });
+      } else {
+        navigate({ to: "/" });
+      }
     },
     onError: (error: unknown) => {
       if (error instanceof ApiError) {
@@ -34,6 +38,26 @@ export function useAuthRegister() {
 
   return useMutation({
     mutationFn: (data: RegisterRequest) => authApi.register(data),
+    onSuccess: async (response: AuthResponse) => {
+      if (response.session_token) setWsToken(response.session_token)
+      await refetchUser();
+      navigate({ to: "/" });
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw error;
+    },
+  });
+}
+
+export function useAuthOnboarding() {
+  const navigate = useNavigate();
+  const { refetchUser } = useAuth();
+
+  return useMutation({
+    mutationFn: (data: OnboardingRequest) => authApi.onboarding(data),
     onSuccess: async (response: AuthResponse) => {
       if (response.session_token) setWsToken(response.session_token)
       await refetchUser();

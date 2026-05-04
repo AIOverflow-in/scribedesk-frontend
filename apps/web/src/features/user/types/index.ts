@@ -3,7 +3,6 @@ export interface User {
   firstName: string
   lastName: string
   email: string
-  dob: string
   gender: "male" | "female" | "other"
   speciality: string
   avatar: string

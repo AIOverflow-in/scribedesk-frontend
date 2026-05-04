@@ -26,6 +26,13 @@ export const Route = createRootRoute({
         href: appCss,
       },
     ],
+    scripts: [
+      {
+        src: "https://accounts.google.com/gsi/client",
+        async: true,
+        defer: true,
+      },
+    ],
   }),
   shellComponent: RootDocument,
 })

@@ -7,7 +7,8 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useLocation } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import type { UserResponse } from "@workspace/schemas/user";
 import { createApiClient } from "@workspace/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
@@ -31,6 +32,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryClient = useQueryClient();
 
   const isAuthenticated = !!user;
 
@@ -49,6 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  useEffect(() => {
+    if (isLoading) return
+    if (!user) return
+    if (user.is_onboarded === false && location.pathname !== "/onboarding") {
+      navigate({ to: "/onboarding" })
+    }
+  }, [user, isLoading, navigate, location.pathname])
+
   const logout = async () => {
     try {
       await apiClient.post("/auth/logout", {});
@@ -57,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setWsToken(null);
       setUser(null);
+      queryClient.clear();
       navigate({ to: "/login" });
     }
   };

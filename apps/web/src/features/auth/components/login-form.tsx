@@ -1,19 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { z } from "zod";
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { cn } from "@workspace/ui/lib/utils"
 import { useAuthLogin } from "../hooks/use-auth-flow"
+import { useGoogleSignIn } from "../hooks/use-google-signin"
 import { toast } from "@workspace/ui/components/sonner"
 import { Eye, EyeOff } from "lucide-react"
+import { loginRequestSchema } from "@workspace/schemas/auth"
 
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-})
+const loginSchema = loginRequestSchema
 
 export function LoginForm({
   className,
@@ -25,6 +23,7 @@ export function LoginForm({
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
   const [errorTimeout, setErrorTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
   const loginMutation = useAuthLogin()
+  const { signIn: handleGoogleLogin, isPending: googlePending } = useGoogleSignIn()
 
   const clearErrorsAfterDelay = () => {
     if (errorTimeout) clearTimeout(errorTimeout)
@@ -38,10 +37,14 @@ export function LoginForm({
 
     const result = loginSchema.safeParse({ email, password })
     if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors
+      const fieldErrors: Record<string, string | undefined> = {}
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as string
+        fieldErrors[key] = issue.message
+      }
       setErrors({
-        email: fieldErrors.email?.[0],
-        password: fieldErrors.password?.[0],
+        email: fieldErrors.email,
+        password: fieldErrors.password,
       })
       clearErrorsAfterDelay()
       return
@@ -119,7 +122,7 @@ export function LoginForm({
         {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
       </Field>
 
-      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+      <Button type="submit" className="w-full" disabled={loginMutation.isPending || googlePending}>
         {loginMutation.isPending ? "Logging in..." : "Login"}
       </Button>
 
@@ -128,9 +131,9 @@ export function LoginForm({
         <div className="absolute inset-0 top-1/2 -translate-y-1/2 border-t" />
       </div>
 
-      <Button variant="outline" type="button" className="w-full">
+      <Button variant="outline" type="button" className="w-full" onClick={handleGoogleLogin} disabled={googlePending}>
         <img src="/icons/auth/google.png" alt="Google" className="mr-2 h-6 w-6" />
-        Login with Google
+        {googlePending ? "Connecting..." : "Login with Google"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">

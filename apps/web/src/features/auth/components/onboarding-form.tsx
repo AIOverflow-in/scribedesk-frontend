@@ -1,25 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { cn } from "@workspace/ui/lib/utils"
 import { Check } from "lucide-react"
+import { useAuthOnboarding } from "../hooks/use-auth-flow"
+import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "@workspace/ui/components/sonner"
 import { StepPersonal } from "./steps/step-personal"
 import { StepClinic } from "./steps/step-clinic"
-import { useAuthRegister } from "../hooks/use-auth-flow"
-import { toast } from "@workspace/ui/components/sonner"
 import type { PersonalDetails, ClinicDetails } from "../types"
 
-export const personalSchema = z.object({
+const personalSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().optional(),
-  email: z.email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
   gender: z.enum(["male", "female", "other"]),
   speciality: z.string().optional(),
 })
 
-export const clinicSchema = z.object({
+const clinicSchema = z.object({
   name: z.string().min(1, "Clinic name is required"),
   street: z.string().optional(),
   city: z.string().optional(),
@@ -28,10 +27,11 @@ export const clinicSchema = z.object({
   country: z.string().min(1, "Country is required"),
 })
 
-export function RegisterForm({
+export function OnboardingForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const { user } = useAuth()
   const [step, setStep] = useState(1)
   const [personal, setPersonal] = useState<PersonalDetails>({
     firstName: "",
@@ -52,7 +52,19 @@ export function RegisterForm({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [errorTimeout, setErrorTimeout] = useState<ReturnType<typeof setTimeout> | null>(null)
 
-  const registerMutation = useAuthRegister()
+  const onboardingMutation = useAuthOnboarding()
+
+  useEffect(() => {
+    if (user) {
+      const nameParts = (user.first_name || "").split(" ")
+      setPersonal((prev) => ({
+        ...prev,
+        firstName: user.first_name || "",
+        lastName: user.last_name || "",
+        email: user.email || "",
+      }))
+    }
+  }, [user])
 
   const clearErrorsAfterDelay = () => {
     if (errorTimeout) clearTimeout(errorTimeout)
@@ -90,10 +102,8 @@ export function RegisterForm({
       return
     }
 
-    registerMutation.mutate(
+    onboardingMutation.mutate(
       {
-        email: personal.email,
-        password: personal.password,
         profile: {
           first_name: personal.firstName,
           last_name: personal.lastName || undefined,
@@ -111,10 +121,10 @@ export function RegisterForm({
       },
       {
         onSuccess: () => {
-          toast.success("Account created successfully")
+          toast.success("Profile completed successfully")
         },
         onError: (error) => {
-          const message = error instanceof Error ? error.message : "Failed to create account"
+          const message = error instanceof Error ? error.message : "Failed to complete profile"
           toast.error(message)
         },
       }
@@ -123,20 +133,27 @@ export function RegisterForm({
 
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
-      {/* Step Indicator */}
+      <div className="flex flex-col items-center gap-1 text-center mb-2">
+        <h1 className="text-2xl font-bold">Complete your profile</h1>
+        <p className="text-sm text-muted-foreground">
+          You're almost there! Just fill in your details to get started.
+        </p>
+      </div>
+
       <div className="flex items-center justify-center gap-0">
         <StepIndicator step={1} currentStep={step} label="Personal" />
         <div className="h-px bg-border w-8 mx-2" />
         <StepIndicator step={2} currentStep={step} label="Clinic" />
       </div>
 
-      {/* Step Content */}
       {step === 1 && (
         <StepPersonal
           data={personal}
           onChange={setPersonal}
           onNext={handlePersonalNext}
           errors={errors}
+          hidePassword
+          disableEmail
         />
       )}
 
@@ -146,18 +163,9 @@ export function RegisterForm({
           onChange={setClinic}
           onBack={() => setStep(1)}
           onSubmit={submitForm}
-          isPending={registerMutation.isPending}
+          isPending={onboardingMutation.isPending}
           errors={errors}
         />
-      )}
-
-      {step === 1 && (
-        <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <a href="/login" className="underline underline-offset-4">
-            Login
-          </a>
-        </p>
       )}
     </form>
   )

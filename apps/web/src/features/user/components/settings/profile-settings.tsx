@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext"
 import { useUpdateProfile } from "../../hooks/use-user"
 import { toast } from "@workspace/ui/components/sonner"
+import { SPECIALITIES } from "@workspace/schemas"
 
 export function ProfileSettings() {
   const { user } = useAuth()
@@ -22,7 +23,6 @@ export function ProfileSettings() {
   const [formData, setFormData] = React.useState({
     first_name: user?.first_name || "",
     last_name: user?.last_name || "",
-    dob: user?.dob || "",
     gender: (user?.gender as "Male" | "Female" | "Other" | "Prefer not to say") || "Male",
     speciality: user?.speciality || "",
   })
@@ -32,7 +32,6 @@ export function ProfileSettings() {
       setFormData({
         first_name: user.first_name || "",
         last_name: user.last_name || "",
-        dob: user.dob || "",
         gender: user.gender as "Male" | "Female" | "Other" | "Prefer not to say" || "Male",
         speciality: user.speciality || "",
       })
@@ -43,7 +42,6 @@ export function ProfileSettings() {
     return (
       formData.first_name !== (user?.first_name || "") ||
       formData.last_name !== (user?.last_name || "") ||
-      formData.dob !== (user?.dob || "") ||
       formData.gender !== (user?.gender || "Male") ||
       formData.speciality !== (user?.speciality || "")
     )
@@ -58,7 +56,6 @@ export function ProfileSettings() {
       setFormData({
         first_name: user.first_name || "",
         last_name: user.last_name || "",
-        dob: user.dob || "",
         gender: user.gender as "Male" | "Female" | "Other" | "Prefer not to say" || "Male",
         speciality: user.speciality || "",
       })
@@ -70,7 +67,6 @@ export function ProfileSettings() {
       {
         first_name: formData.first_name || undefined,
         last_name: formData.last_name || undefined,
-        dob: formData.dob || undefined,
         gender: formData.gender,
         speciality: formData.speciality || undefined,
       },
@@ -129,17 +125,6 @@ export function ProfileSettings() {
       <div className="grid grid-cols-2 gap-4">
         <Field>
           <FieldLabel className="text-muted-foreground font-medium text-xs">
-            Date of birth
-          </FieldLabel>
-          <Input
-            type="date"
-            className="rounded-md"
-            value={formData.dob || ""}
-            onChange={(e) => handleInputChange("dob", e.target.value)}
-          />
-        </Field>
-        <Field>
-          <FieldLabel className="text-muted-foreground font-medium text-xs">
             Gender
           </FieldLabel>
           <Select value={formData.gender} onValueChange={(v) => handleInputChange("gender", v)}>
@@ -154,19 +139,22 @@ export function ProfileSettings() {
             </SelectContent>
           </Select>
         </Field>
-      </div>
-
-<Field>
+        <Field>
           <FieldLabel className="text-muted-foreground font-medium text-xs">
             Speciality
           </FieldLabel>
-          <Input
-            className="rounded-md"
-            placeholder="e.g. General Medicine"
-            value={formData.speciality || ""}
-            onChange={(e) => handleInputChange("speciality", e.target.value)}
-          />
+          <Select value={formData.speciality} onValueChange={(v) => handleInputChange("speciality", v)}>
+            <SelectTrigger className="rounded-md">
+              <SelectValue placeholder="Select speciality" />
+            </SelectTrigger>
+            <SelectContent>
+              {SPECIALITIES.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
+      </div>
 
       {isDirty && (
         <div className="flex justify-end gap-3 pt-2">

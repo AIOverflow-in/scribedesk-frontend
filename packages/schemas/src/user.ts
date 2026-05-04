@@ -15,10 +15,10 @@ export const userResponseSchema = z.object({
   email: z.email(),
   first_name: z.string(),
   last_name: z.string().nullable().optional(),
-  dob: z.string().nullable().optional(),
   gender: z.enum(["Male", "Female", "Other", "Prefer not to say"]).nullable().optional(),
   speciality: z.string().nullable().optional(),
   signature_url: z.string().nullable().optional(),
+  is_onboarded: z.boolean().optional(),
   created_at: z.string(),
   updated_at: z.string(),
   clinic: clinicDataSchema.nullable(),
@@ -27,7 +27,6 @@ export const userResponseSchema = z.object({
 export const updateProfileRequestSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
-  dob: z.string().optional(),
   gender: z.enum(["Male", "Female", "Other", "Prefer not to say"]).optional(),
   speciality: z.string().optional(),
 });
