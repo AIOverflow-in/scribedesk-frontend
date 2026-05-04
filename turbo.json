@@ -5,7 +5,8 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".output/**"]
+      "outputs": [".output/**"],
+      "env": ["VITE_API_URL", "VITE_WS_URL", "VITE_GOOGLE_CLIENT_ID"]
     },
     "lint": {
       "dependsOn": ["^lint"]
