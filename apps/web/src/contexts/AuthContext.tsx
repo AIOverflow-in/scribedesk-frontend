@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useNavigate, useLocation } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import type { UserResponse } from "@workspace/schemas/user";
 import { createApiClient } from "@workspace/api-client";
 import { ApiError } from "@workspace/schemas/api-error";
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
 
   const isAuthenticated = !!user;
 
@@ -66,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setWsToken(null);
       setUser(null);
+      queryClient.clear();
       navigate({ to: "/login" });
     }
   };
