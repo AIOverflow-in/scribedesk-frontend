@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useAuth } from "@/contexts/AuthContext"
+import { cn } from "@workspace/ui/lib/utils"
 
 import { NavMain } from "@/shared/components/sidebar/nav-main"
 import { NavChats } from "@/shared/components/sidebar/nav-chats"
@@ -102,12 +103,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton 
-                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors"
-                tooltip="New session"
-                onClick={() => navigate({ to: "/scribe", search: { newSession: "true" } as any })}
+                className={cn(
+                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors",
+                  isRecording && "opacity-50"
+                )}
+                tooltip={isRecording ? "Recording in progress — stop to create a new session" : "New session"}
+                onClick={() => {
+                  if (isRecording) return
+                  navigate({ to: "/scribe", search: { newSession: "true" } as any })
+                }}
               >
                 <CirclePlus />
-                <span>New session</span>
+                <span className="flex items-center gap-2">
+                  New session
+                  {isRecording && (
+                    <span className="text-[10px] font-medium bg-white/20 px-1.5 py-0.5 rounded">Recording</span>
+                  )}
+                </span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
