@@ -8,7 +8,7 @@ import path from "path"
 
 const config = defineConfig({
   plugins: [
-    nitro(),
+    nitro({ preset: "netlify" }),
     viteTsConfigPaths({
       projects: ["./tsconfig.json"],
     }),

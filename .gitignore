@@ -19,6 +19,9 @@ coverage
 # Vercel
 .vercel
 
+# Netlify
+.netlify
+
 # Build Outputs
 dist
 .output
