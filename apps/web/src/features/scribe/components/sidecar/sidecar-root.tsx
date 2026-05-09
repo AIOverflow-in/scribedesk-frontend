@@ -1,17 +1,18 @@
 import * as React from "react"
 import { useScribe } from "../../context/scribe-context"
 import { ChatWindow } from "@/features/chat/components/chat-view/chat-window"
-import { useChatStore } from "@/features/chat/stores/chat-store"
+import { useChatConversations } from "@/features/chat/hooks/use-chat-conversations"
 
 export function ScribeSidecar() {
   const { toggleSidecar, consultation } = useScribe()
-  const { threads } = useChatStore()
+  const { data: conversationsData } = useChatConversations({
+    sessionId: consultation?.id,
+  })
 
-  // 1. Find the thread associated with this consultation
   const threadId = React.useMemo(() => {
-    if (!consultation?.id) return null
-    return threads.find(t => t.context?.id === consultation.id)?.id || null
-  }, [threads, consultation?.id])
+    if (!consultation?.id || !conversationsData?.items?.length) return null
+    return conversationsData.items[0].id
+  }, [consultation?.id, conversationsData])
 
   return (
     <div className="w-full bg-background flex flex-col h-full border-l shadow-xs overflow-hidden">

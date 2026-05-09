@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Drone } from "lucide-react"
+import { Spinner } from "@workspace/ui/components/spinner"
 import { ChatHeader } from "./chat-header"
 import { ChatInput } from "./chat-input"
 import { ChatMessageList } from "./chat-message-list"
@@ -11,6 +12,7 @@ import {
   EmptyDescription 
 } from "@workspace/ui/components/empty"
 import { useChatStore } from "../../stores/chat-store"
+import { useChatConversation } from "../../hooks/use-chat-conversations"
 
 interface ChatWindowProps {
   mode: 'sidecar' | 'workspace'
@@ -21,19 +23,29 @@ interface ChatWindowProps {
 export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
   const { messages, setActiveThread } = useChatStore()
   
-  const effectiveId = threadId === 'new' ? null : threadId
-  const activeMessages = effectiveId ? messages[effectiveId] || [] : []
+  const isNewPlaceholder = threadId === 'new'
+  const isLocal = threadId?.startsWith("local-")
+  const effectiveId = (isNewPlaceholder || isLocal || !threadId) ? null : threadId
+
+  const { isLoading: isConversationLoading } =
+    useChatConversation(effectiveId || "")
+
+  const activeMessages = threadId ? messages[threadId] || [] : []
 
   React.useEffect(() => {
-    setActiveThread(effectiveId)
-  }, [effectiveId, setActiveThread])
+    setActiveThread(threadId === 'new' ? null : threadId)
+  }, [threadId, setActiveThread])
 
   return (
     <div className="flex-1 flex flex-col h-full bg-background overflow-hidden">
       <ChatHeader mode={mode} onClose={onClose} />
       
       <div className="flex-1 overflow-hidden flex flex-col relative">
-        {activeMessages.length === 0 ? (
+        {activeMessages.length === 0 && isConversationLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spinner className="size-6 text-primary" />
+          </div>
+        ) : activeMessages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center">
             <Empty className="border-none bg-transparent shadow-none">
               <EmptyHeader className="items-center">

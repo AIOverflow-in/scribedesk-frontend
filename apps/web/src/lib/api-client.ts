@@ -1,4 +1,4 @@
-import { createApiClient, createAuthApi, createUserApi, createPatientApi, createTemplateApi, createReportApi, createSessionApi } from "@workspace/api-client";
+import { createApiClient, createAuthApi, createUserApi, createPatientApi, createTemplateApi, createReportApi, createSessionApi, createChatApi } from "@workspace/api-client";
 
 export const apiClient = createApiClient({
   baseUrl: import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1",
@@ -10,3 +10,4 @@ export const patientApi = createPatientApi(apiClient);
 export const templateApi = createTemplateApi(apiClient);
 export const reportApi = createReportApi(apiClient);
 export const sessionApi = createSessionApi(apiClient);
+export const chatApi = createChatApi(apiClient);

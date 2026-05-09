@@ -2,9 +2,12 @@ import * as React from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { SquarePen, PenLine } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
+import { Spinner } from "@workspace/ui/components/spinner"
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
 import { PageHeader } from "@/shared/components/page-header"
 import { useChatStore } from "../stores/chat-store"
+import { useChatConversations } from "../hooks/use-chat-conversations"
+import { useDeleteChat } from "../hooks/use-delete-chat"
 import { ChatListItem } from "../components/chat-list/chat-list-item"
 import { ChatSearch } from "../components/chat-list/chat-search"
 import { 
@@ -14,18 +17,31 @@ import {
   EmptyTitle, 
   EmptyDescription 
 } from "@workspace/ui/components/empty"
+import type { ChatThread } from "../types"
 
 export function ChatsPage() {
   const navigate = useNavigate()
-  const { threads, createThread, deleteThread } = useChatStore()
+  const { data: conversationsData, isLoading } = useChatConversations()
+  const { localThreads, createLocalThread } = useChatStore()
+  const deleteMutation = useDeleteChat()
   const [searchQuery, setSearchQuery] = React.useState("")
 
-  const filteredThreads = threads.filter(t => 
-    t.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const threadList = React.useMemo<ChatThread[]>(() => {
+    const serverThreads: ChatThread[] = (conversationsData?.items || []).map(
+      (c) => ({
+        id: c.id,
+        title: c.title,
+        updatedAt: c.updated_at,
+        lastMessageSnippet: undefined,
+      })
+    )
+    return [...localThreads, ...serverThreads].filter((t) =>
+      t.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [conversationsData, localThreads, searchQuery])
 
   const handleCreateChat = () => {
-    const id = createThread()
+    const id = createLocalThread()
     navigate({ to: '/chats/$id', params: { id } } as any)
   }
 
@@ -49,10 +65,14 @@ export function ChatsPage() {
 
       {/* List Area */}
       <div className="flex-1 min-h-0">
-        {filteredThreads.length > 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spinner className="size-6 text-primary" />
+          </div>
+        ) : threadList.length > 0 ? (
           <ScrollArea className="flex-1">
             <div className="flex flex-col mb-10 [&>*:hover]:border-t-transparent [&>*:hover+*]:border-t-transparent [&>*:first-child]:border-t-0 *:border-t *:border-border">
-              {filteredThreads.map((thread) => (
+              {threadList.map((thread) => (
                 <ChatListItem
                   key={thread.id}
                   thread={thread}
@@ -60,7 +80,7 @@ export function ChatsPage() {
                   onClick={() => navigate({ to: '/chats/$id', params: { id: thread.id } } as any)}
                   onDelete={(e) => {
                     e.stopPropagation()
-                    deleteThread(thread.id)
+                    deleteMutation.mutate(thread.id)
                   }}
                 />
               ))}

@@ -6,7 +6,7 @@ export interface ApiClientConfig {
 }
 
 export class ApiClient {
-  private baseUrl: string;
+  readonly baseUrl: string;
 
   constructor(config: ApiClientConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, "");
@@ -22,13 +22,16 @@ export class ApiClient {
       },
     });
 
-    const data = await response.json().catch(() => ({}));
-
     if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
       throw new BaseApiError(response.status, data as ApiErrorResponse);
     }
 
-    return data as T;
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return (await response.json()) as T;
   }
 
   public get<T>(endpoint: string, options?: RequestInit) {

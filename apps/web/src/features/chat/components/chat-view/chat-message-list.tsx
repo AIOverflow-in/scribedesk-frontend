@@ -22,7 +22,7 @@ export function ChatMessageList({ messages }: ChatMessageListProps) {
       ref={scrollRef}
       className="flex-1 hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/40 transition-colors"
     >
-      <div className="flex flex-col pt-4 pb-12">
+      <div className="flex flex-col pt-4 pb-32">
         {messages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}

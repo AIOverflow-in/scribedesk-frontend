@@ -6,4 +6,5 @@ export * from "./patient";
 export * from "./template";
 export * from "./report";
 export * from "./session";
+export * from "./chat";
 export * from "./common";
