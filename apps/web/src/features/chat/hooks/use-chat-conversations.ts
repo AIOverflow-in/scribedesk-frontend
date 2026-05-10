@@ -30,11 +30,9 @@ function mapMessages(msgs: MessageResponse[]): ChatMessage[] {
 export function useChatConversation(conversationId: string) {
   const query = useConversation(apiClient, conversationId)
   const setMessages = useChatStore((s) => s.setMessages)
-  const initialized = React.useRef(false)
 
   useEffect(() => {
-    if (query.data && !initialized.current) {
-      initialized.current = true
+    if (query.data) {
       const existing = useChatStore.getState().messages[conversationId]
       if (!existing || existing.length === 0) {
         setMessages(

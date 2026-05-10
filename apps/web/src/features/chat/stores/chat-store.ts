@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { ChatThread, ChatMessage } from '../types'
+import type { CitationItem } from "@workspace/schemas/chat"
 
 interface ToolCallState {
   toolName: string
@@ -14,8 +15,10 @@ interface ChatState {
 
   streamingContent: string
   streamingStatus: 'idle' | 'sending' | 'streaming' | 'error'
+  streamingStatusMessage: string
   streamingToolCalls: ToolCallState[]
   streamingConversationId: string | null
+  citationsByThread: Record<string, CitationItem[]>
 
   // Actions
   setActiveThread: (id: string | null) => void
@@ -28,6 +31,8 @@ interface ChatState {
   removeLocalThread: (id: string) => void
 
   appendStreamingContent: (threadId: string, content: string) => void
+  setStreamingStatusMessage: (msg: string) => void
+  setCitations: (threadId: string, items: CitationItem[]) => void
   setStreamingToolCall: (threadId: string, tool: ToolCallState) => void
   setStreamingConversationId: (id: string | null) => void
   completeStreaming: (threadId: string) => void
@@ -40,8 +45,10 @@ export const useChatStore = create<ChatState>((set) => ({
 
   streamingContent: '',
   streamingStatus: 'idle',
+  streamingStatusMessage: '',
   streamingToolCalls: [],
   streamingConversationId: null,
+  citationsByThread: {},
 
   setActiveThread: (id) => set({ activeThreadId: id }),
 
@@ -158,12 +165,19 @@ export const useChatStore = create<ChatState>((set) => ({
       return {}
     }),
 
+  setStreamingStatusMessage: (msg) => set({ streamingStatusMessage: msg }),
+  setCitations: (threadId, items) =>
+    set((state) => ({
+      citationsByThread: { ...state.citationsByThread, [threadId]: items },
+    })),
+
   setStreamingConversationId: (id) => set({ streamingConversationId: id }),
 
   completeStreaming: (threadId) =>
     set((state) => ({
       streamingContent: '',
       streamingStatus: 'idle',
+      streamingStatusMessage: '',
       streamingToolCalls: [],
       streamingConversationId: null,
     })),

@@ -16,6 +16,10 @@ export function useChatStream() {
   const addMessage = useChatStore((s) => s.addMessage)
   const appendStreamingContent = useChatStore((s) => s.appendStreamingContent)
   const completeStreaming = useChatStore((s) => s.completeStreaming)
+  const setStreamingStatusMessage = useChatStore(
+    (s) => s.setStreamingStatusMessage
+  )
+  const setCitations = useChatStore((s) => s.setCitations)
   const setStreamingToolCall = useChatStore((s) => s.setStreamingToolCall)
   const promoteLocalThread = useChatStore((s) => s.promoteLocalThread)
   const setStreamingConversationId = useChatStore(
@@ -32,6 +36,7 @@ export function useChatStream() {
         content: data.message,
         status: "sent",
       })
+      setStreamingStatusMessage("Thinking...")
 
       const getThreadId = () =>
         useChatStore.getState().activeThreadId || initialThreadId
@@ -53,6 +58,13 @@ export function useChatStream() {
                     params: { id: convId },
                   })
                 }
+                if (event.metadata_type === "citations") {
+                  setCitations(tid, event.data.items)
+                }
+                break
+
+              case "status":
+                setStreamingStatusMessage(event.status_message)
                 break
 
               case "content":
@@ -102,6 +114,8 @@ export function useChatStream() {
       addMessage,
       appendStreamingContent,
       completeStreaming,
+      setStreamingStatusMessage,
+      setCitations,
       setStreamingToolCall,
       promoteLocalThread,
       setStreamingConversationId,

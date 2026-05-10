@@ -20,13 +20,25 @@ export const chatMetadataCreatedSchema = z.object({
   }),
 });
 
+export const citationItemSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  url: z.string().optional(),
+  domain: z.string().optional(),
+  favicon: z.string().optional(),
+  description: z.string().optional(),
+  name: z.string().optional(),
+});
+
+export const citationsArtifactSchema = z.object({
+  count: z.number(),
+  items: z.array(citationItemSchema),
+});
+
 export const chatMetadataCitationsSchema = z.object({
   type: z.literal("metadata"),
   metadata_type: z.literal("citations"),
-  data: z.object({
-    count: z.number(),
-    items: z.array(z.any()),
-  }),
+  data: citationsArtifactSchema,
 });
 
 export const chatStatusSchema = z.object({
@@ -136,5 +148,7 @@ export type ConversationListItem = z.infer<typeof conversationListItemSchema>;
 export type PaginatedConversationsResponse = z.infer<
   typeof paginatedConversationsResponseSchema
 >;
+export type CitationItem = z.infer<typeof citationItemSchema>;
+export type CitationsArtifact = z.infer<typeof citationsArtifactSchema>;
 export type MessageResponse = z.infer<typeof messageResponseSchema>;
 export type ConversationResponse = z.infer<typeof conversationResponseSchema>;
