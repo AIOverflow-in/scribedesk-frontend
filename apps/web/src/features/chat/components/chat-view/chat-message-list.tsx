@@ -6,9 +6,10 @@ import type { ChatMessage as ChatMessageType } from "../../types"
 
 interface ChatMessageListProps {
   messages: ChatMessageType[]
+  mode?: 'sidecar' | 'workspace'
 }
 
-export function ChatMessageList({ messages }: ChatMessageListProps) {
+export function ChatMessageList({ messages, mode = 'workspace' }: ChatMessageListProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null)
   const streamingStatusMessage = useChatStore((s) => s.streamingStatusMessage)
 
@@ -30,7 +31,7 @@ export function ChatMessageList({ messages }: ChatMessageListProps) {
     >
       <div className="flex flex-col pt-4 pb-48">
         {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
+          <ChatMessage key={msg.id} message={msg} mode={mode} />
         ))}
         {showThinking && (
           <div className="flex justify-center py-4">

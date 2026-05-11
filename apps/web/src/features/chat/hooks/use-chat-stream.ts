@@ -8,7 +8,9 @@ import { apiClient } from "@/lib/api-client"
 import { useChatStore } from "../stores/chat-store"
 import type { SendMessageRequest } from "@workspace/schemas/chat"
 
-export function useChatStream() {
+export function useChatStream({
+  navigateOnCreate = true,
+}: { navigateOnCreate?: boolean } = {}) {
   const { mutate, isPending } = useSendChatMessage(apiClient)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -54,10 +56,12 @@ export function useChatStream() {
                   const convId = event.data.conversation_id
                   setStreamingConversationId(convId)
                   promoteLocalThread(initialThreadId, convId)
-                  navigate({
-                    to: "/chats/$id",
-                    params: { id: convId },
-                  })
+                  if (navigateOnCreate) {
+                    navigate({
+                      to: "/chats/$id",
+                      params: { id: convId },
+                    })
+                  }
                 }
                 if (event.metadata_type === "citations") {
                   setCitations(tid, event.data.items)

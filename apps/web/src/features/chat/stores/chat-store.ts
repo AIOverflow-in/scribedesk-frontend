@@ -26,7 +26,10 @@ interface ChatState {
   addMessage: (threadId: string, message: Omit<ChatMessage, 'id' | 'createdAt'>) => void
   updateThreadTitle: (id: string, title: string) => void
 
-  createLocalThread: (context?: ChatThread['context']) => string
+  createLocalThread: (
+    context?: ChatThread['context'],
+    opts?: { addToList?: boolean }
+  ) => string
   promoteLocalThread: (localId: string, serverId: string) => void
   removeLocalThread: (id: string) => void
 
@@ -82,19 +85,25 @@ export const useChatStore = create<ChatState>((set) => ({
       ),
     })),
 
-  createLocalThread: (context) => {
+  createLocalThread: (context, opts) => {
     const newId = `local-${Math.random().toString(36).substring(7)}`
-    const newThread: ChatThread = {
-      id: newId,
-      title: 'New Chat',
-      updatedAt: new Date().toISOString(),
-      isDraft: true,
-      context,
+    const addToList = opts?.addToList !== false
+
+    if (addToList) {
+      const newThread: ChatThread = {
+        id: newId,
+        title: 'New Chat',
+        updatedAt: new Date().toISOString(),
+        isDraft: true,
+        context,
+      }
+      set((state) => ({
+        localThreads: [newThread, ...state.localThreads],
+        activeThreadId: newId,
+      }))
+    } else {
+      set({ activeThreadId: newId })
     }
-    set((state) => ({
-      localThreads: [newThread, ...state.localThreads],
-      activeThreadId: newId,
-    }))
     return newId
   },
 

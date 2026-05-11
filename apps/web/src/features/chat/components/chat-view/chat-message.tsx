@@ -12,9 +12,10 @@ import { SourcesModal } from "../sources/sources-modal"
 
 interface ChatMessageProps {
   message: ChatMessageType
+  mode?: 'sidecar' | 'workspace'
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, mode = 'workspace' }: ChatMessageProps) {
   const [sourcesModalOpen, setSourcesModalOpen] = React.useState(false)
 
   const activeThreadId = useChatStore((s) => s.activeThreadId)
@@ -64,7 +65,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             className={cn(
               "flex flex-col",
               isAssistant
-                ? "w-full pr-4 sm:pr-8"
+                ? cn("w-full pr-4 sm:pr-8", mode === 'sidecar' && "pl-3")
                 : "max-w-[80%] items-end"
             )}
           >

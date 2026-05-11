@@ -2,10 +2,10 @@ import * as React from "react"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { SquarePen, Maximize2, X, ChevronDown, Trash2, Clock, ArrowLeft, Star } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
 } from "@workspace/ui/components/popover"
 import {
   ButtonGroup,
@@ -28,18 +28,29 @@ import { useDeleteChat } from "../../hooks/use-delete-chat"
 import type { ChatThread } from "../../types"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
 import { cn } from "@workspace/ui/lib/utils"
+import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { formatRelativeTime } from "@/shared/utils/time"
 
-export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 'sidecar' | 'workspace', sessionId?: string, onClose?: () => void }) {
+interface ChatHeaderProps {
+  mode?: 'sidecar' | 'workspace'
+  sessionId?: string
+  onClose?: () => void
+  onSelectThread?: (id: string | null) => void
+}
+
+export function ChatHeader({ mode = 'workspace', sessionId, onClose, onSelectThread }: ChatHeaderProps) {
   const navigate = useNavigate()
   const { data: conversationsData } = useChatConversations(
     mode === 'sidecar' && sessionId
       ? { pageSize: 50, sessionId }
       : { pageSize: 50 }
   )
-  const { activeThreadId, localThreads, createLocalThread } = useChatStore()
-  const deleteMutation = useDeleteChat()
+  const { activeThreadId, localThreads, createLocalThread, setActiveThread } = useChatStore()
+  const deleteMutation = useDeleteChat(
+    mode === 'sidecar' ? { skipNavigation: true } : undefined
+  )
   const [deleteOpen, setDeleteOpen] = React.useState(false)
+  const [deletingThreadId, setDeletingThreadId] = React.useState<string | null>(null)
 
   const allThreads = React.useMemo<ChatThread[]>(() => {
     const serverThreads: ChatThread[] = (conversationsData?.items || []).map(
@@ -49,8 +60,29 @@ export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 
   }, [conversationsData, localThreads])
 
   const activeThread = allThreads.find(t => t.id === activeThreadId)
+  const deletingThread = allThreads.find(t => t.id === deletingThreadId) || activeThread
 
-  const deletingTitle = activeThread?.title || "this chat"
+  const deletingTitle = deletingThread?.title || "this chat"
+
+  const handleSelectThread = (id: string) => {
+    if (mode === 'sidecar' && onSelectThread) {
+      onSelectThread(id)
+    } else {
+      navigate({ to: '/chats/$id', params: { id } } as any)
+    }
+  }
+
+  const handleNewChat = () => {
+    if (mode === 'sidecar' && onSelectThread) {
+      onSelectThread(null)
+      setActiveThread(null)
+      return
+    }
+    const id = createLocalThread(
+      sessionId ? { type: "consultation", id: sessionId } : undefined
+    )
+    navigate({ to: '/chats/$id', params: { id } } as any)
+  }
 
   return (
     <>
@@ -84,11 +116,14 @@ export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 
                         <Star className="h-4 w-4 mr-2" />
                         Star chat
                      </Button>
-                     <Button 
-                       variant="ghost" 
-                       className="w-full justify-start text-sm text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
-                       onClick={() => setDeleteOpen(true)}
-                     >
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-sm text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                        onClick={() => {
+                          setDeletingThreadId(activeThreadId)
+                          setDeleteOpen(true)
+                        }}
+                      >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete chat
                      </Button>
@@ -115,54 +150,62 @@ export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent align="start" className="w-72 p-2">
-                <div className="space-y-1">
-                  {allThreads.map(thread => (
-                    <button
-                      key={thread.id}
-                      onClick={() => navigate({ to: '/chats/$id', params: { id: thread.id } } as any)}
-                      className={cn(
-                        "w-full flex items-center justify-between p-3 rounded-md text-left transition-all group/item cursor-pointer",
-                        thread.id === activeThreadId ? "bg-muted" : "hover:bg-muted"
-                      )}
-                    >
-                      <div className="flex flex-col gap-1 min-w-0 pr-2">
-                        <span className="text-base font-normal text-foreground truncate">
-                          {thread.title}
-                        </span>
-                        <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                           <Clock className="h-3 w-3" />
-                           {formatRelativeTime(thread.updatedAt)}
-                        </span>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover/item:opacity-100 transition-opacity cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setDeleteOpen(true)
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </button>
-                  ))}
-                </div>
-              </PopoverContent>
+                <PopoverContent align="start" className="w-72 p-2">
+                  {allThreads.length === 0 ? (
+                    <div className="px-3 py-6 text-center">
+                      <span className="text-sm text-muted-foreground">
+                        No chats for this session yet
+                      </span>
+                    </div>
+                  ) : (
+                    <NativeScroll className="max-h-[280px] space-y-1">
+                      {allThreads.map(thread => (
+                        <div
+                          key={thread.id}
+                          onClick={() => handleSelectThread(thread.id)}
+                          role="button"
+                          tabIndex={0}
+                          className={cn(
+                            "w-full flex items-center justify-between p-3 rounded-md text-left transition-all group/item cursor-pointer",
+                            thread.id === activeThreadId ? "bg-muted" : "hover:bg-muted"
+                          )}
+                        >
+                          <div className="flex flex-col gap-1 min-w-0 pr-2">
+                            <span className="text-base font-normal text-foreground truncate">
+                              {thread.title}
+                            </span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                               <Clock className="h-3 w-3" />
+                               {formatRelativeTime(thread.updatedAt)}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover/item:opacity-100 transition-opacity cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setDeletingThreadId(thread.id)
+                              setDeleteOpen(true)
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </NativeScroll>
+                  )}
+                </PopoverContent>
             </Popover>
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-10 gap-2 px-3 text-sm font-semibold cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted" 
-              onClick={() => {
-                const id = createLocalThread()
-                navigate({ to: '/chats/$id', params: { id } } as any)
-              }}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-10 gap-2 px-3 text-sm font-semibold cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted"
+              onClick={handleNewChat}
             >
               <SquarePen className="h-5 w-5" />
               New chat
@@ -171,9 +214,13 @@ export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-10 w-10 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted" asChild>
-                  <Link to="/chats/$id" params={{ id: activeThreadId || 'new' } as any}>
+                  <a
+                    href={`/chats/${activeThreadId || 'new'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Maximize2 className="h-5 w-5" />
-                  </Link>
+                  </a>
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Full Screen</TooltipContent>
@@ -210,10 +257,17 @@ export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 
             <AlertDialogAction
               variant="destructive"
               onClick={() => {
-                if (activeThread) {
-                  deleteMutation.mutate(activeThread.id)
+                if (deletingThread) {
+                  deleteMutation.mutate(deletingThread.id, {
+                    onSuccess: () => {
+                      if (mode === 'sidecar') {
+                        handleNewChat()
+                      }
+                    },
+                  })
                 }
                 setDeleteOpen(false)
+                setDeletingThreadId(null)
               }}
             >
               Delete

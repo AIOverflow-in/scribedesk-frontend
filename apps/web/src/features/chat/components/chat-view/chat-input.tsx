@@ -6,11 +6,17 @@ import { useChatStream } from "../../hooks/use-chat-stream"
 import { useScribeOptional } from "@/features/scribe/context/scribe-context"
 import { cn } from "@workspace/ui/lib/utils"
 
-export function ChatInput() {
+interface ChatInputProps {
+  mode?: 'sidecar' | 'workspace'
+}
+
+export function ChatInput({ mode = 'workspace' }: ChatInputProps) {
   const scribeContext = useScribeOptional()
   const consultation = scribeContext?.consultation
   const { activeThreadId, localThreads, createLocalThread } = useChatStore()
-  const { sendMessage, isPending } = useChatStream()
+  const { sendMessage, isPending } = useChatStream({
+    navigateOnCreate: mode !== 'sidecar',
+  })
   const [message, setMessage] = React.useState("")
   
   const activeThread = localThreads.find(t => t.id === activeThreadId)
@@ -25,7 +31,12 @@ export function ChatInput() {
 
     let threadId = activeThreadId
     if (!threadId) {
-      threadId = createLocalThread()
+      threadId = createLocalThread(
+        consultation?.id
+          ? { type: "consultation", id: consultation.id }
+          : undefined,
+        { addToList: mode !== 'sidecar' }
+      )
     }
 
     sendMessage({

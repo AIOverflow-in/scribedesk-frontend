@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { SquarePen, PenLine } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Spinner } from "@workspace/ui/components/spinner"
-import { ScrollArea } from "@workspace/ui/components/scroll-area"
+import { NativeScroll } from "@workspace/ui/components/native-scroll"
 import { PageHeader } from "@/shared/components/page-header"
 import { useChatStore } from "../stores/chat-store"
 import { useChatConversations } from "../hooks/use-chat-conversations"
@@ -70,7 +70,7 @@ export function ChatsPage() {
             <Spinner className="size-6 text-primary" />
           </div>
         ) : threadList.length > 0 ? (
-          <ScrollArea className="flex-1">
+          <NativeScroll className="h-full flex-1">
             <div className="flex flex-col mb-10 [&>*:hover]:border-t-transparent [&>*:hover+*]:border-t-transparent [&>*:first-child]:border-t-0 *:border-t *:border-border">
               {threadList.map((thread) => (
                 <ChatListItem
@@ -85,7 +85,7 @@ export function ChatsPage() {
                 />
               ))}
             </div>
-          </ScrollArea>
+          </NativeScroll>
         ) : (
           <div className="py-20">
             <Empty className="border-none bg-transparent">

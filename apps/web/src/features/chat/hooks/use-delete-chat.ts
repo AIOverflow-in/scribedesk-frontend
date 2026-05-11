@@ -7,7 +7,7 @@ import { toast } from "@workspace/ui/components/sonner"
 import { useChatStore } from "../stores/chat-store"
 import { ApiError } from "@workspace/schemas/api-error"
 
-export function useDeleteChat() {
+export function useDeleteChat(options?: { skipNavigation?: boolean }) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const activeThreadId = useChatStore((s) => s.activeThreadId)
@@ -22,7 +22,7 @@ export function useDeleteChat() {
       queryClient.removeQueries({ queryKey: ["conversation", conversationId] })
       removeLocalThread(conversationId)
 
-      if (activeThreadId === conversationId) {
+      if (!options?.skipNavigation && activeThreadId === conversationId) {
         navigate({ to: "/chats" })
       }
 
