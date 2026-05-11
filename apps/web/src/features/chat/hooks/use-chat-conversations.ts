@@ -6,7 +6,6 @@ import type { MessageResponse } from "@workspace/schemas/chat"
 import { apiClient } from "@/lib/api-client"
 import { useChatStore } from "../stores/chat-store"
 import type { ChatMessage } from "../types"
-import React from "react";
 
 type UseConversationsOptions = {
   page?: number
@@ -24,6 +23,7 @@ function mapMessages(msgs: MessageResponse[]): ChatMessage[] {
     role: m.role,
     content: m.content,
     createdAt: m.created_at,
+    artifacts: m.artifacts,
   }))
 }
 

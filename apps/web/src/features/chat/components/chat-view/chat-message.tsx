@@ -20,16 +20,36 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const activeThreadId = useChatStore((s) => s.activeThreadId)
   const citationsByThread = useChatStore((s) => s.citationsByThread)
 
-  const citations = activeThreadId
+  const isAssistant = message.role === "assistant"
+
+  let ownCitations: typeof citationsByThread[string] = []
+  if (message.artifacts) {
+    const raw = (message.artifacts as Record<string, unknown>)?.citations
+    if (Array.isArray(raw)) {
+      ownCitations = raw
+    } else if (raw && typeof raw === "object" && "items" in raw) {
+      const items = (raw as { items: unknown }).items
+      if (Array.isArray(items)) ownCitations = items
+    }
+  }
+
+  const threadCitations = activeThreadId
     ? citationsByThread[activeThreadId] || []
     : []
+
+  const citations =
+    ownCitations.length > 0 ? ownCitations : threadCitations
+
+  const hasOwnCitations = ownCitations.length > 0
+
+  const showSourcesSection =
+    isAssistant &&
+    (hasOwnCitations || (message.isStreaming && threadCitations.length > 0))
 
   const citationsArtifact: CitationsArtifact | undefined =
     citations.length > 0
       ? { count: citations.length, items: citations }
       : undefined
-
-  const isAssistant = message.role === "assistant"
 
   return (
     <>
@@ -75,12 +95,14 @@ export function ChatMessage({ message }: ChatMessageProps) {
                   rehypePlugins={[rehypeRaw]}
                   components={{
                     cite: ({ children }) => {
+                      if (citations.length === 0) return null
                       const citeText =
                         typeof children === "string" ? children : ""
                       const ids = citeText
                         .split(",")
                         .map(Number)
                         .filter(Boolean)
+                      if (ids.length === 0) return null
                       return (
                         <CitationInlineTag
                           citations={citations}
@@ -100,7 +122,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               )}
             </div>
 
-            {isAssistant && citationsArtifact && (
+            {showSourcesSection && (
               <div className="px-1">
                 <SourcesSection
                   citations={citationsArtifact}

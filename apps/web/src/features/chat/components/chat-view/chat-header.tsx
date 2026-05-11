@@ -30,9 +30,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/component
 import { cn } from "@workspace/ui/lib/utils"
 import { formatRelativeTime } from "@/shared/utils/time"
 
-export function ChatHeader({ mode = 'workspace', onClose }: { mode?: 'sidecar' | 'workspace', onClose?: () => void }) {
+export function ChatHeader({ mode = 'workspace', sessionId, onClose }: { mode?: 'sidecar' | 'workspace', sessionId?: string, onClose?: () => void }) {
   const navigate = useNavigate()
-  const { data: conversationsData } = useChatConversations({ pageSize: 50 })
+  const { data: conversationsData } = useChatConversations(
+    mode === 'sidecar' && sessionId
+      ? { pageSize: 50, sessionId }
+      : { pageSize: 50 }
+  )
   const { activeThreadId, localThreads, createLocalThread } = useChatStore()
   const deleteMutation = useDeleteChat()
   const [deleteOpen, setDeleteOpen] = React.useState(false)

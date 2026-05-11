@@ -37,6 +37,7 @@ export function useChatStream() {
         status: "sent",
       })
       setStreamingStatusMessage("Thinking...")
+      setCitations(initialThreadId, [])
 
       const getThreadId = () =>
         useChatStore.getState().activeThreadId || initialThreadId

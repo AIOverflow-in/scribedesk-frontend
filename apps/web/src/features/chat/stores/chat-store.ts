@@ -174,11 +174,37 @@ export const useChatStore = create<ChatState>((set) => ({
   setStreamingConversationId: (id) => set({ streamingConversationId: id }),
 
   completeStreaming: (threadId) =>
-    set((state) => ({
-      streamingContent: '',
-      streamingStatus: 'idle',
-      streamingStatusMessage: '',
-      streamingToolCalls: [],
-      streamingConversationId: null,
-    })),
+    set((state) => {
+      const threadCites = state.citationsByThread[threadId]
+      const hasCitations = threadCites && threadCites.length > 0
+      const citationsByThread = { ...state.citationsByThread }
+      delete citationsByThread[threadId]
+      return {
+        streamingContent: '',
+        streamingStatus: 'idle',
+        streamingStatusMessage: '',
+        streamingToolCalls: [],
+        streamingConversationId: null,
+        citationsByThread,
+        messages: {
+          ...state.messages,
+          [threadId]: (state.messages[threadId] || []).map((m) =>
+            m.isStreaming
+              ? {
+                  ...m,
+                  isStreaming: false,
+                  artifacts: hasCitations
+                    ? {
+                        citations: {
+                          count: threadCites.length,
+                          items: threadCites,
+                        },
+                      }
+                    : m.artifacts,
+                }
+              : m
+          ),
+        },
+      }
+    }),
 }))

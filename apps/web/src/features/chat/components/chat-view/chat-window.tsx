@@ -17,12 +17,13 @@ import { useChatConversation } from "../../hooks/use-chat-conversations"
 interface ChatWindowProps {
   mode: 'sidecar' | 'workspace'
   threadId: string | null
+  sessionId?: string
   onClose?: () => void
 }
 
-export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
-  const { messages, setActiveThread } = useChatStore()
-  
+export function ChatWindow({ mode, threadId, sessionId, onClose }: ChatWindowProps) {
+  const { messages, setActiveThread, activeThreadId } = useChatStore()
+
   const isNewPlaceholder = threadId === 'new'
   const isLocal = threadId?.startsWith("local-")
   const effectiveId = (isNewPlaceholder || isLocal || !threadId) ? null : threadId
@@ -30,7 +31,8 @@ export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
   const { isLoading: isConversationLoading } =
     useChatConversation(effectiveId || "")
 
-  const activeMessages = threadId ? messages[threadId] || [] : []
+  const messageThreadId = isNewPlaceholder ? activeThreadId : threadId
+  const activeMessages = messageThreadId ? messages[messageThreadId] || [] : []
 
   React.useEffect(() => {
     setActiveThread(threadId === 'new' ? null : threadId)
@@ -38,7 +40,7 @@ export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-background overflow-hidden">
-      <ChatHeader mode={mode} onClose={onClose} />
+      <ChatHeader mode={mode} sessionId={sessionId} onClose={onClose} />
       
       <div className="flex-1 overflow-hidden flex flex-col relative">
         {activeMessages.length === 0 && isConversationLoading ? (
