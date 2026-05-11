@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createPaginatedResponseSchema } from "./common";
 import { reportMetadataSchema } from "./report";
+import { conversationListItemSchema } from "./chat";
 
 export const createSessionRequestSchema = z.object({
   patient_id: z.uuid().optional(),
@@ -32,6 +33,7 @@ export const sessionResponseSchema = z.object({
   clinical_summary: z.string().optional().nullable(),
   last_summarized_transcript_id: z.uuid().optional().nullable(),
   reports: z.array(reportMetadataSchema),
+  chats: z.array(conversationListItemSchema).default([]),
   created_at: z.string(),
   updated_at: z.string(),
 });

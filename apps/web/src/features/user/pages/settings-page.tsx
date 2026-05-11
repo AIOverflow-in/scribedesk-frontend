@@ -11,7 +11,7 @@ export function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile")
 
   useEffect(() => {
-    if (search.tab && ["profile", "clinic", "billing"].includes(search.tab)) {
+    if (search.tab && ["profile", "clinic"].includes(search.tab)) {
       setActiveTab(search.tab)
     }
   }, [search.tab])
@@ -27,7 +27,7 @@ export function SettingsPage() {
         <TabsList className="mb-6">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="clinic">Clinic</TabsTrigger>
-          <TabsTrigger value="billing">Billing</TabsTrigger>
+          {/* <TabsTrigger value="billing">Billing</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="profile">
