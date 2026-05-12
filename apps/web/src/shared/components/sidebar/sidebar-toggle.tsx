@@ -20,14 +20,25 @@ interface SidebarHeaderToggleProps {
 }
 
 export function SidebarHeaderToggle({ app }: SidebarHeaderToggleProps) {
-  const { toggleSidebar, state } = useSidebar()
+  const { toggleSidebar, state, isMobile } = useSidebar()
+  const [tooltipKey, setTooltipKey] = React.useState(0)
+
+  React.useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setTooltipKey((k) => k + 1)
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+  }, [])
 
   return (
     <div className="group/header relative flex h-8 w-full items-center">
       <div className="flex-1 min-w-0 transition-all duration-200 group-data-[state=expanded]:pr-9 group-data-[collapsible=icon]:group-hover/header:opacity-0 group-data-[collapsible=icon]:group-hover/header:invisible">
         <AppHeader app={app} />
       </div>
-      <Tooltip>
+      <Tooltip key={tooltipKey}>
         <TooltipTrigger asChild>
           <button
             onClick={toggleSidebar}
@@ -43,7 +54,7 @@ export function SidebarHeaderToggle({ app }: SidebarHeaderToggleProps) {
             </span>
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right" align="center">
+        <TooltipContent side="right" align="center" hidden={isMobile}>
           {state === "expanded" ? "Close sidebar" : "Open sidebar"}
         </TooltipContent>
       </Tooltip>

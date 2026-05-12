@@ -3,6 +3,7 @@ import { useEffect } from "react"
 import { AppLayout } from "@/shared/layout/app-layout"
 import { useAuth } from "@/contexts/AuthContext"
 import { ScribeSessionProvider } from "@/features/scribe/context/scribe-session-provider"
+import { usePushEvents } from "@/shared/hooks/push-events/use-push-events"
 
 export const Route = createFileRoute("/_protected")({
   component: ProtectedLayout,
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/_protected")({
 function ProtectedLayout() {
   const { isLoading, isAuthenticated } = useAuth()
   const navigate = useNavigate()
+
+  usePushEvents()
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

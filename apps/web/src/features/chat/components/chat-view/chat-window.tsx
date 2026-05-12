@@ -1,39 +1,62 @@
 import * as React from "react"
 import { Drone } from "lucide-react"
+import { Spinner } from "@workspace/ui/components/spinner"
 import { ChatHeader } from "./chat-header"
 import { ChatInput } from "./chat-input"
 import { ChatMessageList } from "./chat-message-list"
-import { 
-  Empty, 
-  EmptyHeader, 
-  EmptyMedia, 
-  EmptyTitle, 
-  EmptyDescription 
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription
 } from "@workspace/ui/components/empty"
 import { useChatStore } from "../../stores/chat-store"
+import { useChatConversation } from "../../hooks/use-chat-conversations"
 
 interface ChatWindowProps {
   mode: 'sidecar' | 'workspace'
   threadId: string | null
+  sessionId?: string
   onClose?: () => void
+  onSelectThread?: (id: string | null) => void
 }
 
-export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
-  const { messages, setActiveThread } = useChatStore()
-  
-  const effectiveId = threadId === 'new' ? null : threadId
-  const activeMessages = effectiveId ? messages[effectiveId] || [] : []
+export function ChatWindow({ mode, threadId, sessionId, onClose, onSelectThread }: ChatWindowProps) {
+  const { messages, setActiveThread, activeThreadId } = useChatStore()
+
+  const isNewPlaceholder = threadId === 'new'
+  const isLocal = threadId?.startsWith("local-")
+  const effectiveId = (isNewPlaceholder || isLocal || !threadId) ? null : threadId
+
+  const { isLoading: isConversationLoading } =
+    useChatConversation(effectiveId || "")
+
+  const messageThreadId = isNewPlaceholder ? activeThreadId : threadId
+  const activeMessages = messageThreadId ? messages[messageThreadId] || [] : []
 
   React.useEffect(() => {
-    setActiveThread(effectiveId)
-  }, [effectiveId, setActiveThread])
+    if (mode === 'workspace') {
+      // Workspace: threadId is the URL param, always sync activeThreadId to it
+      setActiveThread(threadId === 'new' ? null : threadId)
+    } else if (threadId !== 'new') {
+      // Sidecar: only sync when a specific conversation is selected
+      setActiveThread(threadId)
+    }
+    // Sidecar + threadId === 'new': do NOT overwrite activeThreadId.
+    // Let createLocalThread / promoteLocalThread manage it.
+  }, [threadId, setActiveThread, mode])
 
   return (
     <div className="flex-1 flex flex-col h-full bg-background overflow-hidden">
-      <ChatHeader mode={mode} onClose={onClose} />
-      
+      <ChatHeader mode={mode} sessionId={sessionId} onClose={onClose} onSelectThread={onSelectThread} />
+
       <div className="flex-1 overflow-hidden flex flex-col relative">
-        {activeMessages.length === 0 ? (
+        {activeMessages.length === 0 && isConversationLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Spinner className="size-6 text-primary" />
+          </div>
+        ) : activeMessages.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center">
             <Empty className="border-none bg-transparent shadow-none">
               <EmptyHeader className="items-center">
@@ -50,14 +73,14 @@ export function ChatWindow({ mode, threadId, onClose }: ChatWindowProps) {
         ) : (
           <div className="flex-1 relative min-h-0 flex flex-col">
             <div className="absolute top-0 inset-x-0 h-4 bg-linear-to-b from-background to-transparent z-10 pointer-events-none" />
-            <ChatMessageList messages={activeMessages} />
+            <ChatMessageList messages={activeMessages} mode={mode} />
           </div>
         )}
-        
+
         {/* Tightened Input area with reduced width */}
         <div className="w-full pb-1 relative z-10 -mt-6">
            <div className="max-w-3xl mx-auto px-4">
-              <ChatInput />
+               <ChatInput mode={mode} />
               <p className="text-[10px] text-muted-foreground text-center mt-1.5 font-medium">
                 AI can make mistakes. Always verify clinical recommendations.
               </p>

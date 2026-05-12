@@ -5,6 +5,7 @@ export interface ChatMessage {
   createdAt: string
   status?: 'sending' | 'sent' | 'error'
   isStreaming?: boolean
+  artifacts?: unknown
 }
 
 export interface ChatThread {

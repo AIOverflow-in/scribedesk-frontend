@@ -2,16 +2,24 @@ import * as React from "react"
 import { Paperclip, SquareSlash, Mic, ArrowUp, Fingerprint } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { useChatStore } from "../../stores/chat-store"
+import { useChatStream } from "../../hooks/use-chat-stream"
 import { useScribeOptional } from "@/features/scribe/context/scribe-context"
 import { cn } from "@workspace/ui/lib/utils"
 
-export function ChatInput() {
+interface ChatInputProps {
+  mode?: 'sidecar' | 'workspace'
+}
+
+export function ChatInput({ mode = 'workspace' }: ChatInputProps) {
   const scribeContext = useScribeOptional()
   const consultation = scribeContext?.consultation
-  const { activeThreadId, addMessage, threads } = useChatStore()
+  const { activeThreadId, localThreads, createLocalThread } = useChatStore()
+  const { sendMessage, isPending } = useChatStream({
+    navigateOnCreate: mode !== 'sidecar',
+  })
   const [message, setMessage] = React.useState("")
   
-  const activeThread = threads.find(t => t.id === activeThreadId)
+  const activeThread = localThreads.find(t => t.id === activeThreadId)
   
   // Only show identity bar if the thread is specifically linked to a consultation context.
   // This ensures standalone chats never show the clinical tag, even if they have a generated title.
@@ -19,11 +27,23 @@ export function ChatInput() {
   const showIdentityBar = hasConsultationContext && (consultation?.title || activeThread?.title)
 
   const handleSend = () => {
-    if (!message.trim() || !activeThreadId) return
-    addMessage(activeThreadId, {
-      role: 'user',
-      content: message,
-      status: 'sent'
+    if (!message.trim() || isPending) return
+
+    let threadId = activeThreadId
+    if (!threadId) {
+      threadId = createLocalThread(
+        consultation?.id
+          ? { type: "consultation", id: consultation.id }
+          : undefined,
+        { addToList: mode !== 'sidecar' }
+      )
+    }
+
+    sendMessage({
+      conversation_id: threadId.startsWith("local-") ? null : threadId,
+      message,
+      session_id: consultation?.id || activeThread?.context?.id || null,
+      patient_id: null,
     })
     setMessage("")
   }
@@ -85,7 +105,7 @@ export function ChatInput() {
                   "h-8 w-8 rounded-lg transition-all shadow-xs cursor-pointer",
                   message.trim() ? "bg-primary text-white" : "bg-muted text-muted-foreground opacity-50"
                 )}
-                disabled={!message.trim()}
+                disabled={!message.trim() || isPending}
                 onClick={handleSend}
              >
                 <ArrowUp className="h-4 w-4" />

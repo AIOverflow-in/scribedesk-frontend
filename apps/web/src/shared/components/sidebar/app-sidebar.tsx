@@ -104,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem>
               <SidebarMenuButton 
                 className={cn(
-                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-colors",
+                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground transition-all",
                   isRecording && "opacity-50"
                 )}
                 tooltip={isRecording ? "Recording in progress — stop to create a new session" : "New session"}
