@@ -22,6 +22,11 @@ export const Route = createRootRoute({
     ],
     links: [
       {
+        rel: "icon",
+        type: "image/x-icon",
+        href: "/logo/scribedesk.ico",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },

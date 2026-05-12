@@ -20,7 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
-import { GalleryVerticalEndIcon, 
+import { 
   AudioLinesIcon,
   UsersIcon, 
   SquarePenIcon,
@@ -32,7 +32,7 @@ import { useScribeStore } from "@/features/scribe/stores/scribe-store"
 const data = {
   app: {
     name: "ScribeDesk",
-    logo: <GalleryVerticalEndIcon />,
+    logo: <img src="/logo/scribedesk.ico" alt="ScribeDesk" className="size-7 rounded-md" />,
     plan: "Enterprise",
   },
   navMain: [
@@ -69,7 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = {
     name: authUser ? `${authUser.first_name} ${authUser.last_name ?? ""}`.trim() : "User",
     email: authUser?.email ?? "",
-    avatar: authUser?.clinic?.logo_url ?? "/favicon.ico",
+    avatar: authUser?.clinic?.logo_url ?? "/logo/scribedesk.ico",
   }
 
   React.useEffect(() => {
