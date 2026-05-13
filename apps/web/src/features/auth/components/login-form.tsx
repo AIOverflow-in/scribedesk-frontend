@@ -67,7 +67,7 @@ export function LoginForm({
   return (
     <form onSubmit={handleSubmit} className={cn("flex flex-col gap-5", className)} {...props}>
       <div className="flex flex-col items-center gap-1 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
         <p className="text-sm text-balance text-muted-foreground">
           Enter your email below to login to your account
         </p>
@@ -135,13 +135,6 @@ export function LoginForm({
         <img src="/icons/auth/google.png" alt="Google" className="mr-2 h-6 w-6" />
         {googlePending ? "Connecting..." : "Login with Google"}
       </Button>
-
-      <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
-        <a href="/register" className="underline underline-offset-4">
-          Sign up
-        </a>
-      </p>
     </form>
   )
 }
