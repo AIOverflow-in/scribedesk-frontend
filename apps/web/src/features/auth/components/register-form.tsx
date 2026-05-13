@@ -150,15 +150,6 @@ export function RegisterForm({
           errors={errors}
         />
       )}
-
-      {step === 1 && (
-        <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <a href="/login" className="underline underline-offset-4">
-            Login
-          </a>
-        </p>
-      )}
     </form>
   )
 }
