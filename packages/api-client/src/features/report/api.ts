@@ -1,5 +1,5 @@
 import type { ApiClient } from "../../core/client";
-import type { CreateReportRequest, ReportResponse } from "@workspace/schemas/report";
+import type { CreateReportRequest, UpdateReportRequest, ReportResponse } from "@workspace/schemas/report";
 
 export function createReportApi(client: ApiClient) {
   return {
@@ -8,6 +8,9 @@ export function createReportApi(client: ApiClient) {
 
     get: (reportId: string) =>
       client.get<ReportResponse>(`/reports/${reportId}`),
+
+    update: (reportId: string, data: UpdateReportRequest) =>
+      client.patch<ReportResponse>(`/reports/${reportId}`, data),
 
     delete: (reportId: string) =>
       client.delete(`/reports/${reportId}`),

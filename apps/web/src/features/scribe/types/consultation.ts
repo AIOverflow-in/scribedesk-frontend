@@ -51,7 +51,7 @@ export function mapSessionToConsultation(session: SessionResponse | SessionListI
           title: r.title,
           type: r.template_name ?? "Unknown",
           createdAt: r.created_at,
-        }))
+        })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       : undefined,
   }
 }

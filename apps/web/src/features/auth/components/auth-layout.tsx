@@ -48,7 +48,14 @@ export function AuthLayout({ children, headerLink }: AuthLayoutProps) {
           )}
         </div>
         <div className="flex flex-1 items-center justify-center">
-          {children}
+          <div className="flex w-full flex-col items-center">
+            {children}
+            {headerLink && (
+              <p className="mt-10 text-base text-muted-foreground md:hidden">
+                {headerLink}
+              </p>
+            )}
+          </div>
         </div>
         <p className="flex items-center gap-3 text-xs text-muted-foreground">
           <span>&copy; 2026 ScribeDesk</span>

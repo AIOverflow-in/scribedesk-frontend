@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { reportApi } from "@/lib/api-client";
-import type { CreateReportRequest } from "@workspace/schemas/report";
+import type { CreateReportRequest, UpdateReportRequest } from "@workspace/schemas/report";
 import { toast } from "@workspace/ui/components/sonner";
 
 export function useReport(reportId: string) {
@@ -21,6 +21,21 @@ export function useCreateReport() {
     },
     onError: (error: Error) => {
       toast.error(error instanceof Error ? error.message : "Failed to generate report");
+    },
+  });
+}
+
+export function useUpdateReport() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateReportRequest }) =>
+      reportApi.update(id, data),
+    onSuccess: (response, variables) => {
+      queryClient.setQueryData(["report", variables.id], response);
+      toast.success("Report updated");
+    },
+    onError: (error: Error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update report");
     },
   });
 }

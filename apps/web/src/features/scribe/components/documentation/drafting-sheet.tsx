@@ -27,12 +27,14 @@ import {
   DropdownMenuSeparator,
 } from "@workspace/ui/components/dropdown-menu"
 import { useScribe } from "../../context/scribe-context"
+import { useUpdateReport } from "../../hooks/use-scribe-reports"
 import { cn } from "@workspace/ui/lib/utils"
 import { ClinicalPaper } from "./clinical-paper"
 import { ClinicalPaperSkeleton } from "./clinical-paper-skeleton"
 
 export function DraftingSheet() {
   const { isSheetOpen, closeSheet, activeDocument } = useScribe()
+  const updateReport = useUpdateReport()
   const [isSigned, setIsSigned] = React.useState(false)
   const [showSignature, setShowSignature] = React.useState(true)
   const [isGenerating, setIsGenerating] = React.useState(true)
@@ -46,6 +48,9 @@ export function DraftingSheet() {
   if (activeDocument) lastDoc.current = activeDocument
   const docToRender = activeDocument || lastDoc.current
 
+  // Track original content to detect changes
+  const originalContentRef = React.useRef("")
+
   // Simulate generation only if the document has no content yet
   React.useEffect(() => {
     if (isSheetOpen) {
@@ -54,6 +59,7 @@ export function DraftingSheet() {
         setEditedContent(docToRender.content)
         setEditedText(docToRender.content)
         setEditedHtml(docToRender.content)
+        originalContentRef.current = docToRender.content
       } else {
         setIsGenerating(true)
         setIsSigned(false)
@@ -67,6 +73,8 @@ export function DraftingSheet() {
       }
     }
   }, [isSheetOpen, activeDocument?.id, activeDocument?.content])
+
+  const hasChanges = editedContent !== originalContentRef.current
 
   const handleCopy = async () => {
     const plainText = editedText || editedContent || docToRender?.content || ""
@@ -101,8 +109,14 @@ export function DraftingSheet() {
   }
 
   const handleSave = () => {
-    console.log("Saving document with content:", editedContent)
-    closeSheet()
+    if (docToRender?.id) {
+      updateReport.mutate(
+        { id: docToRender.id, data: { content: editedContent, title: docToRender.title } },
+        { onSuccess: () => closeSheet() },
+      )
+    } else {
+      closeSheet()
+    }
   }
 
   const handlePrint = () => {
@@ -211,8 +225,8 @@ export function DraftingSheet() {
           <Button variant="outline" size="sm" className="cursor-pointer" onClick={closeSheet}>
             Cancel
           </Button>
-          <Button size="sm" className="cursor-pointer" disabled={isGenerating} onClick={handleSave}>
-            Save
+          <Button size="sm" className="cursor-pointer" disabled={isGenerating || !hasChanges || updateReport.isPending} onClick={handleSave}>
+            {updateReport.isPending ? "Saving..." : "Save"}
           </Button>
         </div>
       </SheetContent>

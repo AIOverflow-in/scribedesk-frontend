@@ -6,6 +6,12 @@ export const createReportRequestSchema = z.object({
   additional_context: z.string().max(2000).optional(),
 });
 
+export const updateReportRequestSchema = z.object({
+  title: z.string().optional(),
+  content: z.string().optional(),
+  report_metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
 export const reportResponseSchema = z.object({
   id: z.uuid(),
   session_id: z.uuid(),
@@ -28,5 +34,6 @@ export const reportMetadataSchema = z.object({
 });
 
 export type CreateReportRequest = z.infer<typeof createReportRequestSchema>;
+export type UpdateReportRequest = z.infer<typeof updateReportRequestSchema>;
 export type ReportResponse = z.infer<typeof reportResponseSchema>;
 export type ReportMetadata = z.infer<typeof reportMetadataSchema>;
